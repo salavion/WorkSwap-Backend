@@ -24,6 +24,10 @@
     <artifactId>workswap-listing-module</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+
     <dependencies>
         <dependency>
 			<groupId>org.salavion</groupId>

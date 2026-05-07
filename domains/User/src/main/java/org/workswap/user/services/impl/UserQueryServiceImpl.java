@@ -1,7 +1,6 @@
 package org.workswap.user.services.impl;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.PageRequest;
@@ -73,20 +72,14 @@ public class UserQueryServiceImpl implements UserQueryService {
         return userMappingService.toShortDTO(user);
     }
 
-    /* public ProfilePageRequest getUserProfile(String userOpenId, Locale locale) {
+    public ShortUserProfileDTO getUserProfile(String userOpenId) {
         User user = userRepository.findByOpenId(userOpenId).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
-        ShortUserProfileDTO profile = userMappingService.toShortProfileDTO(user);
-        
-        List<ShortListingDTO> listings = listingMappingService.getUserShortListings(user, locale);
-
-        return new ProfilePageRequest(
-            profile, 
-            listings);
+        return userMappingService.toShortProfileDTO(user);
     }
 
-    public UserControlPageRequest getUserControlPage(String userOpenId, Locale locale) {
+    /* public UserControlPageRequest getUserControlPage(String userOpenId, Locale locale) {
         User user = userRepository.findByOpenId(userOpenId).orElseThrow(
             () -> new IllegalStateException("User not found"));
 

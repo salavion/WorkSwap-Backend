@@ -1,7 +1,6 @@
 package org.workswap.user.controllers;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.salavion.security.dto.UserAuthData;
@@ -20,9 +19,8 @@ import org.workswap.user.services.UserCommandService;
 import org.workswap.user.services.UserQueryService;
 import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.ShortUserDTO;
+import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserDTO;
-/* import org.workswap.user.dto.UserControlPageRequest;
-import org.workswap.user.dto.ProfilePageRequest; */
 
 import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
@@ -92,13 +90,13 @@ public class UsersController {
         userCommandService.modifyUserParam(authData, updates);
     }
 
-    /* @GetMapping("/{userOpenId}/profile")
+    @GetMapping("/{userOpenId}/profile")
     @PermitAll
-    public ProfilePageRequest getUserProfile(@PathVariable String userOpenId, @RequestParam String locale) {
-        return userQueryService.getUserProfile(userOpenId, Locale.of(locale));
+    public ShortUserProfileDTO getUserProfile(@PathVariable String userOpenId) {
+        return userQueryService.getUserProfile(userOpenId);
     }
 
-    @GetMapping("/{userOpenId}/full-info")
+    /* @GetMapping("/{userOpenId}/full-info")
     @PreAuthorize("hasAuthority('GET_FULL_USER_INFO')")
     public UserControlPageRequest getUserControlPage(
         @PathVariable String userOpenId,

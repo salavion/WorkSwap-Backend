@@ -22,7 +22,12 @@
 
     <groupId>org.workswap.modules</groupId>
     <artifactId>workswap-listing-module</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -45,6 +50,12 @@
 
         <dependency>
 			<groupId>org.workswap.modules</groupId>
+			<artifactId>workswap-storage-module</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+        <dependency>
+			<groupId>org.workswap.modules</groupId>
 			<artifactId>workswap-category-module</artifactId>
 			<version>1.0</version>
 		</dependency>
@@ -52,7 +63,7 @@
         <dependency>
 			<groupId>org.workswap.modules</groupId>
 			<artifactId>workswap-shared</artifactId>
-			<version>1.0</version>
+			<version>1.2</version>
 		</dependency>
 
         <dependency>

@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.workswap.listing.dto.EventPageRequest;
-import org.workswap.listing.dto.EventSettingsDTO;
+import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
 import org.workswap.user.dto.ShortUserDTO;
@@ -34,7 +33,7 @@ public class EventController {
     
     @GetMapping("/{eventId}")
     @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
-    public EventPageRequest getEventListing(
+    public EventDTO.Page getEventListing(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long eventId, 
         @RequestParam(required = false) String token,
@@ -91,7 +90,7 @@ public class EventController {
 
     @GetMapping("/{eventId}/settings")
     @PreAuthorize("hasAuthority('GET_EVENT_SETTINGS')")
-    public EventSettingsDTO getEventSettings(
+    public EventDTO.Settings getEventSettings(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long eventId
     ) {

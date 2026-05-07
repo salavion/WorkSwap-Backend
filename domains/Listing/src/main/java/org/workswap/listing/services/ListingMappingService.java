@@ -2,21 +2,22 @@ package org.workswap.listing.services;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
+import org.workswap.listing.datasource.model.Image;
 import org.workswap.listing.datasource.model.Listing;
-import org.workswap.listing.dto.EventSettingsDTO;
+import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ShortListingDTO;
 
 public interface ListingMappingService {
 
-    ListingDTO toDTO(Listing listing, Locale locale);
-    ShortListingDTO toShortDTO(Listing listing, Locale locale);
-    EventSettingsDTO toEventSettingsDTO(Listing listing);
+    ListingDTO.Full toDTO(Listing listing, String locale);
+    ShortListingDTO toShortDTO(Listing listing, String locale);
+    EventDTO.Settings toEventSettingsDTO(Listing listing);
+    String getImageLink(Image image);
 
     void setListingCategoryMeta(Listing listing);
 
-    List<ListingDTO> toDTOList(Collection<Listing> listings, Locale locale);
-    List<ShortListingDTO> toShortDTOList(Collection<Listing> listings, Locale locale);
+    List<ListingDTO.Full> toDTOList(Collection<Listing> listings, String locale);
+    List<ShortListingDTO> toShortDTOList(Collection<Listing> listings, String locale);
 }

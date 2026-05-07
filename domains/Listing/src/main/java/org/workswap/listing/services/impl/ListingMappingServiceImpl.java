@@ -2,24 +2,26 @@ package org.workswap.listing.services.impl;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.workswap.listing.datasource.model.Image;
 import org.workswap.listing.datasource.model.Listing;
+import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.datasource.model.category.ServiceCategory;
 import org.workswap.listing.datasource.model.types.EventSettings;
 import org.workswap.listing.datasource.model.types.ProductSettings;
 import org.workswap.listing.datasource.model.types.ServiceSettings;
-import org.workswap.listing.dto.EventSettingsDTO;
+import org.workswap.listing.datasource.repository.ListingTranslationRepository;
+import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.enums.ListingType;
-import org.workswap.listing.services.ListingLocalizationService;
 import org.workswap.listing.services.ListingMappingService;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.storage.util.ImageFormatRegistry;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,10 +30,10 @@ import lombok.RequiredArgsConstructor;
 @Profile({"production", "statistic"})
 public class ListingMappingServiceImpl implements ListingMappingService {
 
-    private final ListingLocalizationService listingLocalizationService;
+    private final ListingTranslationRepository translationRepository;
 
     @Transactional
-    public ListingDTO toDTO(Listing listing, Locale locale) {
+    public ListingDTO.Full toDTO(Listing listing, String locale) {
         if (listing == null) {
             return null;
         }
@@ -39,7 +41,7 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         ListingType type = listing.getType();
         Location loc = listing.getLocation();
 
-        listingLocalizationService.localizeListing(listing, locale);
+        ListingTranslation translation = translationRepository.findBestTranslation(listing.getId(), locale);
 
         String categoryName = "";
         Long categoryId = null;
@@ -71,24 +73,27 @@ public class ListingMappingServiceImpl implements ListingMappingService {
                 break;
         }
         
-        ListingDTO dto = new ListingDTO(
+        ListingDTO.Full dto = new ListingDTO.Full(
             listing.getId(),
-            listing.getAuthor().getId(),
-            listing.getLocalizedTitle(),
-            listing.getLocalizedDescription(),
+            translation != null ? translation.getTitle() : null,
+            translation != null ? translation.getDescription() : null,
             listing.getPrice(),
             listing.getPriceType(),
             listing.getType(),
+            loc != null ? loc.getFullName() : null,
+            listing.getRating(),
+            listing.getImagePath(),
+            listing.getPublishedAt(),
+            0,
+            false,
+
+            listing.getAuthor().getId(),
             listing.getPublicType(),
             categoryName,
             categoryId,
-            loc != null ? loc.getFullName() : null,
             loc != null ? loc.getId() : null,
-            listing.getRating(),
             listing.getViews(),
-            listing.getPublishedAt(),
             listing.isActive(),
-            listing.getImagePath(),
             listing.isTestMode(),
             listing.isTemporary()
         );
@@ -96,7 +101,7 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         return dto;
     }
 
-    public ShortListingDTO toShortDTO(Listing listing, Locale locale) {
+    public ShortListingDTO toShortDTO(Listing listing, String locale) {
         
         if (listing == null) {
             return null;
@@ -104,12 +109,12 @@ public class ListingMappingServiceImpl implements ListingMappingService {
 
         Location loc = listing.getLocation();
 
-        listingLocalizationService.localizeListing(listing, locale);
+        ListingTranslation translation = translationRepository.findBestTranslation(listing.getId(), locale);
 
         ShortListingDTO dto = new ShortListingDTO(
             listing.getId(),
-            listing.getLocalizedTitle(),
-            listing.getLocalizedDescription(),
+            translation != null ? translation.getTitle() : null,
+            translation != null ? translation.getDescription() : null,
             listing.getPrice(),
             listing.getPriceType(),
             listing.getType(),
@@ -124,7 +129,7 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         return dto;
     }
 
-    public EventSettingsDTO toEventSettingsDTO(Listing listing) {
+    public EventDTO.Settings toEventSettingsDTO(Listing listing) {
 
         if (listing == null) {
             return null;
@@ -132,7 +137,7 @@ public class ListingMappingServiceImpl implements ListingMappingService {
 
         EventSettings settings = listing.getEventSettings();
 
-        return new EventSettingsDTO(
+        return new EventDTO.Settings(
             settings.getEventDate(),
             settings.getRegistrationCloseTime(),
             settings.isRecurring(),
@@ -144,11 +149,11 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         );
     }
 
-    public List<ListingDTO> toDTOList(Collection<Listing> listings, Locale locale) {
+    public List<ListingDTO.Full> toDTOList(Collection<Listing> listings, String locale) {
         return listings.stream().map(listing -> toDTO(listing, locale)).toList();
     }
 
-    public List<ShortListingDTO> toShortDTOList(Collection<Listing> listings, Locale locale) {
+    public List<ShortListingDTO> toShortDTOList(Collection<Listing> listings, String locale) {
         return listings.stream().map(listing -> toShortDTO(listing, locale)).toList();
     }
 
@@ -180,5 +185,9 @@ public class ListingMappingServiceImpl implements ListingMappingService {
             default: 
                 break;
         }
+    }
+
+    public String getImageLink(Image image) {
+        return "https://cloud.workswap.org" + "/listing-images" + "/" + image.getObjectKey() + "." + ImageFormatRegistry.extensionFromMime(image.getContentType());
     }
 }

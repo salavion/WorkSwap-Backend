@@ -9,9 +9,16 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Image {
 
-    public Image(String path,
-                 Listing listing) {
-        this.path = path;
+    public Image(
+            String objectKey,
+            String contentType,
+            Long size,
+            int width,
+            int height,
+            String hash,
+            Listing listing
+        ) {
+        this.objectKey = objectKey;
         this.listing = listing;
     }
 
@@ -19,7 +26,13 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String path;
+    private String objectKey;
+
+    private String contentType;
+    private Long size;
+    private int width;
+    private int height;
+    private String hash;
 
     @ManyToOne
     @JoinColumn(name = "listing_id")

@@ -2,7 +2,6 @@ package org.workswap.listing.services.event.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +11,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.workswap.listing.datasource.model.Listing;
+import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.model.types.EventSettings;
 import org.workswap.listing.datasource.repository.ListingRepository;
-import org.workswap.listing.dto.EventPageRequest;
-import org.workswap.listing.dto.EventSettingsDTO;
+import org.workswap.listing.datasource.repository.ListingTranslationRepository;
+import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.dto.ImageDTO;
-import org.workswap.listing.enums.ListingPublicType;
-import org.workswap.listing.enums.ListingType;
-import org.workswap.listing.services.ListingLocalizationService;
+import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
@@ -42,7 +40,7 @@ public class EventQueryServiceImpl implements EventQueryService {
 
     private final ListingRepository listingRepository;
 
-    private final ListingLocalizationService listingLocalizationService;
+    private final ListingTranslationRepository translationRepository;
     private final ListingMappingService listingMappingService;
     private final UserMappingService userMappingService;
     private final SecurityFilterService securityFilterService;
@@ -54,7 +52,7 @@ public class EventQueryServiceImpl implements EventQueryService {
         return listingRepository.existsParticipant(eventId, authData.id());
     }
 
-    public EventSettingsDTO getEventSettingsDTO(UserAuthData authData, Long eventId) {
+    public EventDTO.Settings getEventSettingsDTO(UserAuthData authData, Long eventId) {
 
         if (eventId == null) {
             throw new IllegalStateException("ID события отсутствует");
@@ -87,54 +85,71 @@ public class EventQueryServiceImpl implements EventQueryService {
         }
     }
 
-    public EventPageRequest getEventPage(UserAuthData authData, String token, Long eventId, String locale) {
+    public EventDTO.Page getEventPage(UserAuthData authData, String token, Long eventId, String locale) {
         if (eventId == null) {
             throw new IllegalStateException("ID событмя отсутствует");
         }
-        Listing event = listingRepository.findById(eventId).orElseThrow(
+        Listing listing = listingRepository.findById(eventId).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Событие не найдено отсутствует"));
 
         boolean isAuthor = securityFilterService.listingAuthorFilter(authData, eventId);
         logger.debug("Пользователь является автором события? {}", isAuthor);
 
-        Location loc = event.getLocation();
+        Location loc = listing.getLocation();
+        ListingTranslation translation = translationRepository.findBestTranslation(eventId, locale);
 
-        listingLocalizationService.localizeListing(event, Locale.of(locale));
+        EventSettings event = listing.getEventSettings();
 
-        EventSettings settings = event.getEventSettings();
+        ShortUserProfileDTO author = userMappingService.toShortProfileDTO(listing.getAuthor());
+        List<ImageDTO> images = listing.getImages().stream()
+            .map(image -> new ImageDTO(image.getId(), eventId, listingMappingService.getImageLink(image))).toList();
 
-        ShortUserProfileDTO author = userMappingService.toShortProfileDTO(event.getAuthor());
-        List<ImageDTO> images = event.getImages().stream()
-            .map(image -> new ImageDTO(image.getId(), eventId, image.getPath())).toList();
-
-        List<ShortUserDTO> participants = userMappingService.toShortDTOList(settings.getParticipants());
+        List<ShortUserDTO> participants = userMappingService.toShortDTOList(event.getParticipants());
 
         /* listingViewProducer.listingViewed(new ListingViewDTO(authData.id(), eventId, authData.status().equals(UserStatus.TEMP))); */
 
-        EventPageRequest dto = new EventPageRequest(
-            event.getId(),
-            event.getLocalizedTitle(),
-            event.getLocalizedDescription(),
-            event.getPrice(),
-            event.getPriceType(),
-            null,
+        ListingDTO.Full listingDto = new ListingDTO.Full(
+            listing.getId(),
+            translation != null ? translation.getTitle() : null,
+            translation != null ? translation.getDescription() : null,
+            listing.getPrice(),
+            listing.getPriceType(),
+            listing.getType(),
             loc != null ? loc.getFullName() : null,
-            event.getRating(),
-            event.getViews(),
-            event.getPublishedAt(),
-            event.getImagePath(),
-            ListingType.EVENT,
-            ListingPublicType.EVENT,
-            settings.getEventDate(),
-            settings.getRegistrationCloseTime(),
-            settings.isRecurring(),
-            settings.getRecurrencePattern(),
-            settings.getEventStatus(),
-            settings.isPublic(),
-            settings.getMaxParticipants(),
-            settings.getMinParticipants(),
+            listing.getRating(),
+            listing.getImagePath(),
+            listing.getPublishedAt(),
+            0,
+            false,
+
+            listing.getAuthor().getId(),
+            listing.getPublicType(),
+            null,
+            null,
+            loc != null ? loc.getId() : null,
+            listing.getViews(),
+            listing.isActive(),
+            listing.isTestMode(),
+            listing.isTemporary()
+        );
+
+        EventDTO.Settings settings = new EventDTO.Settings(
+            event.getEventDate(),
+            event.getRegistrationCloseTime(),
+            event.isRecurring(),
+            event.getRecurrencePattern(),
+            event.getEventStatus(),
+            event.isPublic(),
+            event.getMaxParticipants(),
+            event.getMinParticipants()
+        );
+
+        EventDTO.Page dto = new EventDTO.Page(
+            listingDto,
             author,
             images,
+
+            settings,
             isAuthor ? participants : null,
             participants.size()
         );

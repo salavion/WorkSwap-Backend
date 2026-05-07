@@ -3,7 +3,6 @@ package org.workswap.listing.services.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -18,19 +17,19 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.workswap.category.datasource.Category;
 import org.workswap.listing.datasource.model.Listing;
+import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.repository.ListingRepository;
+import org.workswap.listing.datasource.repository.ListingTranslationRepository;
 import org.workswap.listing.dto.CatalogFilterDTO;
 import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
-import org.workswap.listing.dto.ListingPageRequest;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.enums.ListingPublicType;
 import org.workswap.listing.enums.ListingType;
 import org.workswap.listing.enums.ProductType;
 import org.workswap.listing.enums.ServiceType;
-import org.workswap.listing.services.ListingLocalizationService;
 import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
@@ -59,7 +58,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     private final ServiceCategoryQueryService serviceCategoryQueryService;
     private final ProductCategoryQueryService productCategoryQueryService;
     private final ListingMappingService mappingService;
-    private final ListingLocalizationService localizationService;
+    private final ListingTranslationRepository translationRepository;
     private final SecurityFilterService securityFilterService;
     private final UserMappingService userMappingService;
 
@@ -69,10 +68,10 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         return listingRepository.existsFavoriteListing(authData.id(), listingId);
     }
 
-    public List<ListingDTO> getRecentListings(int amount, String locale) {
+    public List<ListingDTO.Full> getRecentListings(int amount, String locale) {
         Pageable pageable = PageRequest.of(0, amount);
         List<Listing> listings = listingRepository.findAllByTemporaryFalseOrderByCreatedAtDesc(pageable).getContent();
-        return mappingService.toDTOList(listings, Locale.of(locale));
+        return mappingService.toDTOList(listings, locale);
     }
 
     @NonNull
@@ -95,6 +94,8 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     ) {
 
         List<String> languages = new ArrayList<>();
+
+        logger.debug("Язык: {}", locale);
 
         if (filters.translationsFilter()) {
             userRepository.findLanguagesByUserId(authData.id());
@@ -141,6 +142,8 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
         logger.debug("Все параметры переформатированы, делаем запрос в бд");
 
+        logger.debug("Языки: {}", languages);
+
         t0 = System.currentTimeMillis();
 
         PageRequest pageable = PageRequest.of(filters.page(), 39);
@@ -159,26 +162,57 @@ public class ListingQueryServiceImpl implements ListingQueryService {
             authData
         );
 
+        List<Long> ids = listings.stream().map(l -> l.id()).toList();
+        List<ListingTranslation> translations = translationRepository.findByListingIdsAndLanguages(ids, languages);
+
+        Map<Long, ListingTranslation> translationByListing =
+            translations.stream()
+                .collect(Collectors.toMap(
+                    t -> t.getListing().getId(),
+                    t -> t
+                ));
+
+        List<ShortListingDTO> enriched = listings.getContent().stream()
+            .map(l -> {
+                ListingTranslation t = translationByListing.get(l.id());
+
+                return new ShortListingDTO(
+                    l.id(),
+                    t != null ? t.getTitle() : l.localizedTitle(),
+                    t != null ? t.getDescription() : l.localizedDescription(),
+                    l.price(),
+                    l.priceType(),
+                    l.type(),
+                    l.location(),
+                    l.rating(),
+                    l.imagePath(),
+                    l.publishedAt(),
+                    l.likes(),
+                    l.liked()
+                );
+            })
+            .toList();
+
+
         logger.warn("⏱️ DB query: {} ms", System.currentTimeMillis() - t0);
         logger.debug("Пришёл запрос из бд");
 
-        return new CatalogRequest(listings.getTotalPages(), listings.getContent());
+        return new CatalogRequest(listings.getTotalPages(), enriched);
     }
 
-    public List<ListingDTO> getListingDtosByUser(Long userId, String locale) {
+    public List<ListingDTO.Full> getListingDtosByUser(Long userId, String locale) {
 
         List<Listing> listings = listingRepository.findByAuthorIdAndActiveTrue(userId);
-        return mappingService.toDTOList(listings, Locale.of(locale));
+        return mappingService.toDTOList(listings, locale);
     }
 
-    public List<ListingDTO> getOwnListingsByUser(UserAuthData authData, String locale) {
+    public List<ListingDTO.Full> getOwnListingsByUser(UserAuthData authData, String locale) {
         List<Listing> listings = listingRepository.findByAuthorIdWithAllDetails(authData.id());
-        return mappingService.toDTOList(listings, Locale.of(locale));
+        return mappingService.toDTOList(listings, locale);
     }
 
     public List<ShortListingDTO> getFavorites(UserAuthData authData, String locale) {
-        List<Listing> favorites = listingRepository.findFavoriteListingsByUserIdWithDetails(authData.id());
-        return mappingService.toShortDTOList(favorites, Locale.of(locale));
+        return listingRepository.findLikedListings(authData.id(), locale);
     }
 
     public Map<String, ListingTranslationDTO> getTranslations(Long listingId) {
@@ -208,7 +242,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         return listingRepository.findById(listingId).orElse(null)
             .getImages()
             .stream()
-            .map(image -> new ImageDTO(image.getId(), listingId, image.getPath()))
+            .map(image -> new ImageDTO(image.getId(), listingId, mappingService.getImageLink(image)))
             .toList();
     }
 
@@ -219,49 +253,60 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         return listing.getAccessToken();
     }
 
-    public List<ListingDTO> getDrafts(UserAuthData authData, String locale) {
+    public List<ListingDTO.Full> getDrafts(UserAuthData authData, String locale) {
 
         List<Listing> listings = listingRepository.findByAuthorIdAndTemporary(authData.id(), true);
 
-        return mappingService.toDTOList(listings, Locale.of(locale));
+        return mappingService.toDTOList(listings, locale);
     }
 
-    public ListingPageRequest getListingPage(UserAuthData authData, String token, Long listingId, String locale) {
+    public ListingDTO.Page getListingPage(UserAuthData authData, String token, Long listingId, String locale) {
 
         if (listingId == null) {
             throw new IllegalStateException("ID объявления отсутствует");
         }
 
         Listing listing = getListingById(listingId);
+        ListingTranslation translation = translationRepository.findBestTranslation(listingId, locale);
 
         securityFilterService.listingGetFilter(authData, listing, token);
-        localizationService.localizeListing(listing, Locale.of(locale));
         mappingService.setListingCategoryMeta(listing);
 
         Location loc = listing.getLocation();
 
         ShortUserProfileDTO author = userMappingService.toShortProfileDTO(listing.getAuthor());
         List<ImageDTO> images = listing.getImages().stream()
-            .map(image -> new ImageDTO(image.getId(), listingId, image.getPath())).toList();
+            .map(image -> new ImageDTO(image.getId(), listingId, mappingService.getImageLink(image))).toList();
 
         /* listingViewProducer.listingViewed(new ListingViewDTO(authData.id(), listingId, authData.status().equals(UserStatus.TEMP))); */ 
 
         // TODO переписать на отправку события которое словит другой модуль, модуль rabbit mq 
 
-        return new ListingPageRequest(
-            listing.getId(),
-            listing.getLocalizedTitle(),
-            listing.getLocalizedDescription(),
-            listing.getPrice(),
-            listing.getPriceType(),
-            listing.getCategoryId(),
-            loc != null ? loc.getFullName() : null,
-            listing.getRating(),
-            listing.getViews(),
-            listing.getPublishedAt(),
-            listing.getImagePath(),
-            listing.getType(),
-            listing.getPublicType(),
+        return new ListingDTO.Page(
+            new ListingDTO.Full(
+                listing.getId(),
+                translation != null ? translation.getTitle() : null,
+                translation != null ? translation.getDescription() : null,
+                listing.getPrice(),
+                listing.getPriceType(),
+                listing.getType(),
+                loc != null ? loc.getFullName() : null,
+                listing.getRating(),
+                listing.getImagePath(),
+                listing.getPublishedAt(),
+                0,
+                false,
+
+                listing.getAuthor().getId(),
+                listing.getPublicType(),
+                null,
+                null,
+                loc != null ? loc.getId() : null,
+                listing.getViews(),
+                listing.isActive(),
+                listing.isTestMode(),
+                listing.isTemporary()
+            ),
             author,
             images
         );
@@ -272,13 +317,13 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         Listing listing = getListingById(listingId);
         securityFilterService.listingGetFilter(authData, listing, null);
 
-        return mappingService.toShortDTO(listing, Locale.of(locale));
+        return mappingService.toShortDTO(listing, locale);
     }
 
-    public ListingDTO getListingDTO(Long listingId, UserAuthData authData, String locale) {
+    public ListingDTO.Full getListingDTO(Long listingId, UserAuthData authData, String locale) {
         securityFilterService.listingUpdateFilter(authData, listingId);
 
         Listing listing = getListingById(listingId);
-        return mappingService.toDTO(listing, Locale.of(locale));
+        return mappingService.toDTO(listing, locale);
     }
 }

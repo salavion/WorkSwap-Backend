@@ -1,1 +1,8 @@
+org\workswap\shared\locale\LocalisationConfig.class
+org\workswap\shared\config\Constants.class
+org\workswap\shared\dto\Status.class
 org\workswap\shared\locale\LanguageMapper$1.class
+org\workswap\shared\util\WebhookSigner.class
+org\workswap\shared\locale\LanguageMapper.class
+org\workswap\shared\locale\LocalisationConfig$LanguageUtils.class
+org\workswap\shared\enums\Importance.class

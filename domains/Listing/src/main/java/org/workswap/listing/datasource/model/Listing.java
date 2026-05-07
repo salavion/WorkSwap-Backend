@@ -28,29 +28,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Listing {
 
-    public Listing(User author, String type) {
-        this.author = author;
-
-        if (type != null) {
-            ListingPublicType publicType = ListingPublicType.valueOf(type);
-            this.publicType = publicType;
-            this.type = publicType.getListingType();
-
-            switch (this.type) {
-                case SERVICE -> this.serviceSettings = new ServiceSettings(this, publicType.getServiceType());
-                case PRODUCT -> this.productSettings = new ProductSettings(this, publicType.getProductType());
-                case EVENT -> this.eventSettings = new EventSettings(this);
-            }
-
-            switch (this.publicType) {
-                case PRODUCT_SWAP -> this.priceType = PriceType.SWAP;
-                case PRODUCT_WANTED_FREE -> this.priceType = PriceType.WANTED_FREE;
-                case PRODUCT_GIVEAWAY -> this.priceType = PriceType.FREE;
-                default -> this.priceType = PriceType.FIXED;
-            }
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -131,8 +108,8 @@ public class Listing {
     @ManyToMany
     @JoinTable(
         name = "favorite_listing",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "listing_id")
+        joinColumns = @JoinColumn(name = "listing_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> favoredByUsers = new HashSet<>();
 
@@ -155,24 +132,38 @@ public class Listing {
 
     @Setter
     @Transient
-    private String localizedTitle;
-
-    @Setter
-    @Transient
-    private String localizedDescription;
-
-    @Setter
-    @Transient
     private String categoryName;
 
     @Setter
-    @Transient
     private Long categoryId;
 
     @PreRemove
     private void removeFromUsersFavorites() {
         for (User user : favoredByUsers) {
             favoredByUsers.remove(user);
+        }
+    }
+
+    public Listing(User author, String type) {
+        this.author = author;
+
+        if (type != null) {
+            ListingPublicType publicType = ListingPublicType.valueOf(type);
+            this.publicType = publicType;
+            this.type = publicType.getListingType();
+
+            switch (this.type) {
+                case SERVICE -> this.serviceSettings = new ServiceSettings(this, publicType.getServiceType());
+                case PRODUCT -> this.productSettings = new ProductSettings(this, publicType.getProductType());
+                case EVENT -> this.eventSettings = new EventSettings(this);
+            }
+
+            switch (this.publicType) {
+                case PRODUCT_SWAP -> this.priceType = PriceType.SWAP;
+                case PRODUCT_WANTED_FREE -> this.priceType = PriceType.WANTED_FREE;
+                case PRODUCT_GIVEAWAY -> this.priceType = PriceType.FREE;
+                default -> this.priceType = PriceType.FIXED;
+            }
         }
     }
 }

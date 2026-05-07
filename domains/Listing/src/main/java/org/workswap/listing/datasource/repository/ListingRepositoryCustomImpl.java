@@ -41,8 +41,6 @@ import jakarta.persistence.criteria.Subquery;
 @Repository
 public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
 
-    private static final List<String> FALLBACK_LANGUAGES = List.of("ru", "fi", "en", "it");
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -101,11 +99,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         
         // Joins
         Join<Listing, Location> locationJoin = root.join("location", JoinType.LEFT);
-        
-        // Подзапрос для выбора лучшего перевода [web:14]
-        Expression<String> titleExpr = buildTranslationExpression(cb, query, root, "title", languages);
-        Expression<String> descExpr = buildTranslationExpression(cb, query, root, "description", languages);
-        
+
         // Подзапрос для подсчета лайков [web:11][web:12]
         Subquery<Long> likesCountSubquery = buildLikesCountSubquery(cb, query, root);
         
@@ -118,8 +112,8 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         query.select(cb.construct(
             ShortListingDTO.class,
             root.get("id"),
-            titleExpr,
-            descExpr,
+            cb.nullLiteral(String.class),
+            cb.nullLiteral(String.class),
             root.get("price"),
             root.get("priceType"),  // Передаем enum напрямую
             root.get("type"),
@@ -177,57 +171,6 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
             .where(cb.and(predicates.toArray(new Predicate[0])));
         
         return entityManager.createQuery(countQuery).getSingleResult();
-    }
-
-    /**
-     * Строит COALESCE выражение для выбора перевода с приоритетом [web:17][web:14]
-     */
-    private Expression<String> buildTranslationExpression(
-        CriteriaBuilder cb,
-        CriteriaQuery<?> query,
-        Root<Listing> root,
-        String field,
-        List<String> preferredLanguages
-    ) {
-        
-        List<String> languagePriority = new ArrayList<>();
-        
-        // Приоритет: запрошенные языки + fallback
-        if (preferredLanguages != null && !preferredLanguages.isEmpty()) {
-            languagePriority.addAll(preferredLanguages);
-        }
-        
-        for (String fallback : FALLBACK_LANGUAGES) {
-            if (!languagePriority.contains(fallback)) {
-                languagePriority.add(fallback);
-            }
-        }
-        
-        // Построение COALESCE [web:17]
-        Expression<String> result = null;
-        
-        for (String lang : languagePriority) {
-            Subquery<String> translationSubquery = query.subquery(String.class);
-            Root<Listing> subRoot = translationSubquery.from(Listing.class);
-            MapJoin<Listing, String, ListingTranslation> translationsJoin = 
-                subRoot.joinMap("translations", JoinType.LEFT);
-            
-            translationSubquery.select(translationsJoin.get(field))
-                .where(
-                    cb.equal(subRoot.get("id"), root.get("id")),
-                    cb.equal(translationsJoin.key(), lang),
-                    cb.isNotNull(translationsJoin.get(field)),
-                    cb.notEqual(translationsJoin.get(field), "")
-                );
-            
-            if (result == null) {
-                result = cb.coalesce(translationSubquery, "");
-            } else {
-                result = cb.coalesce(result, translationSubquery);
-            }
-        }
-        
-        return cb.coalesce(result, "");
     }
 
     /**

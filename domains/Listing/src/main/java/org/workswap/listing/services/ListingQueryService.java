@@ -10,7 +10,6 @@ import org.workswap.listing.dto.CatalogFilterDTO;
 import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
-import org.workswap.listing.dto.ListingPageRequest;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.dto.ShortListingDTO;
 
@@ -27,17 +26,17 @@ public interface ListingQueryService {
         String locale
     );
     
-    List<ListingDTO> getListingDtosByUser(Long userId, String locale);
-    List<ListingDTO> getOwnListingsByUser(UserAuthData authData, String locale);
-    List<ListingDTO> getRecentListings(int amount, String locale);
+    List<ListingDTO.Full> getListingDtosByUser(Long userId, String locale);
+    List<ListingDTO.Full> getOwnListingsByUser(UserAuthData authData, String locale);
+    List<ListingDTO.Full> getRecentListings(int amount, String locale);
     List<ShortListingDTO> getFavorites(UserAuthData authData, String locale);
-    List<ListingDTO> getDrafts(UserAuthData authData, String locale);
+    List<ListingDTO.Full> getDrafts(UserAuthData authData, String locale);
     Map<String, ListingTranslationDTO> getTranslations(Long id);
     List<ImageDTO> getImages(Long id);
 
-    ListingPageRequest getListingPage(UserAuthData authData, String token, Long id, String locale);
+    ListingDTO.Page getListingPage(UserAuthData authData, String token, Long id, String locale);
     ShortListingDTO getCatalogListing(Long listingId, UserAuthData authData, String locale);
-    ListingDTO getListingDTO(Long listingId, UserAuthData authData, String locale);
+    ListingDTO.Full getListingDTO(Long listingId, UserAuthData authData, String locale);
 
     String getListingToken(UserAuthData authData, Long listingId);
 }

@@ -8,17 +8,12 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"listing_id", "language"}
+    )
+)
 public class ListingTranslation {
-
-    public ListingTranslation(String language,
-                              String title,
-                              String description,
-                              Listing listing) {
-        this.language = language;
-        this.title = title;
-        this.description = description;
-        this.listing = listing;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +31,14 @@ public class ListingTranslation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id")
     private Listing listing;
+    
+    public ListingTranslation(String language,
+                              String title,
+                              String description,
+                              Listing listing) {
+        this.language = language;
+        this.title = title;
+        this.description = description;
+        this.listing = listing;
+    }
 }

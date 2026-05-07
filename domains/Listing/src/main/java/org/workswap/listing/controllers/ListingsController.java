@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,15 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.CatalogFilterDTO;
 import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
-import org.workswap.listing.dto.ListingPageRequest;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.services.ListingCommandService;
 import org.workswap.listing.services.ListingQueryService;
+import org.workswap.listing.services.ListingStorageService;
 import org.salavion.security.dto.UserAuthData;
 
 import jakarta.annotation.security.PermitAll;
@@ -37,10 +39,11 @@ public class ListingsController {
 
     private final ListingQueryService listingQueryService;
     private final ListingCommandService listingCommandService;
+    private final ListingStorageService listingStorageService;
 
     @GetMapping("/{listingId}")
     @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
-    public ListingDTO getListing(
+    public ListingDTO.Full getListing(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long listingId, 
         @RequestParam(required = false) String token,
@@ -66,7 +69,7 @@ public class ListingsController {
 
     @GetMapping("/{listingId}/page")
     @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
-    public ListingPageRequest getListingPage(
+    public ListingDTO.Page getListingPage(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long listingId, 
         @RequestParam(required = false) String token,
@@ -86,7 +89,7 @@ public class ListingsController {
 
     @GetMapping("/drafts")
     @PreAuthorize("hasAuthority('VIEW_LISTINGS_DRAFTS')")
-    public List<ListingDTO> getDraftListings(
+    public List<ListingDTO.Full> getDraftListings(
             @AuthenticationPrincipal UserAuthData authData, 
             @RequestParam String locale
     ) {
@@ -119,19 +122,19 @@ public class ListingsController {
 
     @GetMapping("/recent")
     @PreAuthorize("hasAuthority('GET_RECENT_LISTINGS')")
-    public List<ListingDTO> getRecentListings(@RequestParam int amount, @RequestParam String locale) {
+    public List<ListingDTO.Full> getRecentListings(@RequestParam int amount, @RequestParam String locale) {
         return listingQueryService.getRecentListings(amount, locale);
     }
 
     @GetMapping("/my-listings")
     @PreAuthorize("hasAuthority('GET_OWN_LISTINGS')")
-    public List<ListingDTO> getMyListings(@AuthenticationPrincipal UserAuthData authData, @RequestParam String locale) {
+    public List<ListingDTO.Full> getMyListings(@AuthenticationPrincipal UserAuthData authData, @RequestParam String locale) {
         return listingQueryService.getOwnListingsByUser(authData, locale);
     }
 
     @GetMapping("/by-user")
     @PermitAll
-    public List<ListingDTO> getListingsByUser(@RequestParam Long userId, @RequestParam String locale) {
+    public List<ListingDTO.Full> getListingsByUser(@RequestParam Long userId, @RequestParam String locale) {
         return listingQueryService.getListingDtosByUser(userId, locale);
     }
 
@@ -177,5 +180,22 @@ public class ListingsController {
         @RequestBody Map<String, ListingTranslationDTO> translations
     ) throws AccessDeniedException {
         return listingCommandService.updateListingTranslations(authData, listingId, translations);
+    }
+
+    @PostMapping("/{listingId}/image")
+    public ImageDTO uploadListingImage(
+        @RequestParam MultipartFile image,
+        @NonNull @RequestParam Long listingId,
+        @AuthenticationPrincipal UserAuthData authData
+    ) {
+        return listingStorageService.uploadListingImage(image, listingId, authData);
+    }
+
+    @DeleteMapping("/{imageId}/image")
+    public void deleteListingImage(
+        @NonNull @RequestParam Long imageId,
+        @AuthenticationPrincipal UserAuthData authData
+    ) {
+        listingStorageService.deleteListingImage(imageId, authData);
     }
 }

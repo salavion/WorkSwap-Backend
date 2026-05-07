@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.workswap.listing.enums.ListingType;
 import org.workswap.listing.enums.PriceType;
 
-public record ShortListingDTO (
+public record ShortListingDTO(
     Long id,
     String localizedTitle,
     String localizedDescription,

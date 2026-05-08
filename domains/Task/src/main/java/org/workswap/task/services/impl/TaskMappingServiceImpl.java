@@ -8,9 +8,8 @@ import org.workswap.task.datasource.model.TaskComment;
 import org.workswap.task.dto.TaskCommentDTO;
 import org.workswap.task.dto.TaskDTO;
 import org.workswap.task.services.TaskMappingService;
-import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserDTO;
-import org.workswap.user.services.UserMappingService;
+import org.workswap.user.services.UserQueryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,9 +17,8 @@ import lombok.RequiredArgsConstructor;
 @Profile("backoffice")
 @RequiredArgsConstructor
 public class TaskMappingServiceImpl implements TaskMappingService {
-    
-    private final UserMappingService userMappingService;
-    private final UserRepository userRepository;
+
+    private final UserQueryService userQueryService;
 
     public TaskDTO toDTO(Task task) {
 
@@ -29,12 +27,12 @@ public class TaskMappingServiceImpl implements TaskMappingService {
 
         ShortUserDTO executor = null;
         if (executorId != null) {
-            executor = userMappingService.toShortDTO(userRepository.findById(executorId).orElse(null));
+            executor = userQueryService.getById(executorId);
         }
 
         ShortUserDTO author = null;
         if (authorId != null) {
-            author = userMappingService.toShortDTO(userRepository.findById(authorId).orElse(null));
+            author = userQueryService.getById(authorId);
         }
 
         Status status = new Status(task.getStatus().getDisplayName(), task.getStatus().toString());
@@ -59,7 +57,7 @@ public class TaskMappingServiceImpl implements TaskMappingService {
 
         ShortUserDTO author = null;
         if (authorId != null) {
-            author = userMappingService.toShortDTO(userRepository.findById(authorId).orElse(null));
+            author = userQueryService.getById(authorId);
         }
 
         return new TaskCommentDTO(

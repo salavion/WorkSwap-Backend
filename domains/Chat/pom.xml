@@ -5,46 +5,33 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
-		<relativePath/>
-	</parent>
+        <groupId>org.workswap</groupId>
+        <artifactId>workswap</artifactId>
+        <version>1.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/salavion/SecurityCore</url>
-        </repository>
-    </repositories>
-
-    <groupId>org.workswap.modules</groupId>
     <artifactId>workswap-chat-module</artifactId>
-    <version>1.0</version>
 
     <dependencies>
         <dependency>
 			<groupId>org.salavion</groupId>
 			<artifactId>security-core</artifactId>
-			<version>1.0.4</version>
 		</dependency>
 
         <dependency>
-			<groupId>org.workswap.modules</groupId>
+			<groupId>org.workswap</groupId>
             <artifactId>workswap-listing-module</artifactId>
-            <version>1.0</version>
 		</dependency>
 
         <dependency>
-			<groupId>org.workswap.modules</groupId>
+			<groupId>org.workswap</groupId>
             <artifactId>workswap-user-module</artifactId>
-            <version>1.0</version>
 		</dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
             <scope>provided</scope>
         </dependency>
 

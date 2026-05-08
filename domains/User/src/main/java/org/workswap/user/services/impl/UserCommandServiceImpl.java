@@ -7,8 +7,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,18 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.workswap.user.services.UserCommandService;
-/* import org.workswap.core.common.utils.WebhookSigner;
-import org.workswap.datasource.central.model.listing.Listing;
-import org.workswap.datasource.central.model.Notification;
-import org.workswap.datasource.central.model.Review;
-import org.workswap.datasource.central.model.chat.Chat;
-import org.workswap.datasource.central.model.chat.ChatParticipant;
-import org.workswap.datasource.central.model.listing.Location;
-import org.workswap.datasource.central.repository.listing.ListingRepository;
-import org.workswap.datasource.central.repository.listing.LocationRepository;
-import org.workswap.datasource.central.repository.NotificationRepository;
-import org.workswap.datasource.central.repository.ReviewRepository;
-import org.workswap.datasource.central.repository.chat.ChatRepository; */
 import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
@@ -65,11 +51,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
-    /* private final ChatRepository chatRepository;
-    private final ListingRepository listingRepository;
-    private final ReviewRepository reviewRepository;
-    private final NotificationRepository notificationRepository; */
-
     @Value("${salavion.url}")
     private String authServiceUrl;
 
@@ -90,58 +71,18 @@ public class UserCommandServiceImpl implements UserCommandService {
 
             // Чистка разговоров
 
-            /* Set<ChatParticipant> chatParticipants = new HashSet<>(user.getChatParticipants());
-            logger.debug("> Чистка чатов");
-
-            if (!chatParticipants.isEmpty()) {
-                for (ChatParticipant chatParticipant : chatParticipants) {
-                    Chat chat = chatParticipant.getChat();
-                    user.getChatParticipants().remove(chatParticipant);
-                    logger.debug(">> Удаление чата {}", chat.getId());
-                    chatRepository.delete(chat);
-                }
-            } else {
-                logger.debug(">> У пользователя не найдено чатов");
-            }
+            // TODO реализовать удаление чатов при удалении аккаунта
+            // надо почитать о том чтобы хранить данные около полугода по требованиям GDPR
 
             // Чистка объявлений
-            List<Listing> listings = new ArrayList<>(user.getListings());
-            logger.debug("> Чистка объявлений");
 
-            if (!listings.isEmpty()) {
-                for (Listing listing : listings) {
-                    logger.debug(">> Удаление объявления {}", listing.getId());
-                    user.getListings().remove(listing);
-                    listingRepository.delete(listing);
-                }
-            } else {
-                logger.debug(">> У пользователя не найдено объявлений");
-            }
+            // TODO реализовать удаление объявлений при удалении аккаунта
 
             // Чистка отзывов
-            List<Review> reviews = new ArrayList<>(user.getReviews());
-            logger.debug("> Чистка отзывов");
-
-            if (!reviews.isEmpty()) {
-                for (Review review : reviews) {
-                    logger.debug(">> Удаление отзыва {}", review.getId());
-                    user.getReviews().remove(review);
-                    reviewRepository.delete(review);
-                }
-            } else {
-                logger.debug(">> У пользователя не найдено отзывов");
-            }
+            // TODO реализовать удаление отзывов при удалении аккаунта
 
             // Чистка уведомления
-            List<Notification> notifications = new ArrayList<>(notificationRepository.findByRecipient(user));
-            logger.debug("> Чистка уведомлений");
-
-            if (!notifications.isEmpty()) {
-                logger.debug(">> Удаляем {} уведомлений", notifications.size());
-                notificationRepository.deleteAll(notifications);
-            } else {
-                logger.debug(">> У пользователя не найдено уведомлений");
-            } */
+            // TODO реализовать удаление уведомлений при удалении аккаунта
 
             // Удаление пользователя
             try {

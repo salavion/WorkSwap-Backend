@@ -1,3 +1,3 @@
 domains/*/target/
-Core/target/
-Shared/target/
+core/target/
+shared/target/

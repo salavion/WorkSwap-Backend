@@ -9,8 +9,7 @@ import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserDTO;
-/* import org.workswap.user.dto.ProfilePageRequest;
-import org.workswap.user.dto.UserControlPageRequest; */
+import org.workswap.user.dto.UserControlPageRequest;
 
 public interface UserQueryService {
     
@@ -25,5 +24,5 @@ public interface UserQueryService {
     UserDTO getCurrentUser(UserAuthData authData);
     ShortUserDTO getById(Long userId);
     ShortUserProfileDTO getUserProfile(String userOpenId);
-    /* UserControlPageRequest getUserControlPage(String userOpenId, Locale locale); */
+    UserControlPageRequest getUserControlPage(String userOpenId);
 }

@@ -20,6 +20,7 @@ import org.workswap.user.services.UserQueryService;
 import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
+import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.UserDTO;
 
 import jakarta.annotation.security.PermitAll;
@@ -96,12 +97,11 @@ public class UsersController {
         return userQueryService.getUserProfile(userOpenId);
     }
 
-    /* @GetMapping("/{userOpenId}/full-info")
+    @GetMapping("/{userOpenId}/full-info")
     @PreAuthorize("hasAuthority('GET_FULL_USER_INFO')")
     public UserControlPageRequest getUserControlPage(
-        @PathVariable String userOpenId,
-        @RequestParam String locale
+        @PathVariable String userOpenId
     ) {
-        return userQueryService.getUserControlPage(userOpenId, Locale.of(locale));
-    } */
+        return userQueryService.getUserControlPage(userOpenId);
+    }
 }

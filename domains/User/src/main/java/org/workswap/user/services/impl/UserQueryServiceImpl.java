@@ -15,8 +15,8 @@ import org.workswap.user.datasource.repository.UserSettingsRepository;
 import org.salavion.security.dto.UserAuthData;
 import org.salavion.security.enums.UserStatus;
 import org.workswap.user.dto.FullUserDTO;
-/* import org.workswap.user.dto.ProfilePageRequest;
-import org.workswap.user.dto.UserControlPageRequest; */
+/* import org.workswap.user.dto.ProfilePageRequest; */
+import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserDTO;
@@ -79,19 +79,14 @@ public class UserQueryServiceImpl implements UserQueryService {
         return userMappingService.toShortProfileDTO(user);
     }
 
-    /* public UserControlPageRequest getUserControlPage(String userOpenId, Locale locale) {
+    public UserControlPageRequest getUserControlPage(String userOpenId) {
         User user = userRepository.findByOpenId(userOpenId).orElseThrow(
             () -> new IllegalStateException("User not found"));
 
         FullUserDTO userDto = userMappingService.toFullDto(user);
 
-        List<ShortListingDTO> listings = listingMappingService.getUserShortListings(user, locale);
-        List<ReviewDTO> reviews = user.getReviews().stream().map(r -> reviewMappingService.toDTO(r)).toList();
-
-        UserForumContent forumContent = forumQueryService.getUserForumContent(user.getId());
-
-        return new UserControlPageRequest(userDto, listings, reviews, forumContent);
-    } */
+        return new UserControlPageRequest(userDto);
+    }
 
     public FullUserDTO getFullUserDTO(UserAuthData authData) {
         User user = userRepository.getFullUser(authData.id()).orElseThrow(

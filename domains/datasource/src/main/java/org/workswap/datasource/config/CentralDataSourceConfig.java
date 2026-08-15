@@ -1,5 +1,6 @@
-package org.workswap.core.config.config;
+package org.workswap.datasource.config;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 
 import javax.sql.DataSource;
@@ -38,6 +39,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 )
 @Profile({"production", "statistic"})
 public class CentralDataSourceConfig {
+
+    @PostConstruct
+    public void init() {
+        System.out.println(">>> CentralDataSourceConfig LOADED");
+    }
 
     @Primary
     @Bean

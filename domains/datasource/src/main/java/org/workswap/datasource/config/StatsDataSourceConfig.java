@@ -1,4 +1,4 @@
-package org.workswap.core.config.config;
+package org.workswap.datasource.config;
 
 import javax.sql.DataSource;
 
@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 
 @Configuration
@@ -26,6 +27,12 @@ import jakarta.persistence.EntityManagerFactory;
 )
 @Profile({"production", "statistic"})
 public class StatsDataSourceConfig {
+
+    @PostConstruct
+    public void init() {
+        System.out.println(">>> StatsDataSourceConfig LOADED");
+    }
+
     @Bean
     @ConfigurationProperties("spring.statistics-datasource")
     public DataSource statsDataSource() {

@@ -22,8 +22,8 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.workswap.datasource.testers.HttpRequestStatisticsFilter;
 import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
-import org.workswap.security.util.HttpRequestStatisticsFilter;
 
 @Configuration
 @EnableWebSecurity

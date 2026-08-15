@@ -1,4 +1,4 @@
-package org.workswap.core.config.common;
+package org.workswap.core.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

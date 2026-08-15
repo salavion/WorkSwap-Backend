@@ -1,4 +1,4 @@
-package org.workswap.security.util;
+package org.workswap.datasource.testers;
 
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.workswap.core.config.common;
+package org.workswap.core.config;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;

@@ -55,6 +55,7 @@
         <module>domains/task</module>
         <module>domains/user</module>
         <module>domains/security</module>
+        <module>domains/datasource</module>
     </modules>
 
     <dependencyManagement>
@@ -145,6 +146,12 @@
             <dependency>
                 <groupId>org.workswap</groupId>
                 <artifactId>workswap-security-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.workswap</groupId>
+                <artifactId>workswap-datasource-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

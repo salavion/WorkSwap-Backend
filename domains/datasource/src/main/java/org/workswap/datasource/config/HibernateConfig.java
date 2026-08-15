@@ -1,9 +1,9 @@
-package org.workswap.core.config.config;
+package org.workswap.datasource.config;
 
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.workswap.security.util.QueryCounter;
+import org.workswap.datasource.testers.QueryCounter;
 
 @Configuration
 public class HibernateConfig {

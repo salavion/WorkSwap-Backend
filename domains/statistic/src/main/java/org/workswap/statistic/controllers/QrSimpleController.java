@@ -1,4 +1,4 @@
-package org.workswap.core.controllers;
+package org.workswap.statistic.controllers;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

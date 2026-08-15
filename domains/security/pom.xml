@@ -27,15 +27,15 @@
 		</dependency>
 
         <dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-datasource-module</artifactId>
+		</dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
 
         <dependency>
             <groupId>org.springframework.security</groupId>

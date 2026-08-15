@@ -41,6 +41,7 @@
     <modules>
         <module>core</module>
         <module>shared</module>
+
         <module>domains/category</module>
         <module>domains/chat</module>
         <module>domains/forum</module>
@@ -56,6 +57,8 @@
         <module>domains/user</module>
         <module>domains/security</module>
         <module>domains/datasource</module>
+
+        <module>../apps/RestAPI</module>
     </modules>
 
     <dependencyManagement>

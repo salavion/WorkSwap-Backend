@@ -84,15 +84,6 @@ public class ChatCommandServiceImpl implements ChatCommandService {
         List<ChatParticipantView> participants =
             chatParticipantRepository.findParticipantsView(chatId);
 
-        // 6. Уведомление
-        /* NotificationDTO notification = new NotificationDTO(
-            "Новое сообщение",
-            authData.name() + ": " + message.getText(),
-            "/account/messenger?chatId=" + chatId
-        ); */
-
-        // TODO переписать создание уведомления в модуль уведомлений, переделать на ивенты
-
         for (ChatParticipantView p : participants) {
 
             if (p.getUserId().equals(authData.id())) {
@@ -108,11 +99,6 @@ public class ChatCommandServiceImpl implements ChatCommandService {
             );
 
             notifyChatUpdate(chatDto, openId);
-
-            /* notificationCommandService.saveChatNotification(
-                p.getUserId(),
-                notification
-            ); */
         }
     }
 

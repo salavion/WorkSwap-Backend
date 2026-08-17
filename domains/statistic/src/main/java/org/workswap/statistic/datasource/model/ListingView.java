@@ -2,8 +2,6 @@ package org.workswap.statistic.datasource.model;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,11 +17,13 @@ public class ListingView {
     public ListingView(
         Long userId,
         Long listingId,
-        boolean temporary
+        boolean temporary,
+        LocalDateTime createdAt
     ) {
         this.userId = userId;
         this.listingId = listingId;
         this.temporary = temporary;
+        this.createdAt = createdAt;
     }
 
     @Id
@@ -36,6 +36,5 @@ public class ListingView {
 
     private boolean temporary;
 
-    @CreationTimestamp
     private LocalDateTime createdAt;
 }

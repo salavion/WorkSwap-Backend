@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import org.salavion.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Profile("production")
 @RequiredArgsConstructor
 public class ListingStorageService {
     

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,10 +19,14 @@ import org.workswap.statistic.enums.StatSaveIntervalType;
 import org.workswap.statistic.services.StatisticCommandService;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.review.datasource.model.Review;
 import org.workswap.review.services.ReviewQueryService;
+import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.statistic.datasource.model.AllListingsStatSnapshot;
 import org.workswap.statistic.datasource.model.ListingStatSnapshot;
 import org.workswap.statistic.datasource.model.ListingView;
@@ -39,9 +41,11 @@ import org.workswap.statistic.datasource.repository.SiteViewRepository;
 import org.workswap.statistic.datasource.repository.UsersStatRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Profile({"production", "statistic"})
+@Slf4j
 @RequiredArgsConstructor
 public class StatisticCommandServiceImpl implements StatisticCommandService {
     
@@ -56,13 +60,11 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
     private final ReviewQueryService reviewQueryService;
     private final UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(StatisticCommandService.class);
-
     @Transactional
     public void cleanUpDuplicateListingsStat() {
         List<ListingStatSnapshot> allSnapshots = listingStatRepository.findAll(Sort.by("listingId", "intervalType", "time"));
 
-        logger.debug("Найдено снапшотов: {}", allSnapshots.size());
+        log.debug("Найдено снапшотов: {}", allSnapshots.size());
 
         Map<String, ListingStatSnapshot> seenSnapshots = new HashMap<>();
         List<ListingStatSnapshot> toDelete = new ArrayList<>();
@@ -83,7 +85,7 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
         }
 
         listingStatRepository.deleteAll(toDelete);
-        logger.debug("Удалено {} дубликатов статистики.", toDelete.size());
+        log.debug("Удалено {} дубликатов статистики.", toDelete.size());
     }
 
     @Transactional
@@ -185,19 +187,28 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
         userRepository.save(user);
     }
 
-    public void saveListingView(Long userId, Long listingId, boolean temporary) {
+    public void saveListingView(ListingViewedEvent event) {
         boolean alreadyExists = true;
-        if (userId != null && listingId != null) {
-            System.out.println("Айди объявления: " + listingId);
-            System.out.println("Айди пользователя: " + userId);
-            alreadyExists = listingViewRepository.existsByUserIdAndListingId(userId, listingId);
+        if (event.userId() != null && event.listingId() != null) {
+            log.debug("Айди объявления: {}", event.listingId());
+            log.debug("Айди пользователя: {}", event.userId());
 
-            System.out.println("Просмотр уже существует? " + alreadyExists);
+            alreadyExists = listingViewRepository.existsByUserIdAndListingId(event.userId(), event.listingId());
+
+            log.debug("Просмотр уже существует? {}", alreadyExists);
 
             if (alreadyExists == false) {
-                ListingView newView = new ListingView(userId, listingId, temporary);
+                ListingView newView = new ListingView(
+                    event.userId(), 
+                    event.listingId(), 
+                    event.temporary(),
+                    event.timestamp()
+                );
                 listingViewRepository.save(newView);
-                Listing listing = listingRepository.findById(listingId).orElse(null);
+
+                Listing listing = listingRepository.findById(event.listingId()).orElseThrow(
+                    () -> new EntityNotFoundException("Объявление не найдено"));
+
                 int views = listing.getViews();
                 listing.setViews(views + 1);
                 listingRepository.save(listing);

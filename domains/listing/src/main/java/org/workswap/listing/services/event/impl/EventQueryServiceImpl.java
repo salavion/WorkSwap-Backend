@@ -1,10 +1,12 @@
 package org.workswap.listing.services.event.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,11 +25,13 @@ import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.listing.services.event.EventQueryService;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.services.UserMappingService;
 import org.salavion.security.dto.UserAuthData;
+import org.salavion.security.enums.UserStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,9 +49,8 @@ public class EventQueryServiceImpl implements EventQueryService {
     private final UserMappingService userMappingService;
     private final SecurityFilterService securityFilterService;
     private final ListingQueryService listingQueryService;
-
-    /* private final ListingViewProducer listingViewProducer; */
-
+    private final ApplicationEventPublisher eventPublisher;
+    
     public boolean existEventParticipant(UserAuthData authData, Long eventId) {
         return listingRepository.existsParticipant(eventId, authData.id());
     }
@@ -106,7 +109,13 @@ public class EventQueryServiceImpl implements EventQueryService {
 
         List<ShortUserDTO> participants = userMappingService.toShortDTOList(event.getParticipants());
 
-        /* listingViewProducer.listingViewed(new ListingViewDTO(authData.id(), eventId, authData.status().equals(UserStatus.TEMP))); */
+        eventPublisher.publishEvent(
+            new ListingViewedEvent(
+                authData.id(), 
+                eventId, 
+                authData.status().equals(UserStatus.TEMP), 
+                LocalDateTime.now()
+            ));
 
         ListingDTO.Full listingDto = new ListingDTO.Full(
             listing.getId(),

@@ -1,5 +1,6 @@
 package org.workswap.listing.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,11 +38,13 @@ import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.listing.services.category.query.ProductCategoryQueryService;
 import org.workswap.listing.services.category.query.ServiceCategoryQueryService;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.services.UserMappingService;
 import org.salavion.security.dto.UserAuthData;
+import org.salavion.security.enums.UserStatus;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +65,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     private final ListingTranslationRepository translationRepository;
     private final SecurityFilterService securityFilterService;
     private final UserMappingService userMappingService;
+    private final ApplicationEventPublisher eventPublisher;
 
     /* private final ListingViewProducer listingViewProducer; */
 
@@ -278,9 +283,13 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         List<ImageDTO> images = listing.getImages().stream()
             .map(image -> new ImageDTO(image.getId(), listingId, mappingService.getImageLink(image))).toList();
 
-        /* listingViewProducer.listingViewed(new ListingViewDTO(authData.id(), listingId, authData.status().equals(UserStatus.TEMP))); */ 
-
-        // TODO переписать на отправку события которое словит другой модуль, модуль rabbit mq 
+        eventPublisher.publishEvent(
+            new ListingViewedEvent(
+                authData.id(), 
+                listingId, 
+                authData.status().equals(UserStatus.TEMP), 
+                LocalDateTime.now()
+            ));
 
         return new ListingDTO.Page(
             new ListingDTO.Full(

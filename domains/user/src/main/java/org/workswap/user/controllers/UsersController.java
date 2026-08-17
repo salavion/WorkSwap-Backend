@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.salavion.security.dto.UserAuthData;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Profile("production")
 @RequestMapping("/user")
 public class UsersController {
 

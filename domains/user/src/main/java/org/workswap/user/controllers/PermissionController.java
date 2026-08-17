@@ -2,6 +2,7 @@ package org.workswap.user.controllers;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Profile("production")
 @RequestMapping("/permission")
 public class PermissionController {
 

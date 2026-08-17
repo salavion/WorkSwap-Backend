@@ -3,7 +3,7 @@ package org.workswap.statistic.ampq.producers;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.workswap.statistic.dto.ListingViewDTO;
+import org.workswap.shared.events.listing.ListingViewedEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,8 +14,8 @@ public class ListingViewProducer {
 
     private final AmqpTemplate amqpTemplate;
 
-    public void listingViewed(ListingViewDTO dto) {
+    public void listingViewed(ListingViewedEvent event) {
 
-        amqpTemplate.convertAndSend("listingViewQueue", dto);
+        amqpTemplate.convertAndSend("listingViewQueue", event);
     }
 }

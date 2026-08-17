@@ -3,9 +3,12 @@ package org.workswap.datasource.config;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -45,6 +48,9 @@ public class CentralDataSourceConfig {
         System.out.println(">>> CentralDataSourceConfig LOADED");
     }
 
+    @Value("${spring.jpa.properties.hibernate.dialect}")
+    private String hibernateDialect;
+
     @Primary
     @Bean
     @ConfigurationProperties("spring.central-datasource")
@@ -72,6 +78,9 @@ public class CentralDataSourceConfig {
                     "org.workswap.user"
                 )
                 .persistenceUnit("central")
+                .properties(Map.of(
+                    "hibernate.dialect", hibernateDialect
+                ))
                 .build();
     }
 

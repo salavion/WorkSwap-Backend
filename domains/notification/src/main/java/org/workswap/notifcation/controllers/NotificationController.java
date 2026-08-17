@@ -1,0 +1,37 @@
+package org.workswap.notifcation.controllers;
+
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.workswap.notifcation.dto.FullNotificationDTO;
+import org.workswap.notifcation.services.NotificationCommandService;
+import org.workswap.notifcation.services.NotificationQueryService;
+import org.salavion.security.dto.UserAuthData;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/notification")
+public class NotificationController {
+
+    private final NotificationQueryService notificationQueryService;
+    private final NotificationCommandService notificationCommandService;
+
+    @GetMapping("/for-user")
+    @PreAuthorize("hasAuthority('GET_NOTIFICATIONS')")
+    public List<FullNotificationDTO> getNotification(@AuthenticationPrincipal UserAuthData authData) {
+        return notificationQueryService.getUserNotifications(authData);
+    }
+
+    @PatchMapping("/{notificationId}/read")
+    @PreAuthorize("hasAuthority('READ_NOTIFICATION')")
+    public void markAsReadNotification(
+            @PathVariable Long notificationId, 
+            @AuthenticationPrincipal UserAuthData authData
+    ) {
+        notificationCommandService.markAsRead(authData, notificationId);
+    }
+}

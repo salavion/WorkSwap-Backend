@@ -3,6 +3,7 @@ package org.workswap.statistic.controllers;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Profile("production")
 @RequiredArgsConstructor
 public class QrSimpleController {
 

@@ -1,8 +1,11 @@
 package org.workswap.datasource.config;
 
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -33,6 +36,9 @@ public class StatsDataSourceConfig {
         System.out.println(">>> StatsDataSourceConfig LOADED");
     }
 
+    @Value("${spring.jpa.properties.hibernate.dialect}")
+    private String hibernateDialect;
+
     @Bean
     @ConfigurationProperties("spring.statistics-datasource")
     public DataSource statsDataSource() {
@@ -47,6 +53,9 @@ public class StatsDataSourceConfig {
                 .dataSource(statsDataSource())
                 .packages("org.workswap.statistic") // Пакет с @Entity статистики
                 .persistenceUnit("stats")
+                .properties(Map.of(
+                    "hibernate.dialect", hibernateDialect
+                ))
                 .build();
     }
 

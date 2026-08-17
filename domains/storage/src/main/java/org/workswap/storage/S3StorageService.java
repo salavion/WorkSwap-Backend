@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.storage.config.S3Properties;
 
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 @RequiredArgsConstructor
 @Service
+@Profile("production")
 public class S3StorageService {
 
     private final S3Client s3Client;

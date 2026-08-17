@@ -59,6 +59,7 @@
         <module>domains/datasource</module>
 
         <module>../apps/RestAPI</module>
+        <module>../apps/Statistic</module>
     </modules>
 
     <dependencyManagement>

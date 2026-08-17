@@ -1,6 +1,7 @@
 package org.workswap.statistic.services;
 
 import org.workswap.listing.datasource.model.Listing;
+import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.statistic.dto.AllListingsStatSnapshotDTO;
 import org.workswap.statistic.dto.OnlineStatSnapshotDTO;
 import org.workswap.statistic.dto.SiteViewDTO;
@@ -20,7 +21,7 @@ public interface StatisticCommandService {
 
     void saveListingsStat(StatSaveIntervalType intervalType);
 
-    void saveListingView(Long listingId, Long userId, boolean temporary);
+    void saveListingView(ListingViewedEvent event);
 
     void saveOnlineStatSnapshot(OnlineStatSnapshotDTO dto);
     void saveUsersStatSnapshot(UsersStatSnapshotDTO dto);

@@ -125,4 +125,12 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
         WHERE cp.chat.id IN :chatIds
     """)
     List<ChatMemberDTO> findMembersByChatIds(@Param("chatIds") List<Long> chatIds);
+
+    @Modifying
+    @Transactional
+    @Query("""
+        DELETE FROM ChatParticipant cp
+        WHERE cp.user.id = :userId
+    """)
+    int deleteAllByUserId(@Param("userId") Long userId);
 }

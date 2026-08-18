@@ -72,4 +72,6 @@ public interface ListingStatRepository extends JpaRepository<ListingStatSnapshot
     );
     
     List<ListingStatSnapshot> findAllByListingId(Long listingId);
+
+    void deleteAllByListingId(Long listingId);
 }

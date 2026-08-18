@@ -1,5 +1,6 @@
 package org.workswap.order.services.impl;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import org.workswap.order.dto.OrderDTO;
 import org.workswap.order.enums.OrderStatus;
 import org.workswap.order.services.OrderCommandService;
 import org.workswap.order.services.OrderMappingService;
+import org.workswap.shared.enums.Importance;
+import org.workswap.shared.events.notification.CreateNotificationCommand;
 import org.workswap.user.datasource.model.User;
 import org.salavion.security.dto.UserAuthData;
 
@@ -26,10 +29,10 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderRepository orderRepository;
 
     private final OrderMappingService orderMappingService;
-    /* private final NotificationCommandService notificationCommandService; */
     private final ListingRepository listingRepository;
     private final SecurityFilterService securityFilterService;
     private final EntityManager entityManager;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderDTO getOrderDTO(UserAuthData authData, Long listingId) {
 
@@ -93,12 +96,25 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         if (isBuyer) order.setConfirmedByBuyer(true);
         if (isSeller) order.setConfirmedBySeller(true);
 
-        // TODO переписать на ивенты, уведомление должно создаваться в модуле уведомлений
-
-        /* if (order.isConfirmedByBuyer() && order.isConfirmedBySeller()) {
+        if (order.isConfirmedByBuyer() && order.isConfirmedBySeller()) {
             order.setStatus(OrderStatus.COMPLETED);
-            notificationCommandService.sendOrderCompleteNotification(order);
-        } */
+
+            eventPublisher.publishEvent(new CreateNotificationCommand(
+                "Заказ завершён", 
+                "Продавец и клиент подтвердили выполнение заказа, \"%s\" теперь считается завершённым".formatted(order.getId()),
+                "https://workswap.org/order/" + order.getId(),
+                order.getBuyer().getId(),
+                Importance.INFO
+            ));
+
+            eventPublisher.publishEvent(new CreateNotificationCommand(
+                "Заказ завершён", 
+                "Продавец и клиент подтвердили выполнение заказа, \"%s\" теперь считается завершённым".formatted(order.getId()),
+                "https://workswap.org/order/" + order.getId(),
+                order.getSeller().getId(),
+                Importance.INFO
+            ));
+        }
 
         orderRepository.save(order);
     }

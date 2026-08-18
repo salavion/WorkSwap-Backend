@@ -15,4 +15,5 @@ public interface ChatCommandService {
     void setPermanentChat(Chat chat);
     void acceptChatTerms(Long chatId, UserAuthData authData);
     void deleteTemporaryChats(UserAuthData authData);
+    void deleteUserFromChats(Long userId);
 }

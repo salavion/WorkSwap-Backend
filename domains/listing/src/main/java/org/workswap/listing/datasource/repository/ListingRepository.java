@@ -215,4 +215,11 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
     """)
     void setImagePathIfEmpty(@Param("id") Long id,
                             @Param("imagePath") String imagePath);
+
+    @Query("""
+        SELECT COALESCE(SUM(l.views), 0)
+        FROM Listing l
+        WHERE l.author.id = :userId
+    """)
+    long sumViewsByAuthorId(@Param("userId") Long userId);
 }

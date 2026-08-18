@@ -20,7 +20,6 @@ import org.workswap.user.datasource.repository.UserSettingsRepository;
 import org.salavion.security.dto.UserAuthData;
 import org.salavion.security.enums.UserStatus;
 import org.workswap.user.dto.FullUserDTO;
-/* import org.workswap.user.dto.ProfilePageRequest; */
 import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;

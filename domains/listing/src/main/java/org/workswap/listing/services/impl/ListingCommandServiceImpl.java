@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +28,7 @@ import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
+import org.workswap.shared.events.listing.ListingDeletedEvent;
 import org.workswap.shared.locale.LanguageMapper;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
 import org.workswap.user.datasource.model.User;
@@ -56,6 +58,8 @@ public class ListingCommandServiceImpl implements ListingCommandService {
     private final ProductCategoryRepository productCategoryRepository;
     private final ServiceCategoryRepository serviceCategoryRepository;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     public Listing create(UserAuthData authData, String type) {
         User authorProxy = entityManager.getReference(User.class, authData.id());
         Listing listing = new Listing(authorProxy, type);
@@ -69,11 +73,10 @@ public class ListingCommandServiceImpl implements ListingCommandService {
 
         Listing listing = listingQueryService.getListingById(listingId);
 
-        logger.debug("Чистим статистику объявления");
-        /* clearListingStatSnapshots(listing); */
-
         logger.debug("Удаляем объявление");
         listingRepository.delete(listing);
+
+        eventPublisher.publishEvent(new ListingDeletedEvent(listingId));
     }
 
     public void addListingToFavorite(UserAuthData authData, Long listingId) {

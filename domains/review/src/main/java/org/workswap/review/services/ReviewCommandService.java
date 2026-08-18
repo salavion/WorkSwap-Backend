@@ -67,4 +67,12 @@ public class ReviewCommandService {
             review.getCreatedAt()
         ));
     }
+
+    public void deleteReviewsByListingId(Long listingId) {
+        reviewRepository.deleteAllByListingId(listingId);
+    }
+
+    public void deleteReviewsByAuthorId(Long userId) {
+        reviewRepository.deleteAllByAuthorId(userId);
+    }
 }

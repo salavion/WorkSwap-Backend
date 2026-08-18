@@ -10,13 +10,12 @@ import org.workswap.statistic.dto.UsersStatsMetricDTO;
 import org.workswap.statistic.dto.ViewsStatsMetricDTO;
 import org.workswap.statistic.enums.IntervalType;
 import org.workswap.statistic.enums.StatSaveIntervalType;
-import org.workswap.user.datasource.model.User;
 
 public interface StatisticQueryService {
     
-    int getTotalViews(User user);
+    long getTotalViews(Long userId);
 
-    Map<String, Object> getUserStats(User user, Locale locale);
+    Map<String, Object> getUserStats(Long userId, Locale locale);
 
     int getMonthlyListingStats(Long listingId, int daysBack, String metric);
 

@@ -163,4 +163,8 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         chatRepository.deleteEmptyChatsByStatus(authData.id(), ChatStatus.TEMPORARY);
     }
+
+    public void deleteUserFromChats(Long userId) {
+        chatParticipantRepository.deleteAllByUserId(userId);
+    }
 }

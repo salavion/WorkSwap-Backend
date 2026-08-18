@@ -88,6 +88,10 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
         log.debug("Удалено {} дубликатов статистики.", toDelete.size());
     }
 
+    public void clearListingStatSnapshots(Long listingId) {
+        listingStatRepository.deleteAllByListingId(listingId);
+    }
+
     @Transactional
     public void saveListingsStat(StatSaveIntervalType intervalType) {
         Duration checkWindow;

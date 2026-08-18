@@ -12,10 +12,6 @@ public interface ListingCommandService {
 
     Listing create(UserAuthData authData, String type);
     void delete(UserAuthData authData, Long listingId);
-    /* void clearListingStatSnapshots(Listing listing); */
-
-    // TODO переписать чистку метаданных объявления на ивенты, этим должен заниматься модуль статистики
-
     void publish(UserAuthData authData, Long listingId);
     void addListingToFavorite(UserAuthData authData, Long listingId);
     void removeListingFromFavorite(UserAuthData authData, Long listingId);

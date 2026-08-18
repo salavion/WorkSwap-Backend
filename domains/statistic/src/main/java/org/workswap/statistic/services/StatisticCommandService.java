@@ -18,6 +18,7 @@ public interface StatisticCommandService {
     void updateRatingForUser(User user);
 
     void cleanUpDuplicateListingsStat();
+    void clearListingStatSnapshots(Long listingId);
 
     void saveListingsStat(StatSaveIntervalType intervalType);
 

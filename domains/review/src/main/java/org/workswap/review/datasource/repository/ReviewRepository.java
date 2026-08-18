@@ -22,4 +22,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r JOIN FETCH r.author WHERE r.profile.id = :profileId")
     List<Review> findByProfileIdWithAuthors(@Param("profileId") Long profileId);
+
+    void deleteAllByListingId(Long listingId);
+    void deleteAllByAuthorId(Long userId);
 }

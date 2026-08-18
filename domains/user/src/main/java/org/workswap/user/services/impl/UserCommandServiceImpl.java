@@ -37,6 +37,7 @@ import org.workswap.user.datasource.repository.permission.RoleRepository;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.salavion.security.dto.UserAuthData;
 import org.salavion.security.dto.UserInfoDTO;
+import org.salavion.security.enums.UserStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,46 +63,15 @@ public class UserCommandServiceImpl implements UserCommandService {
         User user = userRepository.findById(authData.id()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
-        try {
-            if (user == null) {
-                throw new RuntimeException("Пользователя не зарегистрировано.");
-            }
-
-            logger.debug("Пользователь {} найден, начинаем удаление", user.getId());
-
-            // Чистка разговоров
-
-            // TODO реализовать удаление чатов при удалении аккаунта
-            // надо почитать о том чтобы хранить данные около полугода по требованиям GDPR
-
-            // Чистка объявлений
-
-            // TODO реализовать удаление объявлений при удалении аккаунта
-
-            // Чистка отзывов
-            // TODO реализовать удаление отзывов при удалении аккаунта
-
-            // Чистка уведомления
-            // TODO реализовать удаление уведомлений при удалении аккаунта
-
-            // Удаление пользователя
-            try {
-                Long userId = user.getId();
-
-                if (userId == null) {
-                    throw new RuntimeException("Id пользователя не найдено!");
-                }
-                logger.debug("Удаление пользователя {}", userId);
-                userRepository.deleteById(userId);
-            } catch (Exception e) {
-                logger.error("Ошибка при удалении пользователя {}: {}", user.getId(), e.getMessage(), e);
-                throw new RuntimeException("Ошибка при удалении пользователя", e);
-            }
-
-        } catch (Exception e) {
-            logger.error("Не удалось удалить пользователя через OAuth2: {}", e.getMessage(), e);
-            throw new RuntimeException("Ошибка при удалении пользователя через OAuth2", e);
+        if (user == null) {
+            throw new RuntimeException("Пользователя не зарегистрировано.");
         }
+
+        logger.debug("Пользователь {} найден, начинаем удаление", user.getId());
+        
+        user.setStatus(UserStatus.DEACTIVATED);
+
+        userRepository.save(user);
     }
 
     public void modifyUserParam(UserAuthData authData, Map<String, Object> updates) {

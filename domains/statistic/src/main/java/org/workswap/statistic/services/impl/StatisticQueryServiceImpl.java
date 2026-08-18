@@ -26,7 +26,7 @@ import org.workswap.statistic.dto.ViewsStatsMetricDTO;
 import org.workswap.statistic.enums.IntervalType;
 import org.workswap.statistic.enums.StatSaveIntervalType;
 import org.workswap.statistic.services.StatisticQueryService;
-import org.workswap.user.datasource.model.User;
+import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.statistic.datasource.model.AllListingsStatSnapshot;
 import org.workswap.statistic.datasource.model.ListingStatSnapshot;
 import org.workswap.statistic.datasource.model.OnlineStatSnapshot;
@@ -47,19 +47,15 @@ public class StatisticQueryServiceImpl implements StatisticQueryService {
     private static final Logger logger = LoggerFactory.getLogger(StatisticQueryService.class);
 
     private final ListingStatRepository listingStatRepository;
+    private final ListingRepository listingRepository;
     private final OnlineStatRepository onlineStatRepository;
     private final UsersStatRepository usersStatRepository;
     private final ListingViewRepository listingViewRepository;
     private final AllListingsStatRepository allListingsStatRepository;
    
-    public int getTotalViews(User user) {
-        /* return user.getListings().stream()
-                .mapToInt(Listing::getViews)
-                .sum(); */
+    public long getTotalViews(Long userId) {
 
-        // TODO переписать чтобы выдавало все просмотры объявлений
-
-        return 0;
+        return listingRepository.sumViewsByAuthorId(userId);
     }
 
     public int getMonthlyListingStats(Long listingId, int daysBack, String metric) {
@@ -69,11 +65,11 @@ public class StatisticQueryServiceImpl implements StatisticQueryService {
         return countStats(listingId, dateStart, dateEnd, metric);
     }
 
-    public Map<String, Object> getUserStats(User user, Locale locale) {
+    public Map<String, Object> getUserStats(Long userId, Locale locale) {
         Map<String, Object> stats = new HashMap<>();
 
         // Получаем статистику пользователя
-        int totalViews = getTotalViews(user);
+        long totalViews = getTotalViews(userId);
         int totalResponses = 0;
         int completedDeals = 0;
 

@@ -73,9 +73,12 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         return listingRepository.existsFavoriteListing(authData.id(), listingId);
     }
 
-    public List<ListingDTO.Full> getRecentListings(int amount, String locale) {
+    public Page<ListingDTO.Full> getRecentListings(int amount, String locale) {
         Pageable pageable = PageRequest.of(0, amount);
         List<Listing> listings = listingRepository.findAllByTemporaryFalseOrderByCreatedAtDesc(pageable).getContent();
+
+        // Page page = new Page();
+        // TODO доделать на Page
         return mappingService.toDTOList(listings, locale);
     }
 

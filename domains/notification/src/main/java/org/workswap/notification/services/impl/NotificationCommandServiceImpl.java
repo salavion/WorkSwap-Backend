@@ -1,4 +1,4 @@
-package org.workswap.notifcation.services.impl;
+package org.workswap.notification.services.impl;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,13 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.workswap.notifcation.datasource.model.Notification;
-import org.workswap.notifcation.datasource.repository.NotificationRepository;
-import org.workswap.notifcation.dto.FullNotificationDTO;
-import org.workswap.notifcation.dto.NotificationDTO;
-import org.workswap.notifcation.enums.NotificationType;
-import org.workswap.notifcation.services.NotificationCommandService;
-import org.workswap.notifcation.services.NotificationMappingService;
+import org.workswap.notification.datasource.model.Notification;
+import org.workswap.notification.datasource.repository.NotificationRepository;
+import org.workswap.notification.dto.FullNotificationDTO;
+import org.workswap.notification.dto.NotificationDTO;
+import org.workswap.notification.enums.NotificationType;
+import org.workswap.notification.services.NotificationCommandService;
+import org.workswap.notification.services.NotificationMappingService;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.shared.enums.Importance;
 import org.workswap.shared.events.notification.CreateNotificationCommand;

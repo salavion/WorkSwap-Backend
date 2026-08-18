@@ -1,4 +1,4 @@
-package org.workswap.notifcation.services;
+package org.workswap.notification.services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

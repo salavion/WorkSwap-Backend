@@ -1,10 +1,10 @@
-package org.workswap.notifcation.eventhandlers;
+package org.workswap.notification.eventhandlers;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.workswap.notifcation.services.NotificationCommandService;
+import org.workswap.notification.services.NotificationCommandService;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
 
 import lombok.RequiredArgsConstructor;

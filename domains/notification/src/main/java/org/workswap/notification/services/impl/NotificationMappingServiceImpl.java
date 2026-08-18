@@ -1,10 +1,10 @@
-package org.workswap.notifcation.services.impl;
+package org.workswap.notification.services.impl;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.workswap.notifcation.datasource.model.Notification;
-import org.workswap.notifcation.dto.FullNotificationDTO;
-import org.workswap.notifcation.services.NotificationMappingService;
+import org.workswap.notification.datasource.model.Notification;
+import org.workswap.notification.dto.FullNotificationDTO;
+import org.workswap.notification.services.NotificationMappingService;
 
 import lombok.RequiredArgsConstructor;
 

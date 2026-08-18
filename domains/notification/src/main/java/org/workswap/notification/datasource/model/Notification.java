@@ -1,9 +1,9 @@
-package org.workswap.notifcation.datasource.model;
+package org.workswap.notification.datasource.model;
 
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.workswap.notifcation.enums.NotificationType;
+import org.workswap.notification.enums.NotificationType;
 import org.workswap.shared.enums.Importance;
 import org.workswap.user.datasource.model.User;
 

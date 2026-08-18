@@ -1,4 +1,4 @@
-package org.workswap.notifcation.controllers;
+package org.workswap.notification.controllers;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.workswap.notifcation.dto.FullNotificationDTO;
-import org.workswap.notifcation.services.NotificationQueryService;
+import org.workswap.notification.dto.FullNotificationDTO;
+import org.workswap.notification.services.NotificationQueryService;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;

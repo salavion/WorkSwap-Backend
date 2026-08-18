@@ -1,4 +1,4 @@
-package org.workswap.notifcation.services.impl;
+package org.workswap.notification.services.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.workswap.notifcation.datasource.repository.NotificationRepository;
-import org.workswap.notifcation.dto.FullNotificationDTO;
-import org.workswap.notifcation.services.NotificationMappingService;
-import org.workswap.notifcation.services.NotificationQueryService;
+import org.workswap.notification.datasource.repository.NotificationRepository;
+import org.workswap.notification.dto.FullNotificationDTO;
+import org.workswap.notification.services.NotificationMappingService;
+import org.workswap.notification.services.NotificationQueryService;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;

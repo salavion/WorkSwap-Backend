@@ -1,8 +1,8 @@
-package org.workswap.notifcation.dto;
+package org.workswap.notification.dto;
 
 import java.time.LocalDateTime;
 
-import org.workswap.notifcation.enums.NotificationType;
+import org.workswap.notification.enums.NotificationType;
 import org.workswap.shared.enums.Importance;
 
 public record FullNotificationDTO(

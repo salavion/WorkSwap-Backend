@@ -1,4 +1,4 @@
-package org.workswap.notifcation.enums;
+package org.workswap.notification.enums;
 
 public enum NotificationType{
     SYSTEM("Системное"),

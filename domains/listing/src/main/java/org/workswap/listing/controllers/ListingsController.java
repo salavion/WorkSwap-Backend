@@ -124,7 +124,7 @@ public class ListingsController {
 
     @GetMapping("/recent")
     @PreAuthorize("hasAuthority('GET_RECENT_LISTINGS')")
-    public List<ListingDTO.Full> getRecentListings(@RequestParam int amount, @RequestParam String locale) {
+    public Page<ListingDTO.Full> getRecentListings(@RequestParam int amount, @RequestParam String locale) {
         return listingQueryService.getRecentListings(amount, locale);
     }
 

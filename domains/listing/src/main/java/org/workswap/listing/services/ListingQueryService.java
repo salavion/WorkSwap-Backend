@@ -28,7 +28,7 @@ public interface ListingQueryService {
     
     List<ListingDTO.Full> getListingDtosByUser(Long userId, String locale);
     List<ListingDTO.Full> getOwnListingsByUser(UserAuthData authData, String locale);
-    List<ListingDTO.Full> getRecentListings(int amount, String locale);
+    Page<ListingDTO.Full> getRecentListings(int amount, String locale);
     List<ShortListingDTO> getFavorites(UserAuthData authData, String locale);
     List<ListingDTO.Full> getDrafts(UserAuthData authData, String locale);
     Map<String, ListingTranslationDTO> getTranslations(Long id);

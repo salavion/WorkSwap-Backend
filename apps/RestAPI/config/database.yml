@@ -1,0 +1,29 @@
+spring:
+  central-datasource:
+    jdbc-url: jdbc:mariadb://185.176.94.192:3306/s13_WorkSwap?useSSL=false&serverTimezone=UTC
+    username: u13_tgDx8vzLPz
+    password: ZT49YCLP@!Bn.I5vysoD5drz
+    driver-class-name: org.mariadb.jdbc.Driver
+
+    connection-timeout: 30000
+    minimum-idle: 2
+    maximum-pool-size: 10
+    idle-timeout: 600000
+    max-lifetime: 1800000
+    leak-detection-threshold: 15000
+    validation-timeout: 5000
+    keepalive-time: 300000
+  statistics-datasource:
+    jdbc-url: jdbc:mariadb://185.176.94.192:3306/s13_WorkSwap_Statistic?useSSL=false&serverTimezone=UTC
+    username: u13_EVG9udI9rm
+    password: kJVR!zSWYLi@@CLaCgE.RUGY
+    driver-class-name: org.mariadb.jdbc.Driver
+    
+    connection-timeout: 30000
+    minimum-idle: 2
+    maximum-pool-size: 10
+    idle-timeout: 600000
+    max-lifetime: 1800000
+    leak-detection-threshold: 15000
+    validation-timeout: 5000
+    keepalive-time: 300000

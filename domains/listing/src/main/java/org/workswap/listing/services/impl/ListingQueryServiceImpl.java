@@ -13,9 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.workswap.category.datasource.Category;
 import org.workswap.listing.datasource.model.Listing;
@@ -67,22 +68,31 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     private final UserMappingService userMappingService;
     private final ApplicationEventPublisher eventPublisher;
 
-    /* private final ListingViewProducer listingViewProducer; */
-
     public boolean isFavorite(UserAuthData authData, Long listingId) {
         return listingRepository.existsFavoriteListing(authData.id(), listingId);
     }
 
-    public Page<ListingDTO.Full> getRecentListings(int amount, String locale) {
-        Pageable pageable = PageRequest.of(0, amount);
-        List<Listing> listings = listingRepository.findAllByTemporaryFalseOrderByCreatedAtDesc(pageable).getContent();
+    public Page<ListingDTO.Full> getListingsPage(int page, int amount, String sortParam, String locale) {
 
-        // Page page = new Page();
-        // TODO доделать на Page
-        return mappingService.toDTOList(listings, locale);
+        if (sortParam == null || sortParam.length() == 0) sortParam = "createdAt";
+
+        Pageable pageable = PageRequest.of(page, amount, Sort.by(sortParam).descending());
+        Page<Listing> listings = listingRepository.findAllByTemporaryFalseOrderByCreatedAtDesc(pageable);
+
+        List<ListingDTO.Full> dtos = mappingService.toDTOList(listings.getContent(), locale);
+
+        return new PageImpl<ListingDTO.Full>(
+            dtos,
+            pageable,
+            listings.getTotalElements()
+        );
     }
 
-    @NonNull
+    public List<ListingDTO.Full> getRecentListings(int amount, String locale) {
+        
+        return getListingsPage(0, amount, null, locale).getContent();
+    }
+
     public Listing getListingById(Long listingId) {
 
         Objects.requireNonNull(listingId, "listingId must not be null");

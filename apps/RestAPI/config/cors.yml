@@ -1,0 +1,11 @@
+cors:
+  domains: 
+    - https://workswap.org
+    - https://api.workswap.org
+    - https://auth.workswap.org
+    - https://dash.workswap.org
+    - http://localhost:30000
+    - http://localhost:30008
+    - http://localhost:3000
+    - http://localhost:8001
+    - http://localhost:8083

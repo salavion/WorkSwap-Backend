@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,7 +40,7 @@ public class ListingStorageService {
     private final S3StorageService storageService;
     private final EntityManager entityManager;
     
-    public ImageDTO uploadListingImage(MultipartFile file, @NonNull Long listingId, UserAuthData authData) {
+    public ImageDTO uploadListingImage(MultipartFile file, Long listingId, UserAuthData authData) {
 
         securityFilterService.listingUpdateFilter(authData, listingId);
 
@@ -78,7 +77,7 @@ public class ListingStorageService {
         }
     }
 
-    public void deleteListingImage(@NonNull Long imageId, UserAuthData authData) {
+    public void deleteListingImage(Long imageId, UserAuthData authData) {
         Image image = imageRepository.findById(imageId).orElseThrow(
             () -> new EntityNotFoundException("Image by this Id does not exist")
         );

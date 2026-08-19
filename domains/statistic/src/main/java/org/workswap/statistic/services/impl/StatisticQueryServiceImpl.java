@@ -199,13 +199,14 @@ public class StatisticQueryServiceImpl implements StatisticQueryService {
         LocalDateTime cutoff = LocalDateTime.now()
             .minus(intervalType.getDuration().multipliedBy(multiplier));
         UsersStatSnapshot preview = usersStatRepository.findFirstByTimestampLessThanEqualOrderByTimestampDesc(cutoff);
+
         return new UsersStatsMetricDTO(
             actual.getUsersCount(), 
             actual.getStandartsUsers(), 
             actual.getTempUsers(), 
-            actual.getUsersCount() - preview.getUsersCount(), 
-            actual.getStandartsUsers() - preview.getStandartsUsers(), 
-            actual.getTempUsers() - preview.getTempUsers()
+            actual.getUsersCount() - (preview != null ? preview.getUsersCount() : 0), 
+            actual.getStandartsUsers() - (preview != null ? preview.getStandartsUsers() : 0), 
+            actual.getTempUsers() - (preview != null ? preview.getTempUsers() : 0)
         );
     }
 

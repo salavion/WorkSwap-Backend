@@ -3,6 +3,7 @@ package org.workswap.review.controllers;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,5 +47,15 @@ public class ReviewController {
         @RequestParam(required = false) Long profileId
     ) {
         return reviewQueryService.getRewiewsList(listingId, profileId);
+    }
+
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('GET_REVIEWS_PAGE')")
+    public Page<ReviewDTO> getRewiewsPage(
+        @RequestParam int page,
+        @RequestParam int amount,
+        @RequestParam String sortParam
+    ) {
+        return reviewQueryService.getRewiewsPage(page, amount, sortParam);
     }
 }

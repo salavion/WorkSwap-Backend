@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,6 +38,14 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
 
     List<Listing> findByAuthorIdAndTemporaryAndActive(Long authorId, boolean temporary, boolean active);
 
+    @EntityGraph(attributePaths = {
+        "location",
+        "author",
+        "serviceSettings",
+        "serviceSettings.category",
+        "productSettings",
+        "productSettings.category"
+    })
     Page<Listing> findAllByTemporaryFalseOrderByCreatedAtDesc(Pageable pageable);
 
     @Query(value = "select count(*) from favorite_listing where listing_id = :listingId", nativeQuery = true)

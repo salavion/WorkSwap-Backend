@@ -3,7 +3,6 @@ package org.workswap.user.controllers;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +47,7 @@ public class PermissionController {
 
     @GetMapping("/{roleId}/get")
     @PreAuthorize("hasAuthority('GET_PERMISSIONS_BY_ROLE')")
-    public List<PermissionDTO> getPermissionsByRole(@NonNull @PathVariable Long roleId) {
+    public List<PermissionDTO> getPermissionsByRole(@PathVariable Long roleId) {
         return permissionQueryService.getPermissionDtosByRole(roleId);
     }
 

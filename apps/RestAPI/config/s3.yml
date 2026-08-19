@@ -1,0 +1,5 @@
+s3:
+  endpoint: https://0fff1679785f7297aa39f62e21c91c21.r2.cloudflarestorage.com
+  bucket: workswap
+  access-key: cf2ea86bd717733d7cc2da09d050e8c9
+  secret-key: 347d6e7acbb0e66a755ccb913c2266a7918808803e3c48423659466b714793c2

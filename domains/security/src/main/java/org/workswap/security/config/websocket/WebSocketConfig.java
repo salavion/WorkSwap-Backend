@@ -1,12 +1,14 @@
 package org.workswap.security.config.websocket;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.NonNull;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -19,15 +21,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.workswap.security.websocket.AuthChannelInterceptor;
 import org.workswap.security.websocket.AuthHandshakeInterceptor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.util.List;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile({"production"})
+@Profile("production")
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
@@ -36,43 +34,44 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
 
     @Override
-    public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
                 .addInterceptors(authHandshakeInterceptor);
     }
 
     @Override
-    public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/queue");
         registry.setUserDestinationPrefix("/user");
     }
 
     @Override
-    public boolean configureMessageConverters(@NonNull List<MessageConverter> messageConverters) {
-        ObjectMapper objectMapper = new ObjectMapper();
-    
-        // Добавляем поддержку Java 8 Date/Time API
-        objectMapper.registerModule(new JavaTimeModule());
-        
-        // Отключаем сериализацию дат как timestamps (опционально)
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setObjectMapper(objectMapper);
-        
+    public boolean configureMessageConverters(
+            List<MessageConverter> messageConverters
+    ) {
+        JsonMapper objectMapper = JsonMapper.builder().build();
+
+        JacksonJsonMessageConverter converter =
+                new JacksonJsonMessageConverter(objectMapper);
+
         messageConverters.add(converter);
+
         return false;
     }
 
     @Override
-    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
+    public void addArgumentResolvers(
+            List<HandlerMethodArgumentResolver> resolvers
+    ) {
         resolvers.add(new AuthenticationPrincipalArgumentResolver());
     }
 
     @Override
-    public void configureClientInboundChannel(@NonNull ChannelRegistration registration) {
+    public void configureClientInboundChannel(
+            ChannelRegistration registration
+    ) {
         registration.interceptors(
                 authChannelInterceptor,
                 new SecurityContextChannelInterceptor()

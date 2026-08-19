@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class PermissionsService {
         value = "user-permissions",
         key = "#userId"
     )
-    public Collection<GrantedAuthority> getUserPermissions(@NonNull Long userId) {
+    public Collection<GrantedAuthority> getUserPermissions(Long userId) {
 
         userCommandService.createUser(userId);
 

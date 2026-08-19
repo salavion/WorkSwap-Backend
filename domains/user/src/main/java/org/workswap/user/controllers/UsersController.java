@@ -110,7 +110,11 @@ public class UsersController {
 
     @GetMapping("/list")
     //@PreAuthorize("hasAuthority('GET_USERS_LIST')")
-    public Page<UserDTO> getUsersList(@RequestParam int size, @RequestParam int page, @RequestParam String sortParam) {
+    public Page<UserDTO> getUsersList(
+        @RequestParam int size, 
+        @RequestParam int page, 
+        @RequestParam String sortParam
+    ) {
         return userQueryService.getUsersList(size, page, sortParam);
     }
 }

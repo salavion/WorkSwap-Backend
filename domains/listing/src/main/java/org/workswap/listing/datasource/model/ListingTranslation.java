@@ -31,6 +31,9 @@ public class ListingTranslation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id")
     private Listing listing;
+
+    @Column(name = "listing_id", insertable = false, updatable = false)
+    private Long listingId;
     
     public ListingTranslation(String language,
                               String title,

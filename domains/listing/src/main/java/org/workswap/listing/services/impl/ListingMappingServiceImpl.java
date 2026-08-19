@@ -2,6 +2,9 @@ package org.workswap.listing.services.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -33,15 +36,13 @@ public class ListingMappingServiceImpl implements ListingMappingService {
     private final ListingTranslationRepository translationRepository;
 
     @Transactional
-    public ListingDTO.Full toDTO(Listing listing, String locale) {
+    public ListingDTO.Full toDTO(Listing listing, ListingTranslation translation) {
         if (listing == null) {
             return null;
         }
 
         ListingType type = listing.getType();
         Location loc = listing.getLocation();
-
-        ListingTranslation translation = translationRepository.findBestTranslation(listing.getId(), locale);
 
         String categoryName = "";
         Long categoryId = null;
@@ -101,15 +102,31 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         return dto;
     }
 
+    @Transactional
+    public ListingDTO.Full toDTO(Listing listing, String locale) {
+
+        ListingTranslation translation = translationRepository.findBestTranslation(
+            listing.getId(), locale);
+
+        return toDTO(listing, translation);
+    }
+
+    @Transactional
     public ShortListingDTO toShortDTO(Listing listing, String locale) {
+
+        ListingTranslation translation = translationRepository.findBestTranslation(
+            listing.getId(), locale);
+
+        return toShortDTO(listing, translation);
+    }
+
+    public ShortListingDTO toShortDTO(Listing listing, ListingTranslation translation) {
         
         if (listing == null) {
             return null;
         }
 
         Location loc = listing.getLocation();
-
-        ListingTranslation translation = translationRepository.findBestTranslation(listing.getId(), locale);
 
         ShortListingDTO dto = new ShortListingDTO(
             listing.getId(),
@@ -149,12 +166,41 @@ public class ListingMappingServiceImpl implements ListingMappingService {
         );
     }
 
+    public Map<Long, ListingTranslation> getBestListingsTranslations(Collection<Listing> listings, String locale) {
+        List<Long> ids = listings.stream()
+            .map(Listing::getId)
+            .toList();
+
+        return translationRepository
+            .findBestTranslations(ids, locale)
+            .stream()
+            .collect(Collectors.toMap(
+                ListingTranslation::getListingId,
+                Function.identity()
+            ));
+    }
+
     public List<ListingDTO.Full> toDTOList(Collection<Listing> listings, String locale) {
-        return listings.stream().map(listing -> toDTO(listing, locale)).toList();
+
+        Map<Long, ListingTranslation> translations = getBestListingsTranslations(listings, locale);
+
+        return listings.stream()
+            .map(listing -> toDTO(
+                listing, 
+                translations.get(listing.getId())
+            ))
+            .toList();
     }
 
     public List<ShortListingDTO> toShortDTOList(Collection<Listing> listings, String locale) {
-        return listings.stream().map(listing -> toShortDTO(listing, locale)).toList();
+        Map<Long, ListingTranslation> translations = getBestListingsTranslations(listings, locale);
+
+        return listings.stream()
+            .map(listing -> toShortDTO(
+                listing, 
+                translations.get(listing.getId())
+            ))
+            .toList();
     }
 
     public void setListingCategoryMeta(Listing listing) {
@@ -188,6 +234,8 @@ public class ListingMappingServiceImpl implements ListingMappingService {
     }
 
     public String getImageLink(Image image) {
-        return "https://cloud.workswap.org" + "/listing-images" + "/" + image.getObjectKey() + "." + ImageFormatRegistry.extensionFromMime(image.getContentType());
+        return "https://cloud.workswap.org/listing-images/%s.%s".formatted(
+            image.getObjectKey(), 
+            ImageFormatRegistry.extensionFromMime(image.getContentType()));
     }
 }

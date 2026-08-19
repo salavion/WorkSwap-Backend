@@ -17,13 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -40,6 +37,8 @@ import org.salavion.security.dto.UserInfoDTO;
 import org.salavion.security.enums.UserStatus;
 
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -161,10 +160,10 @@ public class UserCommandServiceImpl implements UserCommandService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            ObjectMapper objectMapper = new ObjectMapper();
+            JsonMapper objectMapper = JsonMapper.builder().build();
             JsonNode json = objectMapper.readTree(response.body());
 
-            String linkUrl = json.path("data").path("linkUrl").asText();
+            String linkUrl = json.path("data").path("linkUrl").stringValue();
 
             user.getSettings().setTelegramConnected(true);
             userRepository.save(user);
@@ -187,7 +186,7 @@ public class UserCommandServiceImpl implements UserCommandService {
         userRepository.save(user);
     }
 
-    public void createUser(@NonNull Long userId) {
+    public void createUser(Long userId) {
 
         if (userRepository.existsById(userId)) {
             return;

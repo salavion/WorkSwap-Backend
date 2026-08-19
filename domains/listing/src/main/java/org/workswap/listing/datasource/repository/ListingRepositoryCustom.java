@@ -5,7 +5,6 @@ import java.util.List;
 import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.workswap.category.datasource.Category;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.enums.ListingType;
@@ -24,7 +23,7 @@ public interface ListingRepositoryCustom {
         ServiceType serviceType,
         ProductType productType,
         String sortBy,
-        @NonNull Pageable pageable,
+        Pageable pageable,
         UserAuthData authData
     );
 }

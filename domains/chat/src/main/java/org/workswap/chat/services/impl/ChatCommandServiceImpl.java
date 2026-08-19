@@ -7,7 +7,6 @@ import org.salavion.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final ChatMappingService mappingService;
     /* private final NotificationCommandService notificationCommandService; */
 
-    public void notifyChatUpdate(@NonNull ChatDTO chatDto, @NonNull String recipientOpenId) {
+    public void notifyChatUpdate(ChatDTO chatDto, String recipientOpenId) {
 
         // Отправляем обновление конкретному пользователю
         messagingTemplate.convertAndSendToUser(

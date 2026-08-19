@@ -1,0 +1,11 @@
+api:
+  url: http://localhost:8083 #https://api.workswap.org
+
+spring:
+  profiles:
+    active: 
+      - "statistic"
+  jpa:
+    properties:
+      hibernate: 
+        dialect: org.hibernate.dialect.MariaDBDialect

@@ -8,7 +8,6 @@ import org.workswap.chat.dto.ChatDetails;
 import org.workswap.chat.dto.MessageDTO;
 import org.workswap.user.dto.ShortUserDTO;
 import org.salavion.security.dto.UserAuthData;
-import org.springframework.lang.NonNull;
 
 public interface ChatQueryService {
     
@@ -28,6 +27,5 @@ public interface ChatQueryService {
 
     List<ShortUserDTO> getChatInterlocutors(Long chatId, UserAuthData authData);
 
-    @NonNull
     List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale);
 }

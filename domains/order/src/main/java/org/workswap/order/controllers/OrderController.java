@@ -1,6 +1,5 @@
 package org.workswap.order.controllers;
 
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +25,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public OrderDTO getOrderById(
         @AuthenticationPrincipal UserAuthData authData,
-        @NonNull @PathVariable String orderId
+        @PathVariable String orderId
     ) {
         return orderQueryService.findOrderById(orderId, authData);
     }

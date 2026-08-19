@@ -3,7 +3,6 @@ package org.workswap.user.services;
 import java.util.Map;
 
 import org.salavion.security.dto.UserAuthData;
-import org.springframework.lang.NonNull;
 
 public interface UserCommandService {
 
@@ -14,5 +13,5 @@ public interface UserCommandService {
     void acceptTerms(UserAuthData authData);
 
     void modifyUserParam(UserAuthData authData, Map<String, Object> updates);
-    void createUser(@NonNull Long userId);
+    void createUser(Long userId);
 }

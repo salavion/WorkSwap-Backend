@@ -8,7 +8,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.lang.NonNull;
 
 @Getter
 @Entity
@@ -43,7 +42,6 @@ public class Message {
     @Column(name = "is_read")
     private boolean read = false;
 
-    @NonNull
     public static Message create(Long chatId, Long senderId, String text) {
         Message m = new Message();
         m.chatId = chatId;

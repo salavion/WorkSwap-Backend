@@ -8,7 +8,6 @@ import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.workswap.category.datasource.Category;
 import org.workswap.listing.datasource.model.Listing;
@@ -56,7 +55,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         ServiceType serviceType,
         ProductType productType,
         String sortBy,
-        @NonNull Pageable pageable,
+        Pageable pageable,
         UserAuthData authData
     ) {
         

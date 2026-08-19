@@ -32,9 +32,8 @@ import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.salavion.security.dto.UserAuthData;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor

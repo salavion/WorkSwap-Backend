@@ -1,0 +1,5 @@
+spring:
+  central-datasource:
+    
+  statistics-datasource:
+    

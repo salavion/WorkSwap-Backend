@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.workswap.user.dto.PermissionDTO;
 import org.workswap.user.dto.RoleDTO;
@@ -43,7 +42,7 @@ public class PermissionQueryServiceImpl implements PermissionQueryService {
         return dtos;
     }
 
-    public List<PermissionDTO> getPermissionDtosByRole(@NonNull Long roleId) {
+    public List<PermissionDTO> getPermissionDtosByRole(Long roleId) {
         Role role = roleRepository.findById(roleId).orElseThrow(
             () -> new EntityNotFoundException("Роль не найдена"));
         Set<Permission> roles = role.getPermissions();

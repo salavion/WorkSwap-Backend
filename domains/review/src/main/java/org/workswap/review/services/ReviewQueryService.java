@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.workswap.review.datasource.model.Review;
 import org.workswap.review.datasource.repository.ReviewRepository;
@@ -38,5 +43,20 @@ public class ReviewQueryService {
         return reviews.stream()
             .map(r -> reviewMappingService.toDTO(r))
             .toList();
+    }
+
+    public Page<ReviewDTO> getRewiewsPage(int page, int size, String sortParam) {
+
+        if (sortParam == null || sortParam.length() == 0) sortParam = "createdAt";
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortParam).descending());
+        Page<Review> reviews = reviewRepository.findAll(pageable);
+
+        List<ReviewDTO> dtos = reviews.stream().map(r -> reviewMappingService.toDTO(r)).toList();
+
+        return new PageImpl<>(
+            dtos != null ? dtos : new ArrayList<>(), 
+            pageable, 
+            reviews.getTotalElements());
     }
 }

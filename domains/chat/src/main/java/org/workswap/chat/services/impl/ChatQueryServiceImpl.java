@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,7 +129,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return chats;
     }
 
-    @NonNull
     public List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale) {
         List<Long> chatIds = chats.stream().map(c -> c.id()).toList();
         List<Long> listingIds = chats.stream()

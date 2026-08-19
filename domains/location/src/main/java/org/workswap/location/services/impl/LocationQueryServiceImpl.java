@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
@@ -57,7 +56,7 @@ public class LocationQueryServiceImpl implements LocationQueryService {
                                 .collect(Collectors.toList());
     }
 
-    public LocationDTO getLocation(@NonNull Long locationId) {
+    public LocationDTO getLocation(Long locationId) {
         return locationMappingService.toDTO(
             locationRepository.findById(locationId).orElseThrow(
                 () -> new EntityNotFoundException("Локация не найдена")

@@ -1,0 +1,40 @@
+server:
+  port: 8085
+  tomcat:
+    max-http-form-post-data-size: 100MB # Default, but good to know
+    max-swallow-size: -1 # Allows unlimited size for multipart requests, if needed
+    max-part-count: 1000
+    max-http-form-post-size: 20971520  # 20MB
+
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/images/
+  mvc:
+    static-path-pattern: /**
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate: 
+        format_sql: false
+      connection:
+        isolationLevel: 2 # READ_COMMITTED
+    show-sql: false
+  messages:
+    basename: lang/messages
+    encoding: UTF-8
+    cache-duration: 0
+  lifecycle:
+    timeout-per-shutdown-phase: "20s"
+  config:
+    import:
+      - classpath:config/database.yml
+      - classpath:config/main.yml
+      - classpath:config/logging.yml
+      - classpath:config/rabbitmq.yml
+      - optional:file:./config/database.yml
+      - optional:file:./config/main.yml
+      - optional:file:./config/logging.yml
+      - optional:file:./config/rabbitmq.yml

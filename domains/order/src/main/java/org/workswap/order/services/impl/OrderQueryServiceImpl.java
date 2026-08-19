@@ -3,7 +3,6 @@ package org.workswap.order.services.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.workswap.order.datasource.model.Order;
@@ -37,7 +36,7 @@ public class OrderQueryServiceImpl implements OrderQueryService{
         return orderMappingService.toDTO(order);
     }
 
-    public OrderDTO findOrderById(@NonNull String orderId, UserAuthData authData) {
+    public OrderDTO findOrderById(String orderId, UserAuthData authData) {
 
         if (!orderRepository.existsByIdAndUserIsBuyerOrSeller(orderId, authData.id())) {
             throw new AccessDeniedException("Вы не являетесь участником сделки");

@@ -3,7 +3,6 @@ package org.workswap.location.controllers;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +48,7 @@ public class LocationController {
 
     @GetMapping("/{locationId}/get")
     @PermitAll
-    public LocationDTO getLocation(@NonNull @PathVariable Long locationId) {
+    public LocationDTO getLocation(@PathVariable Long locationId) {
         return locationQueryService.getLocation(locationId);
     }
 
@@ -64,7 +63,7 @@ public class LocationController {
 
     @GetMapping("/{locationId}/delete")
     @PreAuthorize("hasAuthority('DELETE_LOCATION')")
-    public void deleteLocation(@NonNull @PathVariable Long locationId) {
+    public void deleteLocation(@PathVariable Long locationId) {
         locationRepository.deleteById(locationId);
     }
 }

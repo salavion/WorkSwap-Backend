@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNull;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -122,9 +122,23 @@ public class ListingsController {
         listingCommandService.publish(authData, listingId);
     }
 
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('GET_LISTINGS_LIST')")
+    public Page<ListingDTO.Full> getListingsPage(
+        @RequestParam int page, 
+        @RequestParam int amount, 
+        @RequestParam String sortParam,
+        @RequestParam String locale
+    ) {
+        return listingQueryService.getListingsPage(page, amount, sortParam, locale);
+    }
+
     @GetMapping("/recent")
     @PreAuthorize("hasAuthority('GET_RECENT_LISTINGS')")
-    public Page<ListingDTO.Full> getRecentListings(@RequestParam int amount, @RequestParam String locale) {
+    public List<ListingDTO.Full> getRecentListings(
+        @RequestParam int amount,
+        @RequestParam String locale
+    ) {
         return listingQueryService.getRecentListings(amount, locale);
     }
 
@@ -187,7 +201,7 @@ public class ListingsController {
     @PostMapping("/{listingId}/image")
     public ImageDTO uploadListingImage(
         @RequestParam MultipartFile image,
-        @NonNull @RequestParam Long listingId,
+        @RequestParam Long listingId,
         @AuthenticationPrincipal UserAuthData authData
     ) {
         return listingStorageService.uploadListingImage(image, listingId, authData);
@@ -195,7 +209,7 @@ public class ListingsController {
 
     @DeleteMapping("/{imageId}/image")
     public void deleteListingImage(
-        @NonNull @RequestParam Long imageId,
+        @RequestParam Long imageId,
         @AuthenticationPrincipal UserAuthData authData
     ) {
         listingStorageService.deleteListingImage(imageId, authData);

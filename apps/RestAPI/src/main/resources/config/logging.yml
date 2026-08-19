@@ -1,0 +1,60 @@
+logging:
+  file:
+    #name: logs/app.log
+  pattern:
+    console: "%d{HH:mm:ss yyyy-MM-dd} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    org.workswap.config.SecurityConfig: INFO
+    org.workswap.config.WebSocketConfig: INFO
+
+    org.workswap.api.controller.ChatController: INFO  
+    org.workswap.api.controller.websocket.ChatWebSocketController: DEBUG
+    org.workswap.api.controller.websocket.NotificationWebSocketController: DEBUG
+
+    org.workswap.api.controller.UploadController: INFO
+    org.workswap.api.controller.AuthController: DEBUG
+
+    org.workswap.api.testers.QueryCounter: DEBUG
+    
+    org.workswap.core.services.UserService: INFO
+    org.workswap.core.services.ChatService: INFO
+    org.workswap.core.services.CategoryService: INFO
+    org.workswap.core.services.StatService: INFO
+    org.workswap.core.services.LocalizationService: INFO
+    org.workswap.core.services.NotificationService: INFO 
+    org.workswap.core.services.ReviewService: INFO
+
+    org.workswap.core.services.model.listing.query.EventQueryService: INFO
+    org.workswap.core.services.model.other.command.NotificationCommandService: INFO
+    org.workswap.core.services.model.listing.command.ListingCommandService: INFO
+    org.workswap.core.listing.query.ListingQueryService: DEBUG
+    org.workswap.core.services.model.listing.command.EventCommandService: INFO
+
+    org.workswap.core.services.model.chat.command.ChatCommandService: INFO
+
+    org.workswap.core.services.command.PermissionCommandService: INFO
+
+    org.workswap.core.services.model.user.command.UserCommandService: INFO
+    
+    org.workswap.core.services.components.AuthService: INFO
+    org.workswap.core.services.components.LangFileScheduler: INFO
+
+    org.workswap.core.services.model.chat.query.ChatQueryService: INFO
+
+    org.workswap.core.security.authentication.oauth.CustomOAuth2SuccessHandler: INFO
+    org.workswap.core.security.authentication.oauth.CustomOAuth2FailureHandler: INFO
+    org.workswap.core.security.authentication.websocket.AuthChannelInterceptor: DEBUG
+    org.workswap.core.security.JwtTokenConverter: INFO
+    org.workswap.core.security.authentication.oauth.OAuthRedirectResolver: DEBUG
+
+    org.workswap.core.services.rabbitmq.ReviewProducer: INFO
+
+    org.workswap.datasource.central.repository.listing.ListingRepositoryCustom: DEBUG
+
+    org.springframework.web.multipart: INFO
+    org.springframework.web.servlet.resource: INFO
+    org.springframework.security: DEBUG
+
+    com.zaxxer.hikari: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.orm.jdbc.bind: INFO

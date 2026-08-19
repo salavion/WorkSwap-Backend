@@ -39,9 +39,6 @@
     </repositories>
 
     <modules>
-        <module>core</module>
-        <module>shared</module>
-
         <module>domains/category</module>
         <module>domains/chat</module>
         <module>domains/forum</module>
@@ -51,12 +48,14 @@
         <module>domains/order</module>
         <module>domains/review</module>
         <module>domains/statistic</module>
-        <module>domains/storage</module>
         <module>domains/subscription</module>
         <module>domains/task</module>
         <module>domains/user</module>
-        <module>domains/security</module>
-        <module>domains/datasource</module>
+
+        <module>infrastructure/storage</module>
+        <module>infrastructure/shared</module>
+        <module>infrastructure/security</module>
+        <module>infrastructure/datasource</module>
 
         <module>apps/RestAPI</module>
         <module>apps/Statistic</module>

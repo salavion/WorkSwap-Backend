@@ -1,6 +1,3 @@
-domains/*/target/
-core/target/
-apps/*/target/
-shared/target/
+**/target/
 
 apps/RestAPI/ssl/

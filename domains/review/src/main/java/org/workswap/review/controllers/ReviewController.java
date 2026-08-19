@@ -53,9 +53,9 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('GET_REVIEWS_PAGE')")
     public Page<ReviewDTO> getRewiewsPage(
         @RequestParam int page,
-        @RequestParam int amount,
+        @RequestParam int size,
         @RequestParam String sortParam
     ) {
-        return reviewQueryService.getRewiewsPage(page, amount, sortParam);
+        return reviewQueryService.getRewiewsPage(page, size, sortParam);
     }
 }

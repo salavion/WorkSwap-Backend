@@ -1,3 +1,6 @@
 domains/*/target/
 core/target/
+apps/*/target/
 shared/target/
+
+apps/RestAPI/ssl/

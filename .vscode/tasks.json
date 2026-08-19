@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run RestAPI",
+            "type": "shell",
+            "command": "java -jar apps/RestAPI/target/WSApi-1.0.jar",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "applications"
+            }
+        },
+        {
+            "label": "Run Statistic",
+            "type": "shell",
+            "command": "java -jar apps/Statistic/target/WSStatistic-1.0.jar",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "applications"
+            }
+        },
+        {
+            "label": "Run applications",
+            "dependsOn": [
+                "Run RestAPI",
+                "Run Statistic"
+            ],
+            "dependsOrder": "parallel"
+        }
+    ]
+}

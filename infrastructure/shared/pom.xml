@@ -9,7 +9,7 @@
         <groupId>org.workswap</groupId>
         <artifactId>workswap</artifactId>
         <version>1.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>workswap-shared</artifactId>

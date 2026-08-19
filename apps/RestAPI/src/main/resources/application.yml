@@ -45,9 +45,9 @@ spring:
       - classpath:config/logging.yml
       - classpath:config/rabbitmq.yml
       - classpath:config/s3.yml
-      - optional:file:./config/database.yml
-      - optional:file:./config/main.yml
-      - optional:file:./config/logging.yml
-      - optional:file:./config/rabbitmq.yml
-      - optional:file:./config/cors.yml
-      - optional:file:./config/s3.yml
+      - file:./config/database.yml
+      - file:./config/main.yml
+      - file:./config/logging.yml
+      - file:./config/rabbitmq.yml
+      - file:./config/cors.yml
+      - file:./config/s3.yml

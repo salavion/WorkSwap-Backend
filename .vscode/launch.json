@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "RestAPI",
+            "type": "node-terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/RestAPI",
+            "command": "java -jar target/WSApi-1.0.jar"
+        },
+        {
+            "name": "Statistic",
+            "type": "node-terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/Statistic",
+            "command": "java -jar target/WSStat-1.0.jar"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run applications",
+            "configurations": [
+                "RestAPI",
+                "Statistic"
+            ],
+            "stopAll": true
+        }
+    ]
+}

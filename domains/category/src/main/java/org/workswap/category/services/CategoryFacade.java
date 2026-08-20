@@ -26,8 +26,8 @@ public abstract class CategoryFacade<T extends Category> {
 
     // --- Общие команды ---
 
-    public void createCategory(CategoryDTO dto) {
-        commandService.createCategory(dto);
+    public Long createCategory(CategoryDTO dto) {
+        return commandService.createCategory(dto);
     }
 
     public void deleteCategory(Long id) {

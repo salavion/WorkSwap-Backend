@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.location.dto.LocationDTO;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @Profile("production")
-@RequestMapping("/locations")
+@RequestMapping("/location")
 public class LocationController {
     
     private final LocationQueryService locationQueryService;
@@ -52,16 +53,15 @@ public class LocationController {
         return locationQueryService.getLocation(locationId);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     @PreAuthorize("hasAuthority('CREATE_LOCATION')")
-    public void addLocation(
-        @RequestParam(required = false) Long countryId,
-        @RequestParam String name
+    public Long createLocation(
+        @RequestBody LocationDTO location
     ) {
-        locationCommandService.createLocation(countryId, name);
+        return locationCommandService.createLocation(location).getId();
     }
 
-    @GetMapping("/{locationId}/delete")
+    @DeleteMapping("/{locationId}")
     @PreAuthorize("hasAuthority('DELETE_LOCATION')")
     public void deleteLocation(@PathVariable Long locationId) {
         locationRepository.deleteById(locationId);

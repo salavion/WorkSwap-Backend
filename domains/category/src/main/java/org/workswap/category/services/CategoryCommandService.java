@@ -14,7 +14,7 @@ public abstract class CategoryCommandService<T extends Category> {
     protected final CategoryFactory<T> factory;
 
     @Transactional
-    public void createCategory(CategoryDTO dto) {
+    public Long createCategory(CategoryDTO dto) {
         if (categoryRepository.existsByName(dto.name())) {
             throw new IllegalArgumentException("Category with name '" + dto.name() + "' already exists");
         }
@@ -34,7 +34,7 @@ public abstract class CategoryCommandService<T extends Category> {
         T category = factory.create(dto.name(), parent);
         category.setLeaf(dto.leaf());
 
-        categoryRepository.save(category);
+        return categoryRepository.save(category).getId();
     }
 
     @Transactional

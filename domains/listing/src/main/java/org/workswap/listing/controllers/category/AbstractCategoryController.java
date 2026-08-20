@@ -51,8 +51,8 @@ public abstract class AbstractCategoryController<T extends Category> {
 
     @PreAuthorize("hasAuthority('CREATE_CATEGORY')")
     @PostMapping
-    public void createCategory(@RequestBody CategoryDTO dto) {
-        categoryService.createCategory(dto);
+    public Long createCategory(@RequestBody CategoryDTO dto) {
+        return categoryService.createCategory(dto);
     }
 
     @PreAuthorize("hasAuthority('DELETE_CATEGORY')")

@@ -7,7 +7,7 @@
         <groupId>org.workswap</groupId>
         <artifactId>workswap</artifactId>
         <version>1.0</version>
-        <relativePath/>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
 	<groupId>org.workswap</groupId>
@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>21</java.version>
 	</properties>
+
 	<dependencies>
 
         <dependency>

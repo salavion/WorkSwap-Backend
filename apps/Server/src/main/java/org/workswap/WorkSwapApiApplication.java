@@ -17,9 +17,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 )
 @EnableScheduling
 @EnableTransactionManagement
-public class WorkSwapApiApplication {
+public class WorkSwapServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorkSwapApiApplication.class, args);
+		SpringApplication.run(WorkSwapServerApplication.class, args);
 	}
 }

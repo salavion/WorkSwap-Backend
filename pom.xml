@@ -57,7 +57,7 @@
         <module>infrastructure/security</module>
         <module>infrastructure/datasource</module>
 
-        <module>apps/RestAPI</module>
+        <module>apps/Server</module>
         <module>apps/Statistic</module>
     </modules>
 

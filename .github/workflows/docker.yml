@@ -40,7 +40,7 @@ jobs:
                           </server>
                       </servers>
                   </settings>
-                  EOF 
+                  EOF
 
             - name: Build applications
               run: mvn install

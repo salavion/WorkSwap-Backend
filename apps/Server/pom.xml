@@ -11,7 +11,7 @@
     </parent>
 
 	<groupId>org.workswap</groupId>
-	<artifactId>WSApi</artifactId>
+	<artifactId>server</artifactId>
 	<name>api</name>
 	
 	<properties>

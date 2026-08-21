@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run RestAPI",
+            "label": "Run Server",
             "type": "shell",
-            "command": "java -jar apps/RestAPI/target/WSApi-1.0.jar",
+            "command": "java -jar apps/Server/target/server-1.0.jar",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
@@ -15,7 +15,7 @@
         {
             "label": "Run Statistic",
             "type": "shell",
-            "command": "java -jar apps/Statistic/target/WSStatistic-1.0.jar",
+            "command": "java -jar apps/Statistic/target/statistic-1.0.jar",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
@@ -26,7 +26,7 @@
         {
             "label": "Run applications",
             "dependsOn": [
-                "Run RestAPI",
+                "Run Server",
                 "Run Statistic"
             ],
             "dependsOrder": "parallel"

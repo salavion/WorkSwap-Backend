@@ -11,7 +11,7 @@
     </parent>
 
 	<groupId>org.workswap</groupId>
-	<artifactId>WSStat</artifactId>
+	<artifactId>statistic</artifactId>
 	<name>statistic</name>
 
 	<properties>

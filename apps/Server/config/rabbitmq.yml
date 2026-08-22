@@ -1,0 +1,6 @@
+spring:
+  rabbitmq:
+    host: workswap-rabbit
+    port: 5671
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}

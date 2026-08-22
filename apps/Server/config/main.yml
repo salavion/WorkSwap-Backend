@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: 
+      - "api"
+      - "production"
+      - "backoffice"
+  jpa:
+    properties:
+      hibernate: 
+        dialect: org.hibernate.dialect.MariaDBDialect
+  
+api:
+  url: ${API_URL}
+  key:
+    localization: 9gxqzuZo8EmYopc5MF43
+
+frontend:
+  url: ${FRONTEND_URL}
+
+cloud:
+  url: ${CLOUD_URL}
+
+app:
+  cookie:
+    secure: true
+    domain: ".workswap.org"
+    sameSite: "None"
+
+tgbot:
+  url: http://89.35.130.223:30003
+
+isTest: true
+
+salavion: 
+  url: ${AUTH_URL}
+  code: ${SSO_CODE}
+
+mailjet:
+  api-key: ${MAILJET_API_KEY}
+  secret-key: ${MAILJET_SECRET_KEY}
+  sender: ${MAILJET_SENDER}

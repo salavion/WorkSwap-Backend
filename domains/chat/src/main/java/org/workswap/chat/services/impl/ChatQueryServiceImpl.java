@@ -45,7 +45,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production"})
+@Profile({"server"})
 public class ChatQueryServiceImpl implements ChatQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatQueryService.class);

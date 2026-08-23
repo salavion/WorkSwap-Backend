@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class PermissionCommandSeviceImpl implements PermissionCommandSevice {
     
     private final RoleRepository roleRepository;

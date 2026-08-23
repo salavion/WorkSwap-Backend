@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 @EnableConfigurationProperties(S3Properties.class)
-@Profile("production")
+@Profile("server")
 public class S3Config {
     
     @Bean

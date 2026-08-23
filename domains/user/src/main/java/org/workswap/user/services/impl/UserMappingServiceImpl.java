@@ -19,7 +19,7 @@ import org.workswap.user.services.UserMappingService;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class UserMappingServiceImpl implements UserMappingService {
 
     public UserDTO toDTO(User user) {

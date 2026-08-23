@@ -1,6 +1,5 @@
 package org.workswap.task.services.impl;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.shared.dto.Status;
 import org.workswap.task.datasource.model.Task;
@@ -14,7 +13,6 @@ import org.workswap.user.services.UserQueryService;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("backoffice")
 @RequiredArgsConstructor
 public class TaskMappingServiceImpl implements TaskMappingService {
 

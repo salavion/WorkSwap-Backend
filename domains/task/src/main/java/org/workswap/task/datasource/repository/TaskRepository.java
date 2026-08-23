@@ -3,7 +3,6 @@ package org.workswap.task.datasource.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +14,6 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.enums.TaskType;
 
 @Repository
-@Profile("backoffice")
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByStatus(TaskStatus status);
     Task findByName(String name);

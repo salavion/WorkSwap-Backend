@@ -11,7 +11,7 @@ import org.workswap.user.datasource.model.permission.Role;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 @RequiredArgsConstructor
 public class PermissionMappingServiceImpl implements PermissionMappingService {
     

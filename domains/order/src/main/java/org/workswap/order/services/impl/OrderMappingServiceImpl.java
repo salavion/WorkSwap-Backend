@@ -12,7 +12,7 @@ import org.workswap.user.datasource.model.User;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class OrderMappingServiceImpl implements OrderMappingService{
     

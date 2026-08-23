@@ -10,7 +10,7 @@ import org.workswap.listing.services.category.factory.ProductCategoryFactory;
 import org.workswap.listing.services.category.query.ProductCategoryQueryService;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class ProductCategoryService
         extends CategoryFacade<ProductCategory> {
 

@@ -31,7 +31,7 @@ import org.salavion.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("production")
+@Profile("server")
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @RequiredArgsConstructor
 public class AuthChannelInterceptor implements ChannelInterceptor {

@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     entityManagerFactoryRef = "centralEntityManagerFactory",
     transactionManagerRef = "centralTransactionManager"
 )
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class CentralDataSourceConfig {
 
     @PostConstruct

@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 
 @RequiredArgsConstructor
 @Service
-@Profile("production")
+@Profile("server")
 public class S3StorageService {
 
     private final S3Client s3Client;

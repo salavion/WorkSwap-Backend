@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class QrSimpleController {
 

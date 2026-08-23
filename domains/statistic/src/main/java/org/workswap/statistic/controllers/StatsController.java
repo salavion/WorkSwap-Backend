@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/stats")
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class StatsController {
 

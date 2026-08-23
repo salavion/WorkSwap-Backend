@@ -8,7 +8,7 @@ import org.workswap.shared.events.listing.ListingViewedEvent;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class ListingViewProducer {
 

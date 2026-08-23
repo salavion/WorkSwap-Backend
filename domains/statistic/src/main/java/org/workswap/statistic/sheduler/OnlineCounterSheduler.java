@@ -13,7 +13,7 @@ import org.workswap.user.services.OnlineCounter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @Component
 public class OnlineCounterSheduler {
     

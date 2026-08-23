@@ -19,7 +19,7 @@ import org.workswap.user.services.UserMappingService;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production"})
+@Profile({"server"})
 @RequiredArgsConstructor
 public class ForumMappingServiceImpl implements ForumMappingService {
 

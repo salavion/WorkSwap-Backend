@@ -13,7 +13,7 @@ import org.workswap.statistic.ampq.producers.ListingsStatProducer;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @Component
 public class ListingsCounterSheduler {
     

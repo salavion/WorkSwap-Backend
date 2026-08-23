@@ -1,18 +1,10 @@
 spring:
   profiles:
-    active: 
-      - "api"
-      - "production"
-      - "backoffice"
-  jpa:
-    properties:
-      hibernate: 
-        dialect: org.hibernate.dialect.MariaDBDialect
+    active:
+      - "server"
   
 api:
   url: ${API_URL}
-  key:
-    localization: 9gxqzuZo8EmYopc5MF43
 
 frontend:
   url: ${FRONTEND_URL}
@@ -29,7 +21,7 @@ app:
 tgbot:
   url: http://89.35.130.223:30003
 
-isTest: true
+isTest: false
 
 salavion: 
   url: ${AUTH_URL}

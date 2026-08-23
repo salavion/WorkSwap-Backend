@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.salavion.security.dto.UserAuthData;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import org.workswap.task.services.TaskQueryService;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("backoffice")
 @RequiredArgsConstructor
 public class TaskQueryServiceImpl implements TaskQueryService{
     

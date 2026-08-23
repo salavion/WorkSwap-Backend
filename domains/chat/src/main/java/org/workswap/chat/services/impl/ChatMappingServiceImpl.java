@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class ChatMappingServiceImpl implements ChatMappingService {
  
     private static final Logger logger = LoggerFactory.getLogger(ChatMappingService.class);

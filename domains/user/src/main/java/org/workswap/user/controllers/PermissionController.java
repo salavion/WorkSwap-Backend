@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @RequestMapping("/permission")
 public class PermissionController {
 

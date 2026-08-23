@@ -7,11 +7,18 @@ server:
     max-http-form-post-size: 20971520  # 20MB
 
 spring:
+  profiles:
+    active: 
+      - "statistic"
+      - ${SPRING_PROFILES_ACTIVE:dev}
+
   web:
     resources:
       static-locations: classpath:/static/,classpath:/images/
+      
   mvc:
     static-path-pattern: /**
+
   jpa:
     open-in-view: true
     hibernate:
@@ -19,22 +26,10 @@ spring:
     properties:
       hibernate: 
         format_sql: false
+        dialect: org.hibernate.dialect.MariaDBDialect
       connection:
-        isolationLevel: 2 # READ_COMMITTED
+        isolationLevel: 2
     show-sql: false
-  messages:
-    basename: lang/messages
-    encoding: UTF-8
-    cache-duration: 0
+
   lifecycle:
     timeout-per-shutdown-phase: "20s"
-  config:
-    import:
-      - classpath:config/database.yml
-      - classpath:config/main.yml
-      - classpath:config/logging.yml
-      - classpath:config/rabbitmq.yml
-      - optional:file:./config/database.yml
-      - optional:file:./config/main.yml
-      - optional:file:./config/logging.yml
-      - optional:file:./config/rabbitmq.yml

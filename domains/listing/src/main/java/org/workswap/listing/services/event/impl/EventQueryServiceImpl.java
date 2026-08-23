@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class EventQueryServiceImpl implements EventQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(EventQueryService.class);

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @RequestMapping("/event")
 public class EventController {
 

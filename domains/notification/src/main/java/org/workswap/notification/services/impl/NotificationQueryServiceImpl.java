@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class NotificationQueryServiceImpl implements NotificationQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationQueryService.class);

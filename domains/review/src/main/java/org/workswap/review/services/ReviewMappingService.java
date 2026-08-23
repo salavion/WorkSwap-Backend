@@ -8,7 +8,7 @@ import org.workswap.review.dto.ReviewDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 @RequiredArgsConstructor
 public class ReviewMappingService{
     

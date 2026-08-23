@@ -16,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public abstract class CategoryQueryService<T extends Category> {
 
     protected final CategoryRepository<T> categoryRepository;

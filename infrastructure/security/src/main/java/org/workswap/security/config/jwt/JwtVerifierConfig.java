@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableConfigurationProperties
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class JwtVerifierConfig {
 

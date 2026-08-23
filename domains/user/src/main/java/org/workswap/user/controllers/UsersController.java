@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @RequestMapping("/user")
 public class UsersController {
 

@@ -2,10 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "WorkSwapServerApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.WorkSwapServerApplication",
+            "projectName": "server"
+        },
+        {
             "name": "Server",
             "type": "node-terminal",
             "request": "launch",
-            "cwd": "${workspaceFolder}/apps/RestAPI",
+            "cwd": "${workspaceFolder}/apps/Server",
             "command": "java -jar target/server-1.0.jar"
         },
         {

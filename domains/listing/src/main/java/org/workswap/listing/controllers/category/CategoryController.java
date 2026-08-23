@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @RequestMapping("/category")
 public class CategoryController {
     

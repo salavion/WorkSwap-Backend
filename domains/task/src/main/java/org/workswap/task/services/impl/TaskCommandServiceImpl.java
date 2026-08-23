@@ -2,7 +2,6 @@ package org.workswap.task.services.impl;
 
 import java.time.LocalDateTime;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +20,6 @@ import org.salavion.security.dto.UserAuthData;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("backoffice")
 @RequiredArgsConstructor
 public class TaskCommandServiceImpl implements TaskCommandService {
 

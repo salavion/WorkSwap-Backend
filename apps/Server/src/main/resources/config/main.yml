@@ -1,39 +1,28 @@
-spring:
-  profiles:
-    active: 
-      - "api"
-      - "production"
-      - "backoffice"
-  jpa:
-    properties:
-      hibernate: 
-        dialect: org.hibernate.dialect.MariaDBDialect
-
 api:
-  url: http://localhost:8083 #https://api.workswap.org
+  url: http://localhost:8083
 
 frontend:
-  url: http://localhost:30000 #https://workswap.org
+  url: http://localhost:30000
 
 cloud:
-  url: https://cloud.workswap.org #http://localhost:8084
+  url: https://cloud.workswap.org
 
 app:
   cookie:
     secure: false
-    domain: "localhost" # ".workswap.org"
+    domain: "localhost"
     sameSite: "Strict"
 
 tgbot:
-  url: http://89.35.130.223:30003
+  url: http://localhost:30003
 
 isTest: true
 
 salavion: 
   url: http://localhost:8001
-  code: f9wh9023r023g7d3
+  code: 1234321
 
 mailjet:
-  api-key: 7f3bda3c5576d2b30b363c3b8f983c8d
-  secret-key: 535c970b6cecc2652d3e107789d0e4f4
-  sender: kkodolov40@gmail.com
+  api-key: 1234321
+  secret-key: 123454321
+  sender: kirya343@gmail.com

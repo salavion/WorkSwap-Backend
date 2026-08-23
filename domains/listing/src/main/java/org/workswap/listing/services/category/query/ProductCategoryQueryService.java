@@ -11,7 +11,7 @@ import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class ProductCategoryQueryService
         extends CategoryQueryService<ProductCategory>{
 

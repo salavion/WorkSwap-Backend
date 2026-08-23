@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class ImageStorageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageStorageService.class);

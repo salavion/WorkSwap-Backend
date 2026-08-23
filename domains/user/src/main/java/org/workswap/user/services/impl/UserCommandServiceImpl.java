@@ -42,7 +42,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class UserCommandServiceImpl implements UserCommandService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserCommandService.class);

@@ -8,7 +8,7 @@ import org.workswap.statistic.dto.OnlineStatSnapshotDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class OnlineStatProducer {
 

@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 public class LocationCommandService {
 
     private final LocationRepository locationRepository;

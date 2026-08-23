@@ -28,7 +28,7 @@ import jakarta.persistence.EntityManagerFactory;
     entityManagerFactoryRef = "statsEntityManagerFactory",
     transactionManagerRef = "statsTransactionManager"
 )
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class StatsDataSourceConfig {
 
     @PostConstruct

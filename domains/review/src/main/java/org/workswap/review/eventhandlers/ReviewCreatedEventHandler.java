@@ -10,7 +10,7 @@ import org.workswap.shared.events.review.ReviewCreatedEvent;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class ReviewCreatedEventHandler {
 

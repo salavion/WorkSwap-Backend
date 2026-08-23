@@ -11,7 +11,7 @@ import org.workswap.statistic.services.StatisticCommandService;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class StatisticListingEventHandler {
 

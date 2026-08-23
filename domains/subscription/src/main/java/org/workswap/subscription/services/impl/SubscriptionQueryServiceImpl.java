@@ -9,7 +9,7 @@ import org.workswap.subscription.services.SubscriptionQueryService;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class SubscriptionQueryServiceImpl implements SubscriptionQueryService {
 

@@ -9,7 +9,7 @@ import org.workswap.shared.events.listing.ListingDeletedEvent;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class ReviewListingEventHandler {
 

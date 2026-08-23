@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Validated
 @ConfigurationProperties(prefix = "s3")
-@Profile("production")
+@Profile("server")
 public record S3Properties(
     @NotBlank String endpoint,
     @NotBlank String bucket,

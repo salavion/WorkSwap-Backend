@@ -28,7 +28,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production"})
+@Profile({"server"})
 @RequiredArgsConstructor
 public class ForumCommandServiceImpl implements ForumCommandService {
 

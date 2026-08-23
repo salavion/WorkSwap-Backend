@@ -25,7 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {

@@ -13,7 +13,7 @@ import com.mailjet.client.resource.Emailv31;
 import com.mailjet.client.ClientOptions;
 
 @Service
-@Profile("production")
+@Profile("server")
 public class EmailService {
 
     private final MailjetClient client;

@@ -37,7 +37,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production"})
+@Profile({"server"})
 public class NotificationCommandServiceImpl implements NotificationCommandService {
     
     private static final Logger logger = LoggerFactory.getLogger(NotificationCommandService.class);

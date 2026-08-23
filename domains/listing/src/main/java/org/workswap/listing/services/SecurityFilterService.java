@@ -10,7 +10,7 @@ import org.workswap.listing.exceptions.ListingAccessDeniedException;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class SecurityFilterService {
 

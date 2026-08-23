@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @RequestMapping("/location")
 public class LocationController {
     

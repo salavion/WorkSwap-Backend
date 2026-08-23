@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class NotificationMappingServiceImpl implements NotificationMappingService {
 	
     public FullNotificationDTO toDTO(Notification notification) {

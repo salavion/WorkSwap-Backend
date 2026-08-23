@@ -20,7 +20,7 @@ import org.workswap.user.datasource.repository.permission.RoleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 @RequiredArgsConstructor
 public class PermissionQueryServiceImpl implements PermissionQueryService {
     

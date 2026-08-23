@@ -40,7 +40,7 @@ import org.workswap.statistic.datasource.repository.UsersStatRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 @RequiredArgsConstructor
 public class StatisticQueryServiceImpl implements StatisticQueryService {
 

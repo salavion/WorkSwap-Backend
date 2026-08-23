@@ -14,7 +14,7 @@ import org.workswap.user.datasource.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Profile("production")
+@Profile("server")
 @Component
 public class UsersCounterSheduler {
     

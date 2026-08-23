@@ -10,7 +10,7 @@ import org.workswap.shared.events.notification.CreateNotificationCommand;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("production")
+@Profile("server")
 @RequiredArgsConstructor
 public class CreateNotificationCommandHandler {
 

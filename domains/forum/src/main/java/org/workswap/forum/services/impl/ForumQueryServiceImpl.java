@@ -28,7 +28,7 @@ import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Profile({"production"})
+@Profile({"server"})
 @RequiredArgsConstructor
 public class ForumQueryServiceImpl implements ForumQueryService {
     

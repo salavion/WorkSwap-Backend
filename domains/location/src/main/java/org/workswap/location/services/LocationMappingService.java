@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Profile({"production", "statistic"})
+@Profile({"server", "statistic"})
 public class LocationMappingService{
     
     public LocationDTO toDTO(Location location) {

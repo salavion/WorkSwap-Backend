@@ -7,7 +7,7 @@ import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.services.category.ProductCategoryService;
 
 @RestController
-@Profile("production")
+@Profile("server")
 @RequestMapping("/category/product")
 public class ProductCategoryController
         extends AbstractCategoryController<ProductCategory> {

@@ -58,8 +58,8 @@
 		</dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-webflux-module</artifactId>
+		</dependency>
     </dependencies>
 </project>

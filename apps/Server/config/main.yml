@@ -31,3 +31,6 @@ mailjet:
   api-key: ${MAILJET_API_KEY}
   secret-key: ${MAILJET_SECRET_KEY}
   sender: ${MAILJET_SENDER}
+
+deepl:
+  api-key: ${DEEPL_API_KEY}

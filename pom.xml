@@ -56,6 +56,7 @@
         <module>infrastructure/shared</module>
         <module>infrastructure/security</module>
         <module>infrastructure/datasource</module>
+        <module>infrastructure/webflux</module>
 
         <module>apps/Server</module>
         <module>apps/Statistic</module>
@@ -155,6 +156,12 @@
             <dependency>
                 <groupId>org.workswap</groupId>
                 <artifactId>workswap-datasource-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.workswap</groupId>
+                <artifactId>workswap-webflux-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

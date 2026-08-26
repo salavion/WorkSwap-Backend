@@ -1,12 +1,12 @@
 package org.workswap.listing.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,16 @@ import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.datasource.model.category.ServiceCategory;
 import org.workswap.listing.datasource.repository.ListingRepository;
+import org.workswap.listing.datasource.repository.ListingTranslationRepository;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
 import org.workswap.listing.dto.ListingTranslationDTO;
+import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.listing.enums.PriceType;
 import org.workswap.listing.services.ListingCommandService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
+import org.workswap.listing.services.translations.DeepLTranslationService;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.shared.events.listing.ListingDeletedEvent;
@@ -41,13 +44,13 @@ import jakarta.persistence.EntityManager;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Profile({"server"})
 public class ListingCommandServiceImpl implements ListingCommandService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ListingCommandService.class);
 
     private final ListingRepository listingRepository;
     private final LocationRepository locationRepository;
@@ -57,6 +60,9 @@ public class ListingCommandServiceImpl implements ListingCommandService {
     private final ListingQueryService listingQueryService;
     private final ProductCategoryRepository productCategoryRepository;
     private final ServiceCategoryRepository serviceCategoryRepository;
+
+    private final ListingTranslationRepository listingTranslationRepository;
+    private final DeepLTranslationService deepLTranslationService;
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -73,7 +79,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
 
         Listing listing = listingQueryService.getListingById(listingId);
 
-        logger.debug("Удаляем объявление");
+        log.debug("Удаляем объявление");
         listingRepository.delete(listing);
 
         eventPublisher.publishEvent(new ListingDeletedEvent(listingId));
@@ -107,7 +113,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
         Listing listing = listingQueryService.getListingById(listingId);
 
         updates.forEach((key, value) -> {
-            logger.debug("Обновляем часть объявления: {}", key );
+            log.debug("Обновляем часть объявления: {}", key );
 
             if (value == null) {
                 throw new IllegalStateException("Вы передали пустой параметр");
@@ -176,7 +182,8 @@ public class ListingCommandServiceImpl implements ListingCommandService {
     public Set<String> updateListingTranslations(
         UserAuthData authData,
         Long listingId, 
-        Map<String, ListingTranslationDTO> translationsMap
+        Map<String, ListingTranslationDTO> translationsMap,
+        ListingTranslateType translateType
     ) {
 
         securityFilterService.listingUpdateFilter(authData, listingId);
@@ -184,7 +191,10 @@ public class ListingCommandServiceImpl implements ListingCommandService {
         Listing listing = listingQueryService.getListingById(listingId);
 
         Map<String, ListingTranslation> currentTranslations = listing.getTranslations();
-        Set<String> newLanguages = new HashSet<>();
+
+        log.debug("currentTranslations: {}", new ArrayList<>(currentTranslations.keySet()));
+
+        Set<String> newLanguages = new HashSet<>(currentTranslations.keySet());
 
         LanguageDetector detector = LanguageDetectorBuilder.fromLanguages(LanguageUtils.SUPPORTED_LANGUAGES_LINGUA).build();
 
@@ -196,7 +206,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
             String title = dto.title();
             String description = dto.description();
 
-            logger.debug("incoming {} -> title: {}", lang, title);
+            log.debug("incoming {} -> title: {}", lang, title);
 
             // Определяем язык, если пришёл undetected
             if (lang != null && "undetected".equalsIgnoreCase(lang.trim())) {
@@ -211,17 +221,25 @@ public class ListingCommandServiceImpl implements ListingCommandService {
             if ((title != null && !title.isBlank()) ||
                 (description != null && !description.isBlank())) {
 
-                logger.debug("using lang {} -> {}", lang, title);
+                log.debug("using lang {} -> {}", lang, title);
                 newLanguages.add(lang);
             }
 
             // update or create translation
             if (currentTranslations.containsKey(lang)) {
+                log.debug("update {}", lang);
                 ListingTranslation tr = currentTranslations.get(lang);
                 tr.setTitle(title);
                 tr.setDescription(description);
+
+                listingTranslationRepository.save(tr);
+
             } else {
-                ListingTranslation tr = new ListingTranslation(lang, title, description, listing);
+                log.debug("create {}", lang);
+                ListingTranslation tr = new ListingTranslation(lang, title, description, listing, translateType);
+                
+                listingTranslationRepository.save(tr);
+
                 currentTranslations.put(lang, tr);
             }
         }
@@ -230,5 +248,45 @@ public class ListingCommandServiceImpl implements ListingCommandService {
         currentTranslations.keySet().removeIf(lang -> !newLanguages.contains(lang));
 
         return newLanguages;
+    }
+
+    public ListingTranslationDTO autoTranslateListing(
+        UserAuthData authData, 
+        Long listingId, 
+        String lang, 
+        String preferedRefLang
+    ) {
+        securityFilterService.listingAuthorFilter(authData, listingId);
+
+        List<ListingTranslation> translations = listingTranslationRepository.findByListingId(listingId);
+
+        if (translations.size() == 0) throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, 
+            "At least one text must be provided for translation");
+
+        ListingTranslation reference = translations.stream()
+            .filter(l -> l.getLanguage().equals(preferedRefLang)) // find prefered
+            .findFirst()
+            .orElse( // if prefered not found, find hand mate
+                translations.stream()
+                    .filter(l -> l.getType().equals(ListingTranslateType.HAND_MATE))
+                    .findFirst()
+                    .orElse( // if hand mate not found -> find any
+                        translations.getFirst()));
+
+        ListingTranslationDTO translated = deepLTranslationService.translate(
+            new ListingTranslationDTO(
+                reference.getTitle(), 
+                reference.getDescription()
+            ), 
+            lang, 
+            reference.getLanguage()
+        );
+
+        log.debug(translated.toString());
+
+        updateListingTranslations(authData, listingId, Map.of(lang, translated), ListingTranslateType.DEEPL);
+
+        return translated;
     }
 }

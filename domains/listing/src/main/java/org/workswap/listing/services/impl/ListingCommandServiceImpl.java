@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -265,11 +266,11 @@ public class ListingCommandServiceImpl implements ListingCommandService {
             "At least one text must be provided for translation");
 
         ListingTranslation reference = translations.stream()
-            .filter(l -> l.getLanguage().equals(preferedRefLang)) // find prefered
+            .filter(l -> Objects.equals(l.getLanguage(), preferedRefLang)) // find prefered
             .findFirst()
             .orElse( // if prefered not found, find hand mate
                 translations.stream()
-                    .filter(l -> l.getType().equals(ListingTranslateType.HAND_MATE))
+                    .filter(l -> Objects.equals(l.getType(), ListingTranslateType.HAND_MATE))
                     .findFirst()
                     .orElse( // if hand mate not found -> find any
                         translations.getFirst()));

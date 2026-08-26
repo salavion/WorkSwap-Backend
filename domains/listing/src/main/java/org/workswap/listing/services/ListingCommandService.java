@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.security.access.AccessDeniedException;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.dto.ListingTranslationDTO;
+import org.workswap.listing.enums.ListingTranslateType;
 import org.salavion.security.dto.UserAuthData;
 
 public interface ListingCommandService {
@@ -20,6 +21,13 @@ public interface ListingCommandService {
     Set<String> updateListingTranslations(
         UserAuthData authData,
         Long listingId, 
-        Map<String, ListingTranslationDTO> translationsMap
+        Map<String, ListingTranslationDTO> translationsMap,
+        ListingTranslateType translateType
     );
+
+    ListingTranslationDTO autoTranslateListing(
+        UserAuthData authData, 
+        Long listingId, 
+        String lang, 
+        String preferedRefLang);
 }

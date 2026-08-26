@@ -1,5 +1,7 @@
 package org.workswap.listing.datasource.model;
 
+import org.workswap.listing.enums.ListingTranslateType;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,14 +36,21 @@ public class ListingTranslation {
 
     @Column(name = "listing_id", insertable = false, updatable = false)
     private Long listingId;
+
+    @Enumerated(EnumType.STRING)
+    private ListingTranslateType type;
     
-    public ListingTranslation(String language,
-                              String title,
-                              String description,
-                              Listing listing) {
+    public ListingTranslation(
+            String language,
+            String title,
+            String description,
+            Listing listing,
+            ListingTranslateType type
+    ) {
         this.language = language;
         this.title = title;
         this.description = description;
         this.listing = listing;
+        this.type = type;
     }
 }

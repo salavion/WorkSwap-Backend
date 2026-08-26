@@ -11,19 +11,9 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>workswap-user-module</artifactId>
+    <artifactId>workswap-webflux-module</artifactId>
 
     <dependencies>
-
-        <dependency>
-			<groupId>org.salavion</groupId>
-			<artifactId>security-core</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-            <artifactId>workswap-location-module</artifactId>
-		</dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -32,13 +22,13 @@
         </dependency>
 
         <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-datasource-module</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
         <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-webflux-module</artifactId>
-		</dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
     </dependencies>
 </project>

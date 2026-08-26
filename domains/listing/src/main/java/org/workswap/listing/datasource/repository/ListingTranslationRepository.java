@@ -71,4 +71,6 @@ public interface ListingTranslationRepository extends JpaRepository<ListingTrans
         @Param("listingIds") List<Long> listingIds,
         @Param("languages") List<String> languages
     );
+
+    List<ListingTranslation> findByListingId(Long listingId);
 }

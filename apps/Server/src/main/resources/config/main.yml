@@ -26,3 +26,6 @@ mailjet:
   api-key: 1234321
   secret-key: 123454321
   sender: kirya343@gmail.com
+
+deepl:
+  api-key: 123123

@@ -2,7 +2,6 @@ package org.workswap.forum.controllers;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.dto.UserAuthData;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.forum.dto.ForumActivityItemDTO;
@@ -20,7 +21,6 @@ import org.workswap.forum.dto.ForumTopicDTO;
 import org.workswap.forum.services.ForumCommandService;
 import org.workswap.forum.services.ForumQueryService;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,7 +32,7 @@ public class ForumController {
     private final ForumQueryService forumQueryService;
 
     @GetMapping("/recent-topics")
-    @PermitAll
+    @PublicEndpoint
     public List<ForumTopicDTO> getForumPage(
         @RequestParam int count,
         @RequestParam String locale,
@@ -43,7 +43,7 @@ public class ForumController {
     }
 
     @GetMapping("/topic")
-    @PermitAll
+    @PublicEndpoint
     public ForumTopicDTO getTopic(
         @RequestParam String topicOpenId
     ) {
@@ -52,7 +52,7 @@ public class ForumController {
 
     
     @PostMapping("/topic")
-    @PreAuthorize("hasAuthority('CREATE_FORUM_TOPIC')")
+    @RequiredPermission("CREATE_FORUM_TOPIC")
     public String createTopic(
         @RequestBody ForumTopicDTO topicDTO,
         @AuthenticationPrincipal UserAuthData authData
@@ -61,7 +61,7 @@ public class ForumController {
     }
 
     @PostMapping("/post")
-    @PreAuthorize("hasAuthority('CREATE_FORUM_POST')")
+    @RequiredPermission("CREATE_FORUM_POST")
     public String createPost(
         @RequestBody ForumPostDTO postDTO,
         @AuthenticationPrincipal UserAuthData authData
@@ -70,7 +70,7 @@ public class ForumController {
     }
 
     @PostMapping("/comment")
-    @PreAuthorize("hasAuthority('CREATE_FORUM_COMMENT')")
+    @RequiredPermission("CREATE_FORUM_COMMENT")
     public Long createComment(
         @RequestBody ForumCommentDTO ForumCommentDTO,
         @AuthenticationPrincipal UserAuthData authData
@@ -79,7 +79,7 @@ public class ForumController {
     }
 
     @DeleteMapping("/topic")
-    @PreAuthorize("hasAuthority('DELETE_FORUM_TOPIC')")
+    @RequiredPermission("DELETE_FORUM_TOPIC")
     public void deleteTopic(
         @RequestParam String topicOpenId,
         @AuthenticationPrincipal UserAuthData authData
@@ -88,7 +88,7 @@ public class ForumController {
     }
 
     @DeleteMapping("/post")
-    @PreAuthorize("hasAuthority('DELETE_FORUM_POST')")
+    @RequiredPermission("DELETE_FORUM_POST")
     public void deletePost(
         @RequestParam String postOpenId,
         @AuthenticationPrincipal UserAuthData authData
@@ -97,7 +97,7 @@ public class ForumController {
     }
 
     @DeleteMapping("/comment")
-    @PreAuthorize("hasAuthority('DELETE_FORUM_COMMENT')")
+    @RequiredPermission("DELETE_FORUM_COMMENT")
     public void deleteComment(
         @RequestParam Long commentId,
         @AuthenticationPrincipal UserAuthData authData
@@ -106,13 +106,13 @@ public class ForumController {
     }
 
     @GetMapping("/tags")
-    @PermitAll
+    @PublicEndpoint
     public List<CategoryDTO> getTopic() {
         return forumQueryService.getForumtags();
     }
 
     @GetMapping("/activity")
-    @PermitAll
+    @PublicEndpoint
     public List<ForumActivityItemDTO> getForumActivity() {
         return forumQueryService.getForumActivity();
     }

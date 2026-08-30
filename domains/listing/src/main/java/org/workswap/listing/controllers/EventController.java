@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +19,7 @@ import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
 import org.workswap.user.dto.ShortUserDTO;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class EventController {
     private final EventCommandService eventCommandService;
     
     @GetMapping("/{eventId}")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
+    @RequiredPermission("GET_LISTING_BY_ID")
     public EventDTO.Page getEventListing(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long eventId, 
@@ -45,7 +45,7 @@ public class EventController {
     }
     
     @GetMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('GET_EVENT_PARTICIPANTS')")
+    @RequiredPermission("GET_EVENT_PARTICIPANTS")
     public List<ShortUserDTO> getEventPaticipants(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long eventId
@@ -54,7 +54,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/participants/check")
-    @PreAuthorize("hasAuthority('CHECK_EVENT_PARTICIPANTS')")
+    @RequiredPermission("CHECK_EVENT_PARTICIPANTS")
     public boolean checkEventPaticipant(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long eventId
@@ -63,7 +63,7 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('ADD_EVENT_PARTICIPANT')")
+    @RequiredPermission("ADD_EVENT_PARTICIPANT")
     public void addEventPaticipant(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long eventId
@@ -72,7 +72,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('REMOVE_EVENT_PARTICIPANT')")
+    @RequiredPermission("REMOVE_EVENT_PARTICIPANT")
     public void removeEventPaticipant(
         @AuthenticationPrincipal UserAuthData authData, 
         @PathVariable Long eventId 
@@ -81,7 +81,7 @@ public class EventController {
     }
 
     @PatchMapping("/{eventId}/modify")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long eventId,
@@ -91,7 +91,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/settings")
-    @PreAuthorize("hasAuthority('GET_EVENT_SETTINGS')")
+    @RequiredPermission("GET_EVENT_SETTINGS")
     public EventDTO.Settings getEventSettings(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long eventId

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +28,11 @@ import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.listing.services.ListingCommandService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.ListingStorageService;
+import org.salavion.security.annotations.controllers.Authenticated;
+import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.dto.UserAuthData;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -45,7 +46,7 @@ public class ListingsController {
     private final ListingStorageService listingStorageService;
 
     @GetMapping("/{listingId}")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
+    @RequiredPermission("GET_LISTING_BY_ID")
     public ListingDTO.Full getListing(
             @AuthenticationPrincipal UserAuthData authData, 
             @PathVariable Long listingId, 
@@ -56,7 +57,7 @@ public class ListingsController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_LISTING')")
+    @RequiredPermission("CREATE_LISTING")
     public Long createListing(
             @RequestParam String type,
             @AuthenticationPrincipal UserAuthData authData
@@ -65,7 +66,7 @@ public class ListingsController {
     }
 
     @DeleteMapping("/{listingId}")
-    @PreAuthorize("hasAuthority('DELETE_LISTING')")
+    @RequiredPermission("DELETE_LISTING")
     public void deleteListing(
             @PathVariable Long listingId, 
             @AuthenticationPrincipal UserAuthData authData
@@ -74,7 +75,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/page")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
+    @RequiredPermission("GET_LISTING_BY_ID")
     public ListingDTO.Page getListingPage(
             @AuthenticationPrincipal UserAuthData authData, 
             @PathVariable Long listingId, 
@@ -85,7 +86,7 @@ public class ListingsController {
     }
 
     @PostMapping("/catalog") 
-    @PreAuthorize("hasAuthority('LOAD_CATALOG')")
+    @PublicEndpoint
     public CatalogRequest getSortedCatalog(
             @RequestBody CatalogFilterDTO filters,
             @RequestParam String locale,
@@ -95,7 +96,7 @@ public class ListingsController {
     }
 
     @GetMapping("/drafts")
-    @PreAuthorize("hasAuthority('VIEW_LISTINGS_DRAFTS')")
+    @RequiredPermission("VIEW_LISTINGS_DRAFTS")
     public List<ListingDTO.Full> getDraftListings(
             @AuthenticationPrincipal UserAuthData authData, 
             @RequestParam String locale
@@ -104,7 +105,7 @@ public class ListingsController {
     }
 
     @PostMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('FAVORITE_LISTING')")
+    @RequiredPermission("FAVORITE_LISTING")
     public void addFavorite(
             @PathVariable Long listingId, 
             @AuthenticationPrincipal UserAuthData authData
@@ -113,7 +114,7 @@ public class ListingsController {
     }
 
     @DeleteMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('FAVORITE_LISTING')")
+    @RequiredPermission("FAVORITE_LISTING")
     public void removeFavorite(
             @PathVariable Long listingId, 
             @AuthenticationPrincipal UserAuthData authData
@@ -122,7 +123,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('CHECK_FAVORITE_LISTING')")
+    @RequiredPermission("CHECK_FAVORITE_LISTING")
     public boolean isFavorite(
             @PathVariable Long listingId, 
             @AuthenticationPrincipal UserAuthData authData
@@ -131,7 +132,7 @@ public class ListingsController {
     }
 
     @PatchMapping("/{listingId}/publish")
-    @PreAuthorize("hasAuthority('PUBLISH_LISTING')")
+    @RequiredPermission("PUBLISH_LISTING")
     public void publishListing(
             @PathVariable Long listingId, 
             @AuthenticationPrincipal UserAuthData authData
@@ -140,7 +141,7 @@ public class ListingsController {
     }
 
     @GetMapping("/page")
-    @PreAuthorize("hasAuthority('GET_LISTINGS_LIST')")
+    @RequiredPermission("GET_LISTINGS_LIST")
     public Page<ListingDTO.Full> getListingsPage(
             @RequestParam int page, 
             @RequestParam int amount, 
@@ -151,7 +152,7 @@ public class ListingsController {
     }
 
     @GetMapping("/recent")
-    @PreAuthorize("hasAuthority('GET_RECENT_LISTINGS')")
+    @RequiredPermission("GET_RECENT_LISTINGS")
     public List<ListingDTO.Full> getRecentListings(
             @RequestParam int amount,
             @RequestParam String locale
@@ -160,7 +161,7 @@ public class ListingsController {
     }
 
     @GetMapping("/my-listings")
-    @PreAuthorize("hasAuthority('GET_OWN_LISTINGS')")
+    @RequiredPermission("GET_OWN_LISTINGS")
     public List<ListingDTO.Full> getMyListings(
             @AuthenticationPrincipal UserAuthData authData, 
             @RequestParam String locale
@@ -169,7 +170,7 @@ public class ListingsController {
     }
 
     @GetMapping("/by-user")
-    @PermitAll
+    @PublicEndpoint
     public List<ListingDTO.Full> getListingsByUser(
             @RequestParam Long userId, 
             @RequestParam String locale
@@ -178,7 +179,7 @@ public class ListingsController {
     }
 
     @GetMapping("/favorites")
-    @PreAuthorize("hasAuthority('GET_FAVORITES_LISTINGS')")
+    @RequiredPermission("GET_FAVORITES_LISTINGS")
     public List<ShortListingDTO> getFavorites(
             @AuthenticationPrincipal UserAuthData authData, 
             @RequestParam String locale
@@ -187,7 +188,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/images")
-    @PermitAll
+    @PublicEndpoint
     public List<ImageDTO> getImages(
             @PathVariable Long listingId
     ) {
@@ -195,7 +196,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/translations")
-    @PermitAll
+    @PublicEndpoint
     public Map<String, ListingTranslationDTO> getTranslations(
             @PathVariable Long listingId
     ) {
@@ -203,7 +204,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/token")
-    @PermitAll
+    @PublicEndpoint
     public String getToken(
             @AuthenticationPrincipal UserAuthData authData,
             @PathVariable Long listingId
@@ -212,7 +213,7 @@ public class ListingsController {
     }
 
     @PatchMapping("/{listingId}/modify")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
             @AuthenticationPrincipal UserAuthData authData,
             @PathVariable Long listingId,
@@ -222,7 +223,7 @@ public class ListingsController {
     }
 
     @PatchMapping("/{listingId}/modify/translations")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @RequiredPermission("UPDATE_LISTING")
     public Set<String> updateListingTranslations(
             @AuthenticationPrincipal UserAuthData authData,
             @PathVariable Long listingId,
@@ -232,6 +233,7 @@ public class ListingsController {
     }
 
     @PostMapping("/{listingId}/image")
+    @Authenticated
     public ImageDTO uploadListingImage(
             @RequestParam MultipartFile image,
             @PathVariable Long listingId,
@@ -241,6 +243,7 @@ public class ListingsController {
     }
 
     @DeleteMapping("/{listingId}/image/{imageId}")
+    @Authenticated
     public void deleteListingImage(
             @RequestParam Long imageId,
             @AuthenticationPrincipal UserAuthData authData
@@ -249,6 +252,7 @@ public class ListingsController {
     }
 
     @PostMapping("/{listingId}/auto-translate")
+    @Authenticated
     public ListingTranslationDTO autoTranslateListing(
             @PathVariable Long listingId,
             @RequestParam String lang,

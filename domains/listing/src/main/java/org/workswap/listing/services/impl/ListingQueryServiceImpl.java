@@ -115,7 +115,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
         logger.debug("Язык: {}", locale);
 
-        if (filters.translationsFilter()) {
+        if (filters.translationsFilter() && authData != null) {
             userRepository.findLanguagesByUserId(authData.id());
 
             if (!languages.contains(locale)) {

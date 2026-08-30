@@ -1,6 +1,5 @@
 package org.workswap.chat.controllers;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatQueryService;
+import org.salavion.security.annotations.controllers.Authenticated;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.dto.UserAuthData;
-
-import jakarta.annotation.security.PermitAll;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +25,7 @@ public class ChatController {
     private final ChatCommandService chatCommandService;
 
     @GetMapping("/listing-discussion")
-    @PermitAll
+    @Authenticated
     public Long getOrCreateListingDiscussion(
         @RequestParam Long listingId,
         @AuthenticationPrincipal UserAuthData authData
@@ -35,7 +34,7 @@ public class ChatController {
     }
 
     @GetMapping("/private-chat")
-    @PermitAll
+    @Authenticated
     public Long getOrCreatePrivateChat(
         @RequestParam Long interlocutorId,
         @AuthenticationPrincipal UserAuthData authData
@@ -44,7 +43,7 @@ public class ChatController {
     }
 
     @GetMapping("/event-chat")
-    @PermitAll
+    @Authenticated
     public Long getOrCreateEventChat(
         @RequestParam Long eventId,
         @AuthenticationPrincipal UserAuthData authData
@@ -53,7 +52,7 @@ public class ChatController {
     }
 
     @PatchMapping("/{chatid}/chat-terms")
-    @PreAuthorize("hasAuthority('CHAT_ACCEPT_TERMS')")
+    @RequiredPermission("CHAT_ACCEPT_TERMS")
     public boolean getTermsState(
         @PathVariable Long chatId, 
         @AuthenticationPrincipal UserAuthData authData
@@ -62,13 +61,13 @@ public class ChatController {
     }
 
     @PatchMapping("/{chatId}/accept-terms")
-    @PreAuthorize("hasAuthority('CHAT_ACCEPT_TERMS')")
+    @RequiredPermission("CHAT_ACCEPT_TERMS")
     public void acceptTerms(@PathVariable Long chatId, @AuthenticationPrincipal UserAuthData authData) {
         chatCommandService.acceptChatTerms(chatId, authData);
     }
 
     @DeleteMapping("/temporary")
-    @PreAuthorize("hasAuthority('CLEAR_TEMPORARY_CHATS')")
+    @RequiredPermission("CLEAR_TEMPORARY_CHATS")
     public void deleteTemporaryChat(@AuthenticationPrincipal UserAuthData authData) {
         chatCommandService.deleteTemporaryChats(authData);
     }

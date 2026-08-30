@@ -2,8 +2,9 @@ package org.workswap.location.controllers;
 
 import java.util.List;
 
+import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.workswap.location.dto.LocationDTO;
 import org.workswap.location.services.LocationCommandService;
 import org.workswap.location.services.LocationQueryService;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,31 +30,31 @@ public class LocationController {
     private final LocationRepository locationRepository;
 
     @GetMapping
-    @PermitAll
+    @PublicEndpoint
     public List<LocationDTO> getAllLocations() {
         return locationQueryService.getAllLocations();
     }
 
     @GetMapping("/countries")
-    @PermitAll
+    @PublicEndpoint
     public List<LocationDTO> getCountires() {
         return locationQueryService.getCountries();
     }
 
     @GetMapping("/cities/{coutryId}")
-    @PermitAll
+    @PublicEndpoint
     public List<LocationDTO> getCities(@PathVariable Long coutryId) {
         return locationQueryService.getCities(coutryId);
     }
 
     @GetMapping("/{locationId}/get")
-    @PermitAll
+    @PublicEndpoint
     public LocationDTO getLocation(@PathVariable Long locationId) {
         return locationQueryService.getLocation(locationId);
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_LOCATION')")
+    @RequiredPermission("CREATE_LOCATION")
     public Long createLocation(
         @RequestBody LocationDTO location
     ) {
@@ -62,7 +62,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/{locationId}")
-    @PreAuthorize("hasAuthority('DELETE_LOCATION')")
+    @RequiredPermission("DELETE_LOCATION")
     public void deleteLocation(@PathVariable Long locationId) {
         locationRepository.deleteById(locationId);
     }

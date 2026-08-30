@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(
 	scanBasePackages = {
 		"org.workswap", 
-		"org.salavion.security"
+		"org.salavion"
 	},
 	exclude = DataSourceAutoConfiguration.class
 )

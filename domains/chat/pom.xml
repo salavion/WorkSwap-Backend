@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
 			<groupId>org.salavion</groupId>
-			<artifactId>security-core</artifactId>
+			<artifactId>sso-core</artifactId>
 		</dependency>
 
         <dependency>

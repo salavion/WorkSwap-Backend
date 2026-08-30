@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +20,7 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.enums.TaskType;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskQueryService;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class TasksController {
     private final TaskCommandService taskCommandService;
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('CREATE_TASK')")
+    @RequiredPermission("CREATE_TASK")
     public TaskDTO createTask(
         @RequestBody TaskCreateDTO dto,
         @AuthenticationPrincipal UserAuthData authData
@@ -43,7 +43,7 @@ public class TasksController {
     }
 
     @PostMapping("/{taskId}/pickup")
-    @PreAuthorize("hasAuthority('PICKUP_TASK')")
+    @RequiredPermission("PICKUP_TASK")
     public void pickupTask(
         @PathVariable Long taskId, 
         @AuthenticationPrincipal UserAuthData authData
@@ -52,7 +52,7 @@ public class TasksController {
     }
 
     @PostMapping("/{taskId}/complete")
-    @PreAuthorize("hasAuthority('COMPLETE_TASK')")
+    @RequiredPermission("COMPLETE_TASK")
     public void completeTask(
         @PathVariable Long taskId, 
         @AuthenticationPrincipal UserAuthData authData
@@ -61,13 +61,13 @@ public class TasksController {
     }
 
     @PostMapping("/{taskId}/cancel")
-    @PreAuthorize("hasAuthority('CANCEL_TASK')")
+    @RequiredPermission("CANCEL_TASK")
     public void cancelTask(@PathVariable Long taskId) {
         taskCommandService.cancelTask(taskId);
     }
 
     @PostMapping("/{taskId}/comment")
-    @PreAuthorize("hasAuthority('CREATE_TASK_COMMENT')")
+    @RequiredPermission("CREATE_TASK_COMMENT")
     public void commentToTask(
         @PathVariable Long taskId,
         @RequestParam String commentContent,
@@ -77,7 +77,7 @@ public class TasksController {
     }
 
     @PostMapping("/comment/delete")
-    @PreAuthorize("hasAuthority('DELETE_TASK_COMMENT')")
+    @RequiredPermission("DELETE_TASK_COMMENT")
     public void deleteCommentToTask(
         @RequestParam Long commentId, 
         @AuthenticationPrincipal UserAuthData authData
@@ -86,7 +86,7 @@ public class TasksController {
     }
 
     @GetMapping("/metadata")
-    @PreAuthorize("hasAuthority('GET_TASK_METADATA')")
+    @RequiredPermission("GET_TASK_METADATA")
     public ResponseEntity<?> getTaskSettings() {
         return ResponseEntity.ok(Map.of(
             "taskStatusList", TaskStatus.values(), 
@@ -94,19 +94,19 @@ public class TasksController {
     }
 
     @GetMapping("/get-tasks")
-    @PreAuthorize("hasAuthority('GET_TASKS')")
+    @RequiredPermission("GET_TASKS")
     public TasksPageRequest getTasksPage(@AuthenticationPrincipal UserAuthData authData) {
         return taskQueryService.getTasksPage(authData);
     }
 
     @GetMapping("/{taskId}/details")
-    @PreAuthorize("hasAuthority('VIEW_TASK_DETAILS')")
+    @RequiredPermission("VIEW_TASK_DETAILS")
     public TaskDTO getTaskDetails(@PathVariable Long taskId) {
         return taskQueryService.getTaskDetails(taskId);
     }
 
     @GetMapping("/{taskId}/comments")
-    @PreAuthorize("hasAuthority('VIEW_TASK_COMMENTS')")
+    @RequiredPermission("VIEW_TASK_COMMENTS")
     public List<TaskCommentDTO> getTaskComments(@PathVariable Long taskId) {
         return taskQueryService.getTaskComments(taskId);
     }

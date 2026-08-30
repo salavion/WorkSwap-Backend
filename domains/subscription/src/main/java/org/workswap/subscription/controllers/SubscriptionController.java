@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.workswap.subscription.datasource.repository.SubscriptionRepository;
 import org.workswap.subscription.enums.SubscriptionType;
 import org.workswap.subscription.services.SubscriptionCommandService;
+import org.salavion.security.annotations.controllers.Authenticated;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/subscribe")
+@RequestMapping("/subscribe")
 @RequiredArgsConstructor
 public class SubscriptionController {
     
@@ -23,6 +24,7 @@ public class SubscriptionController {
     private final SubscriptionRepository subscriptionRepository;
 
     @PostMapping("/{targetId}/add")
+    @Authenticated
     public void subscribe(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long targetId,
@@ -32,6 +34,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/{targetId}/remove")
+    @Authenticated
     public void unsubscribe(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long targetId,
@@ -41,6 +44,7 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{targetId}/check")
+    @Authenticated
     public boolean checkSubscribtion(
         @AuthenticationPrincipal UserAuthData authData,
         @PathVariable Long targetId,

@@ -3,6 +3,7 @@ package org.workswap.listing.datasource.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         ProductType productType,
         String sortBy,
         Pageable pageable,
-        UserAuthData authData
+        Optional<UserAuthData> optAuthData
     ) {
         
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -65,7 +66,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         List<ShortListingDTO> content = Objects.requireNonNull(executeMainQuery(
             cb, categories, locationName, search, requireReviews,
             translationsFilter, languages, type, serviceType, productType,
-            sortBy, pageable, authData
+            sortBy, pageable, optAuthData
         ));
         
         // Подсчет общего количества
@@ -90,7 +91,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         ProductType productType,
         String sortBy,
         Pageable pageable,
-        UserAuthData authData
+        Optional<UserAuthData> optAuthData
     ) {
         
         CriteriaQuery<ShortListingDTO> query = cb.createQuery(ShortListingDTO.class);
@@ -103,8 +104,8 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         Subquery<Long> likesCountSubquery = buildLikesCountSubquery(cb, query, root);
         
         // Подзапрос для проверки "liked" [web:12]
-        Expression<Boolean> likedExpr = authData != null 
-            ? buildLikedExpression(cb, query, root, authData.id())
+        Expression<Boolean> likedExpr = optAuthData.isPresent() 
+            ? buildLikedExpression(cb, query, root, optAuthData.get().id())
             : cb.literal(false);
 
         // Projection

@@ -47,6 +47,8 @@ public class SecurityFilterService {
     }
 
     public boolean listingAuthorFilter(UserAuthData authData, Long listingId) {
+        if (authData == null) return false;
+        
         return listingRepository.existsByIdAndAuthorId(listingId, authData.id());
     }
 }

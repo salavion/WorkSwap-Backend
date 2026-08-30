@@ -3,9 +3,9 @@ package org.workswap.listing.controllers;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,7 +19,10 @@ import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
 import org.workswap.user.dto.ShortUserDTO;
+import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
+import org.salavion.security.annotations.parameters.OptionalAuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -34,9 +37,9 @@ public class EventController {
     private final EventCommandService eventCommandService;
     
     @GetMapping("/{eventId}")
-    @RequiredPermission("GET_LISTING_BY_ID")
+    @PublicEndpoint
     public EventDTO.Page getEventListing(
-        @AuthenticationPrincipal UserAuthData authData,
+        @OptionalAuthUser Optional<UserAuthData> authData,
         @PathVariable Long eventId, 
         @RequestParam(required = false) String token,
         @RequestParam String locale
@@ -47,7 +50,7 @@ public class EventController {
     @GetMapping("/{eventId}/participants")
     @RequiredPermission("GET_EVENT_PARTICIPANTS")
     public List<ShortUserDTO> getEventPaticipants(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         return eventQueryService.getEventParticipants(authData, eventId);
@@ -56,7 +59,7 @@ public class EventController {
     @GetMapping("/{eventId}/participants/check")
     @RequiredPermission("CHECK_EVENT_PARTICIPANTS")
     public boolean checkEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         return eventQueryService.existEventParticipant(authData, eventId);
@@ -65,7 +68,7 @@ public class EventController {
     @PostMapping("/{eventId}/participants")
     @RequiredPermission("ADD_EVENT_PARTICIPANT")
     public void addEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         eventCommandService.addEventParticipant(authData, eventId);
@@ -74,7 +77,7 @@ public class EventController {
     @DeleteMapping("/{eventId}/participants")
     @RequiredPermission("REMOVE_EVENT_PARTICIPANT")
     public void removeEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId 
     ) {
         eventCommandService.removeEventParticipant(authData, eventId);
@@ -83,7 +86,7 @@ public class EventController {
     @PatchMapping("/{eventId}/modify")
     @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long eventId,
         @RequestBody Map<String, Object> updates
     ) throws AccessDeniedException {
@@ -93,7 +96,7 @@ public class EventController {
     @GetMapping("/{eventId}/settings")
     @RequiredPermission("GET_EVENT_SETTINGS")
     public EventDTO.Settings getEventSettings(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long eventId
     ) {
         return eventQueryService.getEventSettingsDTO(authData, eventId);

@@ -1,6 +1,7 @@
 package org.workswap.forum.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
+import org.salavion.security.annotations.parameters.OptionalAuthUser;
 import org.salavion.security.dto.UserAuthData;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.forum.dto.ForumActivityItemDTO;
@@ -36,8 +39,7 @@ public class ForumController {
     public List<ForumTopicDTO> getForumPage(
         @RequestParam int count,
         @RequestParam String locale,
-        @RequestParam boolean translationsFilter,
-        @AuthenticationPrincipal UserAuthData authData
+        @RequestParam boolean translationsFilter
     ) {
         return forumQueryService.getForumPage(locale, translationsFilter, count);
     }
@@ -55,7 +57,7 @@ public class ForumController {
     @RequiredPermission("CREATE_FORUM_TOPIC")
     public String createTopic(
         @RequestBody ForumTopicDTO topicDTO,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return forumCommandService.createTopic(authData, topicDTO).getOpenId();
     }
@@ -64,7 +66,7 @@ public class ForumController {
     @RequiredPermission("CREATE_FORUM_POST")
     public String createPost(
         @RequestBody ForumPostDTO postDTO,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return forumCommandService.createPost(authData, postDTO.topicOpenId(), postDTO.content()).getOpenId();
     }
@@ -73,7 +75,7 @@ public class ForumController {
     @RequiredPermission("CREATE_FORUM_COMMENT")
     public Long createComment(
         @RequestBody ForumCommentDTO ForumCommentDTO,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return forumCommandService.createComment(authData, ForumCommentDTO.postOpenId(), ForumCommentDTO.content()).getId();
     }
@@ -82,7 +84,7 @@ public class ForumController {
     @RequiredPermission("DELETE_FORUM_TOPIC")
     public void deleteTopic(
         @RequestParam String topicOpenId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         forumCommandService.deleteTopic(authData, topicOpenId);
     }
@@ -91,7 +93,7 @@ public class ForumController {
     @RequiredPermission("DELETE_FORUM_POST")
     public void deletePost(
         @RequestParam String postOpenId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         forumCommandService.deletePost(authData, postOpenId);
     }
@@ -100,7 +102,7 @@ public class ForumController {
     @RequiredPermission("DELETE_FORUM_COMMENT")
     public void deleteComment(
         @RequestParam Long commentId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         forumCommandService.deleteComment(authData, commentId);
     }

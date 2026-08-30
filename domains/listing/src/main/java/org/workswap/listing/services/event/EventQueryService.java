@@ -1,6 +1,7 @@
 package org.workswap.listing.services.event;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.salavion.security.dto.UserAuthData;
 import org.workswap.listing.dto.EventDTO;
@@ -11,5 +12,5 @@ public interface EventQueryService {
 
     List<ShortUserDTO> getEventParticipants(UserAuthData authData, Long eventId);
     EventDTO.Settings getEventSettingsDTO(UserAuthData authData, Long eventId);
-    EventDTO.Page getEventPage(UserAuthData authData, String token, Long eventId, String locale);
+    EventDTO.Page getEventPage(Optional<UserAuthData> optAuthData, String token, Long eventId, String locale);
 }

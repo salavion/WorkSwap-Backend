@@ -3,7 +3,8 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,6 @@ import org.workswap.category.datasource.Category;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.category.services.CategoryFacade;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,13 +22,13 @@ public abstract class AbstractCategoryController<T extends Category> {
     protected final CategoryFacade<T> categoryService;
 
     @GetMapping("/all")
-    @PermitAll
+    @PublicEndpoint
     public List<CategoryDTO> categoryList() {
         return categoryService.getAllCategories();
     }
 
     @GetMapping("/{parentId}/children")
-    @PermitAll
+    @PublicEndpoint
     public List<CategoryDTO> getChildCategories(@PathVariable Long parentId, Locale locale) {
         return categoryService.toDTOList(
                     categoryService.getChildCategories(parentId)
@@ -36,27 +36,27 @@ public abstract class AbstractCategoryController<T extends Category> {
     }
 
     @GetMapping("/{categoryId}/is-leaf")
-    @PermitAll
+    @PublicEndpoint
     public boolean isLeafCategory(@PathVariable Long categoryId) {
         return categoryService.isLeafCategory(categoryId);
     }
 
     @GetMapping("/{categoryId}/path")
-    @PermitAll
+    @PublicEndpoint
     public List<CategoryDTO> getCategoryPath(@PathVariable Long categoryId, Locale locale) {
         return categoryService.toDTOList(
                     categoryService.getCategoryPath(categoryId)
                 );
     }
 
-    @PreAuthorize("hasAuthority('CREATE_CATEGORY')")
     @PostMapping
+    @RequiredPermission("CREATE_CATEGORY")
     public Long createCategory(@RequestBody CategoryDTO dto) {
         return categoryService.createCategory(dto);
     }
 
-    @PreAuthorize("hasAuthority('DELETE_CATEGORY')")
     @DeleteMapping("/{categoryId}")
+    @RequiredPermission("DELETE_CATEGORY")
     public void deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
     }

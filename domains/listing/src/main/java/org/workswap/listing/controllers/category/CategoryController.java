@@ -3,6 +3,7 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Map;
 
+import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +13,6 @@ import org.workswap.category.services.CategoryMappingService;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,13 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
     
     private final CategoryMappingService categoryMappingService;
-
-    //перенести сервис в сервис
     private final ServiceCategoryRepository serviceCategoryRepository;
     private final ProductCategoryRepository productCategoryRepository;
     
     @GetMapping("/all")
-    @PermitAll
+    @PublicEndpoint
     public Map<String, List<CategoryDTO>> categoryList() {
 
         List<CategoryDTO> sCategories = categoryMappingService.toDTOList(serviceCategoryRepository.findAll());

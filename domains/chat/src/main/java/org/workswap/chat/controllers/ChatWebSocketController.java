@@ -22,6 +22,7 @@ import org.workswap.user.dto.ShortUserDTO;
 import java.util.List;
 import java.util.Map;
 
+// TODO решить вопрос с защитой вебсокетных
 @Controller
 @RequiredArgsConstructor
 public class ChatWebSocketController {

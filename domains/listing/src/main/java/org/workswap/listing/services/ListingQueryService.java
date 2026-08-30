@@ -2,6 +2,7 @@ package org.workswap.listing.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,7 @@ public interface ListingQueryService {
     boolean isFavorite(UserAuthData authData, Long listingId);
 
     CatalogRequest getSortedCatalog(
-        UserAuthData authData, 
+        Optional<UserAuthData> optAuthData, 
         CatalogFilterDTO filters, 
         String locale
     );
@@ -34,7 +35,7 @@ public interface ListingQueryService {
     Map<String, ListingTranslationDTO> getTranslations(Long id);
     List<ImageDTO> getImages(Long id);
 
-    ListingDTO.Page getListingPage(UserAuthData authData, String token, Long id, String locale);
+    ListingDTO.Page getListingPage(Optional<UserAuthData> authData, String token, Long id, String locale);
     ShortListingDTO getCatalogListing(Long listingId, UserAuthData authData, String locale);
     ListingDTO.Full getListingDTO(Long listingId, UserAuthData authData, String locale);
 

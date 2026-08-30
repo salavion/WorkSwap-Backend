@@ -3,9 +3,8 @@ package org.workswap.listing.services.event.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -39,8 +38,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Profile("server")
 public class EventQueryServiceImpl implements EventQueryService {
-
-    private static final Logger logger = LoggerFactory.getLogger(EventQueryService.class);
 
     private final ListingRepository listingRepository;
 
@@ -88,15 +85,14 @@ public class EventQueryServiceImpl implements EventQueryService {
         }
     }
 
-    public EventDTO.Page getEventPage(UserAuthData authData, String token, Long eventId, String locale) {
+    public EventDTO.Page getEventPage(Optional<UserAuthData> optAuthData, String token, Long eventId, String locale) {
         if (eventId == null) {
             throw new IllegalStateException("ID событмя отсутствует");
         }
         Listing listing = listingRepository.findById(eventId).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NO_CONTENT, "Событие не найдено отсутствует"));
 
-        boolean isAuthor = securityFilterService.listingAuthorFilter(authData, eventId);
-        logger.debug("Пользователь является автором события? {}", isAuthor);
+        boolean isAuthor = false;
 
         Location loc = listing.getLocation();
         ListingTranslation translation = translationRepository.findBestTranslation(eventId, locale);
@@ -109,13 +105,19 @@ public class EventQueryServiceImpl implements EventQueryService {
 
         List<ShortUserDTO> participants = userMappingService.toShortDTOList(event.getParticipants());
 
-        eventPublisher.publishEvent(
-            new ListingViewedEvent(
-                authData.id(), 
-                eventId, 
-                authData.status().equals(UserStatus.TEMP), 
-                LocalDateTime.now()
-            ));
+        if (optAuthData.isPresent()) {
+            UserAuthData authData = optAuthData.get();
+
+            isAuthor = securityFilterService.listingAuthorFilter(authData, eventId);
+
+            eventPublisher.publishEvent(
+                new ListingViewedEvent(
+                    authData.id(), 
+                    eventId, 
+                    authData.status().equals(UserStatus.TEMP), 
+                    LocalDateTime.now()
+                ));
+        }
 
         ListingDTO.Full listingDto = new ListingDTO.Full(
             listing.getId(),

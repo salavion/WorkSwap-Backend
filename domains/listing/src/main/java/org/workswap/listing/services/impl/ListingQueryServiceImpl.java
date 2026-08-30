@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -106,7 +107,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     }
 
     public CatalogRequest getSortedCatalog(
-        UserAuthData authData, 
+        Optional<UserAuthData> optAuthData, 
         CatalogFilterDTO filters, 
         String locale
     ) {
@@ -115,8 +116,8 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
         logger.debug("Язык: {}", locale);
 
-        if (filters.translationsFilter() && authData != null) {
-            userRepository.findLanguagesByUserId(authData.id());
+        if (filters.translationsFilter() && optAuthData.isPresent()) {
+            userRepository.findLanguagesByUserId(optAuthData.get().id());
 
             if (!languages.contains(locale)) {
                 languages.add(locale);
@@ -177,7 +178,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
             productType,
             filters.sortBy(),
             pageable,
-            authData
+            optAuthData
         );
 
         List<Long> ids = listings.stream().map(l -> l.id()).toList();
@@ -278,7 +279,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         return mappingService.toDTOList(listings, locale);
     }
 
-    public ListingDTO.Page getListingPage(UserAuthData authData, String token, Long listingId, String locale) {
+    public ListingDTO.Page getListingPage(Optional<UserAuthData> optAuthData, String token, Long listingId, String locale) {
 
         if (listingId == null) {
             throw new IllegalStateException("ID объявления отсутствует");
@@ -287,7 +288,8 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         Listing listing = getListingById(listingId);
         ListingTranslation translation = translationRepository.findBestTranslation(listingId, locale);
 
-        securityFilterService.listingGetFilter(authData, listing, token);
+        securityFilterService.listingGetFilter(optAuthData.get(), listing, token);
+
         mappingService.setListingCategoryMeta(listing);
 
         Location loc = listing.getLocation();
@@ -296,13 +298,17 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         List<ImageDTO> images = listing.getImages().stream()
             .map(image -> new ImageDTO(image.getId(), listingId, mappingService.getImageLink(image))).toList();
 
-        eventPublisher.publishEvent(
-            new ListingViewedEvent(
-                authData.id(), 
-                listingId, 
-                authData.status().equals(UserStatus.TEMP), 
-                LocalDateTime.now()
-            ));
+        if (optAuthData.isPresent()) {
+            UserAuthData authData = optAuthData.get();
+            
+            eventPublisher.publishEvent(
+                new ListingViewedEvent(
+                    authData.id(), 
+                    listingId, 
+                    authData.status().equals(UserStatus.TEMP), 
+                    LocalDateTime.now()
+                ));
+        }
 
         return new ListingDTO.Page(
             new ListingDTO.Full(

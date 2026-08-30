@@ -12,6 +12,7 @@ import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatQueryService;
 import org.salavion.security.annotations.controllers.Authenticated;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ChatController {
     @Authenticated
     public Long getOrCreateListingDiscussion(
         @RequestParam Long listingId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return chatQueryService.getOrCreateListingDiscussion(authData, listingId).getId();
     }
@@ -37,7 +38,7 @@ public class ChatController {
     @Authenticated
     public Long getOrCreatePrivateChat(
         @RequestParam Long interlocutorId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return chatQueryService.getOrCreatePrivateChat(authData, interlocutorId).getId();
     }
@@ -46,7 +47,7 @@ public class ChatController {
     @Authenticated
     public Long getOrCreateEventChat(
         @RequestParam Long eventId,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return chatQueryService.getOrCreateEventChat(authData, eventId).getId();
     }
@@ -55,20 +56,20 @@ public class ChatController {
     @RequiredPermission("CHAT_ACCEPT_TERMS")
     public boolean getTermsState(
         @PathVariable Long chatId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return chatQueryService.isChatTermsAccepted(chatId, authData);
     }
 
     @PatchMapping("/{chatId}/accept-terms")
     @RequiredPermission("CHAT_ACCEPT_TERMS")
-    public void acceptTerms(@PathVariable Long chatId, @AuthenticationPrincipal UserAuthData authData) {
+    public void acceptTerms(@PathVariable Long chatId, @AuthUser UserAuthData authData) {
         chatCommandService.acceptChatTerms(chatId, authData);
     }
 
     @DeleteMapping("/temporary")
     @RequiredPermission("CLEAR_TEMPORARY_CHATS")
-    public void deleteTemporaryChat(@AuthenticationPrincipal UserAuthData authData) {
+    public void deleteTemporaryChat(@AuthUser UserAuthData authData) {
         chatCommandService.deleteTemporaryChats(authData);
     }
 }

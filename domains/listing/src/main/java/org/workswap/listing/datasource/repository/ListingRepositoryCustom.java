@@ -1,6 +1,7 @@
 package org.workswap.listing.datasource.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,6 @@ public interface ListingRepositoryCustom {
         ProductType productType,
         String sortBy,
         Pageable pageable,
-        UserAuthData authData
+        Optional<UserAuthData> optAuthData
     );
 }

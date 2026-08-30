@@ -3,11 +3,11 @@ package org.workswap.listing.controllers;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,6 +31,8 @@ import org.workswap.listing.services.ListingStorageService;
 import org.salavion.security.annotations.controllers.Authenticated;
 import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
+import org.salavion.security.annotations.parameters.OptionalAuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -48,7 +50,7 @@ public class ListingsController {
     @GetMapping("/{listingId}")
     @RequiredPermission("GET_LISTING_BY_ID")
     public ListingDTO.Full getListing(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @AuthUser UserAuthData authData, 
             @PathVariable Long listingId, 
             @RequestParam(required = false) String token,
             @RequestParam String locale
@@ -60,7 +62,7 @@ public class ListingsController {
     @RequiredPermission("CREATE_LISTING")
     public Long createListing(
             @RequestParam String type,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingCommandService.create(authData, type).getId();
     }
@@ -69,7 +71,7 @@ public class ListingsController {
     @RequiredPermission("DELETE_LISTING")
     public void deleteListing(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.delete(authData, listingId);
     }
@@ -77,7 +79,7 @@ public class ListingsController {
     @GetMapping("/{listingId}/page")
     @RequiredPermission("GET_LISTING_BY_ID")
     public ListingDTO.Page getListingPage(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @OptionalAuthUser Optional<UserAuthData> authData, 
             @PathVariable Long listingId, 
             @RequestParam(required = false) String token,
             @RequestParam String locale
@@ -90,7 +92,7 @@ public class ListingsController {
     public CatalogRequest getSortedCatalog(
             @RequestBody CatalogFilterDTO filters,
             @RequestParam String locale,
-            @AuthenticationPrincipal UserAuthData authData
+            @OptionalAuthUser Optional<UserAuthData> authData
     ) {
         return listingQueryService.getSortedCatalog(authData, filters, locale);
     }
@@ -98,7 +100,7 @@ public class ListingsController {
     @GetMapping("/drafts")
     @RequiredPermission("VIEW_LISTINGS_DRAFTS")
     public List<ListingDTO.Full> getDraftListings(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getDrafts(authData, locale);
@@ -108,7 +110,7 @@ public class ListingsController {
     @RequiredPermission("FAVORITE_LISTING")
     public void addFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.addListingToFavorite(authData, listingId);
     }
@@ -117,7 +119,7 @@ public class ListingsController {
     @RequiredPermission("FAVORITE_LISTING")
     public void removeFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.removeListingFromFavorite(authData, listingId);
     }
@@ -126,7 +128,7 @@ public class ListingsController {
     @RequiredPermission("CHECK_FAVORITE_LISTING")
     public boolean isFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingQueryService.isFavorite(authData, listingId);
     }
@@ -135,7 +137,7 @@ public class ListingsController {
     @RequiredPermission("PUBLISH_LISTING")
     public void publishListing(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.publish(authData, listingId);
     }
@@ -163,7 +165,7 @@ public class ListingsController {
     @GetMapping("/my-listings")
     @RequiredPermission("GET_OWN_LISTINGS")
     public List<ListingDTO.Full> getMyListings(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getOwnListingsByUser(authData, locale);
@@ -181,7 +183,7 @@ public class ListingsController {
     @GetMapping("/favorites")
     @RequiredPermission("GET_FAVORITES_LISTINGS")
     public List<ShortListingDTO> getFavorites(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getFavorites(authData, locale);
@@ -204,9 +206,9 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/token")
-    @PublicEndpoint
+    @Authenticated
     public String getToken(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId
     ) {
         return listingQueryService.getListingToken(authData, listingId);
@@ -215,7 +217,7 @@ public class ListingsController {
     @PatchMapping("/{listingId}/modify")
     @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId,
             @RequestBody Map<String, Object> updates
     ) throws AccessDeniedException {
@@ -225,7 +227,7 @@ public class ListingsController {
     @PatchMapping("/{listingId}/modify/translations")
     @RequiredPermission("UPDATE_LISTING")
     public Set<String> updateListingTranslations(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId,
             @RequestBody Map<String, ListingTranslationDTO> translations
     ) throws AccessDeniedException {
@@ -237,7 +239,7 @@ public class ListingsController {
     public ImageDTO uploadListingImage(
             @RequestParam MultipartFile image,
             @PathVariable Long listingId,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingStorageService.uploadListingImage(image, listingId, authData);
     }
@@ -246,7 +248,7 @@ public class ListingsController {
     @Authenticated
     public void deleteListingImage(
             @RequestParam Long imageId,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingStorageService.deleteListingImage(imageId, authData);
     }
@@ -257,7 +259,7 @@ public class ListingsController {
             @PathVariable Long listingId,
             @RequestParam String lang,
             @RequestParam(required = false) String preferedRefLang,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingCommandService.autoTranslateListing(authData, listingId, lang, preferedRefLang);
     }

@@ -73,6 +73,7 @@ public class QrSimpleController {
         // 5) Редирект на нужную страницу
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(java.net.URI.create("https://workswap.org/"));
+        
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 }

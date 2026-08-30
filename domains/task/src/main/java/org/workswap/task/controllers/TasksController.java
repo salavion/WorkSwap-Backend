@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +20,7 @@ import org.workswap.task.enums.TaskType;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskQueryService;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class TasksController {
     @RequiredPermission("CREATE_TASK")
     public TaskDTO createTask(
         @RequestBody TaskCreateDTO dto,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return taskCommandService.createTask(authData, dto);
     }
@@ -46,7 +46,7 @@ public class TasksController {
     @RequiredPermission("PICKUP_TASK")
     public void pickupTask(
         @PathVariable Long taskId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         taskCommandService.pickupTask(authData, taskId);
     }
@@ -55,7 +55,7 @@ public class TasksController {
     @RequiredPermission("COMPLETE_TASK")
     public void completeTask(
         @PathVariable Long taskId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         taskCommandService.completeTask(authData, taskId);
     }
@@ -71,7 +71,7 @@ public class TasksController {
     public void commentToTask(
         @PathVariable Long taskId,
         @RequestParam String commentContent,
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         taskCommandService.createComment(authData, taskId, commentContent);
     }
@@ -80,7 +80,7 @@ public class TasksController {
     @RequiredPermission("DELETE_TASK_COMMENT")
     public void deleteCommentToTask(
         @RequestParam Long commentId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         taskCommandService.deleteComment(authData, commentId);
     }
@@ -95,7 +95,7 @@ public class TasksController {
 
     @GetMapping("/get-tasks")
     @RequiredPermission("GET_TASKS")
-    public TasksPageRequest getTasksPage(@AuthenticationPrincipal UserAuthData authData) {
+    public TasksPageRequest getTasksPage(@AuthUser UserAuthData authData) {
         return taskQueryService.getTasksPage(authData);
     }
 

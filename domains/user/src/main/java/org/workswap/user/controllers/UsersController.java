@@ -3,11 +3,12 @@ package org.workswap.user.controllers;
 import java.util.List;
 import java.util.Map;
 
+import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
 import org.salavion.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,7 +26,6 @@ import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.UserDTO;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -38,70 +38,70 @@ public class UsersController {
     private final UserQueryService userQueryService;
 
     @PostMapping("/telegram")
-    @PreAuthorize("hasAuthority('CONNECT_TELEGRAM')")
-    public String telegramConnect(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("CONNECT_TELEGRAM")
+    public String telegramConnect(@AuthUser UserAuthData authData) {
         return userCommandService.connectTelegram(authData);
     }
 
     @GetMapping("/telegram")
-    @PreAuthorize("hasAuthority('CONNECT_TELEGRAM')")
-    public Boolean checkTelegramConnect(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("CONNECT_TELEGRAM")
+    public Boolean checkTelegramConnect(@AuthUser UserAuthData authData) {
         return userQueryService.checkTelegramConnect(authData);
     }
 
     @PostMapping("/accept-terms")
-    @PreAuthorize("hasAuthority('ACCEPT_TERMS')")
-    public void acceptTerms(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("ACCEPT_TERMS")
+    public void acceptTerms(@AuthUser UserAuthData authData) {
         userCommandService.acceptTerms(authData);
     }
 
     @DeleteMapping
-    @PreAuthorize("hasAuthority('DELETE_OWN_ACCOUNT')")
-    public void deleteAccount(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("DELETE_OWN_ACCOUNT")
+    public void deleteAccount(@AuthUser UserAuthData authData) {
         userCommandService.deleteUser(authData);
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('GET_CURRENT_USER')")
-    public UserDTO getCurrentUser(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("GET_CURRENT_USER")
+    public UserDTO getCurrentUser(@AuthUser UserAuthData authData) {
         return userQueryService.getCurrentUser(authData);
     }
 
     @GetMapping("/settings")
-    @PreAuthorize("hasAuthority('GET_CURRENT_USER_SETTINGS')")
-    public FullUserDTO getCurrentUserSettings(@AuthenticationPrincipal UserAuthData authData) {
+    @RequiredPermission("GET_CURRENT_USER_SETTINGS")
+    public FullUserDTO getCurrentUserSettings(@AuthUser UserAuthData authData) {
         return userQueryService.getFullUserDTO(authData);
     }
 
     @GetMapping("/{userId}")
-    @PermitAll
+    @PublicEndpoint
     public ShortUserDTO getUser(@PathVariable Long userId) {
         return userQueryService.getById(userId);
     }
 
     @GetMapping("/recent")
-    @PreAuthorize("hasAuthority('GET_RECENT_USERS')")
+    @RequiredPermission("GET_RECENT_USERS")
     public List<UserDTO> getRecentUsers(@RequestParam int amount) {
         return userQueryService.getRecentUsers(amount);
     }
 
     @PatchMapping("/modify")
-    @PreAuthorize("hasAuthority('UPDATE_USER_SETTINGS')")
+    @RequiredPermission("UPDATE_USER_SETTINGS")
     public void modifyUser(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @RequestBody Map<String, Object> updates
     ) {
         userCommandService.modifyUserParam(authData, updates);
     }
 
     @GetMapping("/{userOpenId}/profile")
-    @PermitAll
+    @PublicEndpoint
     public ShortUserProfileDTO getUserProfile(@PathVariable String userOpenId) {
         return userQueryService.getUserProfile(userOpenId);
     }
 
     @GetMapping("/{userOpenId}/full-info")
-    @PreAuthorize("hasAuthority('GET_FULL_USER_INFO')")
+    @RequiredPermission("GET_FULL_USER_INFO")
     public UserControlPageRequest getUserControlPage(
         @PathVariable String userOpenId
     ) {
@@ -109,7 +109,7 @@ public class UsersController {
     }
 
     @GetMapping("/list")
-    //@PreAuthorize("hasAuthority('GET_USERS_LIST')")
+    @RequiredPermission("GET_USERS_LIST")
     public Page<UserDTO> getUsersList(
         @RequestParam int size, 
         @RequestParam int page, 

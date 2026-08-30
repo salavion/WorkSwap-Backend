@@ -1,6 +1,5 @@
 package org.workswap.subscription.controllers;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +10,7 @@ import org.workswap.subscription.datasource.repository.SubscriptionRepository;
 import org.workswap.subscription.enums.SubscriptionType;
 import org.workswap.subscription.services.SubscriptionCommandService;
 import org.salavion.security.annotations.controllers.Authenticated;
+import org.salavion.security.annotations.parameters.AuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class SubscriptionController {
     @PostMapping("/{targetId}/add")
     @Authenticated
     public void subscribe(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long targetId,
         @RequestParam String type
     ) {
@@ -36,7 +36,7 @@ public class SubscriptionController {
     @PostMapping("/{targetId}/remove")
     @Authenticated
     public void unsubscribe(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long targetId,
         @RequestParam String type
     ) {
@@ -46,7 +46,7 @@ public class SubscriptionController {
     @GetMapping("/{targetId}/check")
     @Authenticated
     public boolean checkSubscribtion(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long targetId,
         @RequestParam String type
     ) {

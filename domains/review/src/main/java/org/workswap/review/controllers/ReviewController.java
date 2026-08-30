@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import org.workswap.review.services.ReviewCommandService;
 import org.workswap.review.services.ReviewQueryService;
 import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.salavion.security.annotations.parameters.AuthUser;
 import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ReviewController {
     public void addReview(
         @RequestParam(required = false) Long listingId,
         @RequestParam(required = false) Long profileId,
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @RequestParam String text,
         @RequestParam double rating
     ) {

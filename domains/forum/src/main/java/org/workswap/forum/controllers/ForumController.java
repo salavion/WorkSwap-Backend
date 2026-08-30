@@ -1,9 +1,7 @@
 package org.workswap.forum.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.salavion.security.annotations.controllers.PublicEndpoint;
 import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.annotations.parameters.OptionalAuthUser;
 import org.salavion.security.dto.UserAuthData;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.forum.dto.ForumActivityItemDTO;

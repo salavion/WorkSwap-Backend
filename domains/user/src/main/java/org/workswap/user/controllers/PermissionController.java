@@ -2,8 +2,8 @@ package org.workswap.user.controllers;
 
 import java.util.List;
 
+import org.salavion.security.annotations.controllers.RequiredPermission;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,25 +34,25 @@ public class PermissionController {
     private final UserRepository userRepository;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('GET_ALL_PERMISSIONS')")
+    @RequiredPermission("GET_ALL_PERMISSIONS")
     public List<PermissionDTO> getPermissions() {
         return permissionQueryService.getAllPermissionDtos();
     }
 
     @GetMapping("/roles")
-    @PreAuthorize("hasAuthority('GET_ALL_ROLES')")
+    @RequiredPermission("GET_ALL_ROLES")
     public List<RoleDTO> getRoles() {
         return permissionQueryService.getAllRoleDtos();
     }
 
     @GetMapping("/{roleId}/get")
-    @PreAuthorize("hasAuthority('GET_PERMISSIONS_BY_ROLE')")
+    @RequiredPermission("GET_PERMISSIONS_BY_ROLE")
     public List<PermissionDTO> getPermissionsByRole(@PathVariable Long roleId) {
         return permissionQueryService.getPermissionDtosByRole(roleId);
     }
 
     @PutMapping("/{roleId}/role")
-    @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
+    @RequiredPermission("MANAGE_PERMISSIONS")
     public void savePermissionsForRole(
         @PathVariable Long roleId,
         @RequestParam Long permissionId,
@@ -62,19 +62,19 @@ public class PermissionController {
     }
 
     @PostMapping("/role")
-    @PreAuthorize("hasAuthority('CREATE_ROLE')")
+    @RequiredPermission("CREATE_ROLE")
     public Long createRole(@RequestParam String roleName) {
         return permissionCommandSevice.createRole(roleName).getId();
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_PERMISSION')")
+    @RequiredPermission("CREATE_PERMISSION")
     public Long createPermission(@RequestParam String permissionName) {
         return permissionCommandSevice.createPermisson(permissionName).getId();
     }
 
     @PatchMapping("/{permissionId}")
-    @PreAuthorize("hasAuthority('UPDATE_PERMISSION')")
+    @RequiredPermission("UPDATE_PERMISSION")
     public void updatePermission(
         @PathVariable Long permissionId,
         @RequestParam(required = false) String name, 
@@ -84,13 +84,13 @@ public class PermissionController {
     }
 
     @PostMapping("/user/role")
-    @PreAuthorize("hasAuthority('ADD_USER_ROLE')")
+    @RequiredPermission("ADD_USER_ROLE")
     public void userAddRole(@RequestParam Long userId, @RequestParam Long roleId) {
         userRepository.addRoleToUser(userId, roleId);
     }
 
     @DeleteMapping("/user/role")
-    @PreAuthorize("hasAuthority('REMOVE_USER_ROLE')")
+    @RequiredPermission("REMOVE_USER_ROLE")
     public void userRemoveRole(@RequestParam Long userId, @RequestParam Long roleId) {
         userRepository.removeRoleFromUser(userId, roleId);
     }

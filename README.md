@@ -1,223 +1,336 @@
-# WorkSwap
+# WorkSwap Backend
 
-Alusta lisätyön, palveluiden, tuotteiden ja ansioluetteloiden etsimiseen.
+WorkSwap on alusta lisätyön, palveluiden, tuotteiden ja ansioluetteloiden etsimiseen.
 
-Projekti koostuu useista sovelluksista ja käyttöliittymistä.
+Tämä repositorio sisältää WorkSwap-alustan backend-osan. Backend on toteutettu Javalla ja Spring Bootilla, ja se on rakennettu vertikaalista arkkitehtuuria käyttäväksi monimoduuliseksi Maven-projektiksi.
+
+Frontend ja muut WorkSwap-ekosysteemin osat sijaitsevat erillisissä repositorioissa.
 
 ---
 
-**Teknologiat**
+## Teknologiat
 
-**Backend:**
+### Backend
 
 * Java 21
-* Spring Boot (Web, Security, Data JPA, OAuth2, WebSocket, AMQP)
+* Spring Boot
+
+  * Spring Web
+  * Spring Security
+  * Spring Data JPA
+  * Spring OAuth2
+  * Spring WebSocket
+  * Spring AMQP
 * Hibernate
-* MySQL / MariaDB (tietokanta palveluntarjoajan hallinnoimana)
-* RabbitMQ (erillinen VPS-kontti, itse hallinnoitu)
+* MySQL / MariaDB
+* RabbitMQ
 
-**Frontend:**
+### Tiedostojen tallennus
 
-* React (oma CSS, ilman Bootstrapia)
+Käyttäjien ja järjestelmän tiedostojen tallennukseen käytetään **Cloudflare R2** -objektitallennusta.
 
-**Integraatiot:**
-
-* Google OAuth2 (rekisteröinti ja kirjautuminen)
-
-**Reaaliaikaisuus:**
-
-* WebSocket (chat, ilmoitukset, dialogien päivitys)
-* RabbitMQ (asynkroniset tehtävät ja tapahtumajonot)
-
-**Lokalisointi:**
-
-* RU, EN, FI (`.properties` i18n-tiedostot)
-
-**Rakennus:**
+### Koonti
 
 * Maven
+* Multi-module Maven project
 
-**Käyttöönotto:**
+### Käyttöönotto
 
-* Backend: VPS (manuaalinen deploy `.jar`)
-* Frontend: GitHub (CI/CD, ilman manuaalista deployta)
-* RabbitMQ: erillinen VPS (kontti, itse konfiguroitu)
-* MariaDB: palveluntarjoajan tarjoama
+Sovellukset otetaan käyttöön **Dockerin** avulla.
 
 ---
 
-## Projektin arkkitehtuuri
+## Arkkitehtuuri
 
-* **Sovellukset:**
+Backend käyttää **vertikaalista arkkitehtuuria (Vertical Slice Architecture)**.
 
-  1. **Cloud (Pilvi)** — kaikkien sovellusten käyttämien tiedostojen tallennus ja käsittely
-  2. **API** — REST API tietojen käsittelyyn, jota käyttäjä käyttää saadakseen tietoja tietokannoista. Ainoa sovellus, joka on suorassa yhteydessä käyttäjään.
-  3. **Statistics (Tilastot)** — analytiikan kerääminen koko sivustolta
+Projektia ei ole jaettu ainoastaan teknisten kerrosten perusteella, vaan toiminnallisuus on organisoitu erillisiin toimialueisiin. Jokainen toimialue sisältää siihen liittyvät komponentit ja liiketoimintalogiikan.
 
-* **Kirjastot:**
+Projekti on myös monimoduulinen Maven-projekti. Sovellukset koostetaan uudelleenkäytettävistä moduuleista.
 
-  1. **Core** — ydin, jota kaikki sovellukset käyttävät. Sisältää datan käsittelypalvelut ja yleiset konfiguraatioluokat
-  2. **Datasource** — moduuli tietokantamallien konfigurointiin. Sisältää kaikki mallit ja niiden repositoriot
-  3. **Common** — kirjasto, joka sisältää DTO-luokat ja Enum-luokat objektien tyypittämiseen
+Projektin pääasiallinen rakenne:
 
-* **Frontend:**
-
-  1. **Admin** — hallinta- ja moderointisivusto
-  2. **Production** — julkinen sivusto käyttäjille
+```text
+/
+├── apps/
+│   ├── server/
+│   └── statistic/
+│
+├── domains/
+│   ├── category/
+│   ├── chat/
+│   ├── forum/
+│   ├── listing/
+│   ├── location/
+│   ├── notification/
+│   ├── order/
+│   ├── review/
+│   ├── statistic/
+│   ├── subscription/
+│   ├── task/
+│   └── user/
+│
+└── infrastructure/
+    ├── datasource/
+    ├── security/
+    ├── shared/
+    ├── storage/
+    └── webflux/
+```
 
 ---
 
 ## Sovellukset
 
-### 1. Cloud
+Hakemisto `/apps/` sisältää suoritettavat sovellukset.
 
-* Tarkoitus: tiedostojen tallennus ja käsittely: ilmoituskuvat, avatarit, käyttöehtojen ja tietosuojakäytäntöjen tekstitiedostot kaikilla kielillä.
-* Teknologiat:
+Molemmat sovellukset käyttävät tarvittavia toimialue- ja infrastruktuurimoduuleja Maven-riippuvuuksina.
 
-  * Spring Boot (sovelluksen yleinen toiminta)
-  * ImageIO (kuvien pakkaus)
-* Päätoiminnot:
+### Server
 
-  * Käyttäjäkuvien ja muiden sivustotiedostojen vastaanotto, pakkaus, käsittely ja tallennus
+WorkSwapin pääasiallinen backend-sovellus.
 
-### 2. API
+Server toimii alustan pääasiallisena API-sovelluksena ja vastaa asiakaspyyntöjen käsittelystä sekä liiketoimintalogiikan suorittamisesta.
 
-* Tarkoitus: käyttäjän tietopyyntöjen käsittely ja vastausten lähetys tietokannoista
-* Teknologiat:
+Käytetyt teknologiat:
 
-  * Spring Boot
-  * WebSocket (chat)
-  * RabbitMQ (yhteys tilastosovellukseen)
-* Päätoiminnot:
+* Spring Boot
+* Spring Web
+* Spring Security
+* Spring Data JPA
+* Spring OAuth2
+* Spring WebSocket
+* Spring AMQP
+* Hibernate
+* MySQL / MariaDB
+* RabbitMQ
 
-  * Käyttäjältä saatujen tietojen käsittely ja tallennus
-  * Hakujen suorittaminen tietokannoista ja tietojen palauttaminen käyttäjälle
-  * Messengerin toteutus WebSocketin avulla
-  * Komentojen säännöllinen lähetys tilastosovellukseen
+Päätehtävät:
 
-### 3. Statistics
+* REST API -pyyntöjen käsittely;
+* autentikointi ja autorisointi;
+* käyttäjien hallinta;
+* ilmoitusten hallinta;
+* tilausten käsittely;
+* arvostelujen hallinta;
+* chat-toiminnallisuus;
+* ilmoitusten käsittely;
+* tilausten ja tilaustietojen hallinta;
+* foorumin toiminnallisuus;
+* muiden toimialueiden käsittely;
+* tiedostojen hallinta Cloudflare R2 -tallennuksessa;
+* viestien välitys RabbitMQ:n kautta;
+* WebSocket-yhteyksien käsittely.
 
-* Tarkoitus: analytiikan kerääminen ja käsittely kaikista sivuston tietokannoista
-* Teknologiat:
+### Statistic
 
-  * Spring Boot
-  * RabbitMQ (yhteys API-sovellukseen)
-* Päätoiminnot:
+Erillinen sovellus tilastotietojen käsittelyä varten.
 
-  * Tietokantojen säännöllinen skannaus ja tilastojen tallennus
-  * Jokaisen ilmoituksen tilastojen snapshot-tallennus
-  * Online-käyttäjämäärän snapshot-tallennus
+Statistic käyttää `statistic`-toimialuemoduulia sekä tarvittavia infrastruktuurimoduuleja.
 
----
+Sovelluksen päätehtävänä on alustan tilastotietojen käsittely ja tallennus sekä analytiikkaan liittyvien toimintojen suorittaminen.
 
-## Frontend
-
-### Admin Panel
-
-* Tarkoitus: pääsovelluksen hallinta
-* Teknologiat:
-
-  * React
-* Päätoiminnot:
-
-  * Käyttäjien moderointi
-  * Ilmoitusten moderointi
-  * Arvostelujen moderointi
-  * Roolien ja oikeuksien hallinta
-  * Kategorioiden hallinta (lisäys, muokkaus)
-  * Sijaintien hallinta (lisäys, muokkaus)
-  * Sivustotiimin tehtäväpalvelu
-
-### Prod Frontend
-
-* Tarkoitus: käyttäjäsivusto
-* Teknologiat:
-
-  * React
-  * i18nNext (lokalisointi)
-* Päätoiminnot:
-
-  * Ilmoituskatalogin selaus
-  * Ilmoitusten luonti ja muokkaus
-  * Oman tilin hallinta
+Muiden järjestelmän komponenttien kanssa kommunikointiin käytetään RabbitMQ:ta.
 
 ---
 
-## Tietokanta
+## Toimialueet
 
-* **Center**
-  Pääentiteetit:
+Hakemisto `/domains/` sisältää järjestelmän toimialuekohtaiset moduulit.
 
-  * User
-  * UserSettings
-  * Permission
-  * Role
-  * Listing
-  * ListingTranslation
-  * Category
-  * Location
-  * Image
-  * Review
-  * Report
-  * Resume
-  * Chat
-  * ChatPartizipant
-  * Message
-  * News
-  * NewsTranslation
+Jokainen moduuli edustaa erillistä liiketoiminta-aluetta ja kapseloi siihen liittyvän liiketoimintalogiikan.
 
-* **Admin**
-  Pääentiteetit:
+### Category
 
-  * Task
-  * TaskComment
+Ilmoitusten ja muiden alustan kategorioiden hallinta.
 
-* **Stats**
-  Pääentiteetit:
+### Chat
 
-  * ListingView
-  * ListingStatSnapshot
-  * OnlineStatSnapshot
+Keskustelujen ja käyttäjien välisen viestinnän toiminnallisuus.
 
----
+### Forum
 
-## Projektin käynnistys
+Foorumin ja siihen liittyvien entiteettien toiminnallisuus.
 
-### Cloud
+### Listing
 
-1. Asenna Java 21
-2. Lataa ydin
-3. Lataa konfiguraatio
-4. Lataa SSL-avaimet
-5. Käynnistä sovellus
+Ilmoitusten hallinta.
 
-### API
+Sisältää ilmoitusten luomisen, muokkaamisen, julkaisemisen, hakemisen ja muut ilmoituksiin liittyvät toiminnot.
 
-1. Asenna Java 21
-2. Lataa ydin
-3. Lataa konfiguraatio
-4. Lataa SSL-avaimet
-5. Käynnistä sovellus
+### Location
 
-### Statistics
+Alustan käyttämien maantieteellisten sijaintien hallinta.
 
-1. Asenna Java 21
-2. Lataa ydin
-3. Lataa konfiguraatio
-4. Käynnistä sovellus
+### Notification
 
-### Frontend (Admin / Prod)
+Käyttäjien ilmoitusten hallinta.
 
-1. Asenna Node.js
-2. Liitä GitHub ja aseta Main-haara
-3. Käynnistä sivusto
+### Order
+
+Tilausten ja niihin liittyvien toimintojen hallinta.
+
+### Review
+
+Käyttäjien kirjoittamien arvostelujen hallinta.
+
+### Statistic
+
+Tilastoihin ja analytiikkaan liittyvä liiketoimintalogiikka.
+
+### Subscription
+
+Käyttäjien tilausten ja niihin liittyvien toimintojen hallinta.
+
+### Task
+
+Tehtävien ja niihin liittyvien toimintojen hallinta.
+
+### User
+
+Käyttäjien, heidän tietojensa ja niihin liittyvien entiteettien hallinta.
 
 ---
 
-## Kehityssuunnitelmat
+## Infrastruktuuri
 
-* Lisätä käyttäjän varoitus ennen chatin aloittamista
-* Lisätä mahdollisuus ilmoittaa ilmoituksesta
-* Lisätä mahdollisuus poistaa ilmoituksen arvostelu
-* Lisätä mahdollisuus ladata avatar
-* Siirtää chat erilliseen sovellukseen, joka kirjoitetaan GoLangilla
+Hakemisto `/infrastructure/` sisältää tekniset moduulit, joita toimialuemoduulit ja sovellukset käyttävät.
+
+Infrastruktuurikomponentit eivät kuulu tiettyyn liiketoiminta-alueeseen, vaan tarjoavat järjestelmän tarvitsemia yleisiä teknisiä toimintoja.
+
+### Datasource
+
+Tietokantayhteyksistä ja tietokantaan liittyvistä komponenteista vastaava moduuli.
+
+Sisältää MySQL / MariaDB -tietokantojen ja Hibernateen liittyvän toiminnallisuuden.
+
+### Security
+
+Sovelluksen tietoturvasta vastaava moduuli.
+
+Sisältää yleiset komponentit, jotka liittyvät:
+
+* Spring Securityyn;
+* OAuth2:een;
+* autentikointiin;
+* autorisointiin;
+* tokenien käsittelyyn;
+* API:n suojaamiseen.
+
+### Shared
+
+Projektin eri moduulien yhteiset komponentit.
+
+Moduuli on tarkoitettu komponenteille, jotka eivät kuulu tiettyyn toimialueeseen tai yksittäiseen infrastruktuurimekanismiin.
+
+### Storage
+
+Tiedostojen tallennukseen liittyvät abstraktiot ja toteutukset.
+
+Moduulia käytetään Cloudflare R2 -objektitallennuksen kanssa kommunikointiin.
+
+### WebFlux
+
+Spring WebFlux -reaktiiviseen HTTP-teknologiaan liittyvät yhteiset komponentit.
+
+---
+
+## Moduulirakenne
+
+Projekti käyttää **Maven Multi-Module Architecture** -rakennetta.
+
+Hakemiston `/apps/` sovellukset eivät sisällä kaikkea liiketoimintalogiikkaa itse. Ne koostetaan erillisistä toimialue- ja infrastruktuurimoduuleista.
+
+Moduulien väliset varsinaiset riippuvuudet määritellään projektin Maven-konfiguraatiossa.
+
+Tämä rakenne mahdollistaa:
+
+* toimialueiden eristämisen;
+* toimialuemoduulien uudelleenkäytön eri sovelluksissa;
+* liiketoimintalogiikan ja infrastruktuurin erottamisen;
+* moduulien välisen riippuvuuden vähentämisen;
+* sovellusten koostamisen ainoastaan tarvittavista moduuleista;
+* projektin eri osien itsenäisemmän kehittämisen.
+
+---
+
+## Ulkoiset palvelut
+
+Backend kommunikoi useiden ulkoisten infrastruktuuripalveluiden kanssa.
+
+### MySQL / MariaDB
+
+Projektin pääasiallinen relaatiotietokanta.
+
+Tietokannan kanssa työskentelyyn käytetään:
+
+* Spring Data JPA:ta;
+* Hibernatea.
+
+### RabbitMQ
+
+RabbitMQ:ta käytetään asynkroniseen viestien välitykseen ja sovellusten väliseen kommunikointiin.
+
+Sitä käytetään erityisesti `Server`- ja `Statistic`-sovellusten väliseen tiedonsiirtoon.
+
+### Cloudflare R2
+
+Cloudflare R2 toimii projektin objektitallennuksena.
+
+Sitä käytetään tiedostoille, joita ei ole tarkoituksenmukaista tallentaa suoraan relaatiotietokantaan.
+
+---
+
+## Käyttöönotto
+
+Sovellukset suoritetaan Docker-konteissa.
+
+Molemmat sovellukset voidaan rakentaa ja käynnistää itsenäisesti niiden Maven-moduulien ja Docker-konfiguraation mukaisesti.
+
+---
+
+## Tietokanta-arkkitehtuuri
+
+Projektissa käytetään kahta erillistä tietokantaa, joilla on eri käyttötarkoitukset.
+
+### Pääasiallinen tietokanta
+
+Pääasiallinen tietokanta sisältää WorkSwapin ydintiedot ja sovelluksen päivittäiseen toimintaan tarvittavat tiedot.
+
+Tietokantaan tallennetaan esimerkiksi:
+
+* käyttäjät ja heidän asetuksensa;
+* ilmoitukset;
+* kategoriat ja sijainnit;
+* tilaukset;
+* arvostelut;
+* viestit ja chatit;
+* ilmoitukset;
+* muut sovelluksen päätoiminnallisuuteen liittyvät tiedot.
+
+Tätä tietokantaa käytetään pääasiassa `Server`-sovelluksen kautta.
+
+### Tilastotietokanta
+
+Erillinen tietokanta on tarkoitettu tilastoille, analytiikalle sekä suurille tietomäärille, joita ei ole tarkoituksenmukaista säilyttää pääasiallisessa tietokannassa.
+
+Se sisältää esimerkiksi:
+
+* ilmoitusten katselutapahtumia;
+* tilastollisia snapshot-tietoja;
+* käyttäjien aktiivisuuteen liittyviä tietoja;
+* muita analytiikkaan liittyviä tapahtuma- ja historiatietoja.
+
+Tilastotietokannassa voidaan säilyttää huomattavasti yksityiskohtaisempaa ja suurempaa tietomäärää kuin pääasiallisessa tietokannassa. Tällaiset tiedot ovat hyödyllisiä analytiikkaa varten, mutta eivät välttämättä ole tarpeellisia yksittäisen pääentiteetin päivittäisessä käsittelyssä.
+
+`Statistic`-sovellus vastaa tämän tietokannan käsittelystä ja analytiikan muodostamisesta.
+
+Tietokantojen erottaminen vähentää pääasiallisen tietokannan kuormitusta ja mahdollistaa suurten analytiikka- ja historiatietomäärien käsittelyn vaikuttamatta merkittävästi sovelluksen päätoimintoihin.
+
+---
+
+## Projektin tila
+
+Projekti on aktiivisessa kehityksessä.
+
+Uusia toiminnallisuuksia ja muutoksia lisätään projektin kehittymisen myötä.

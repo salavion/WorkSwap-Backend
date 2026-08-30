@@ -1,12 +1,11 @@
 package org.workswap.security.config;
 
 import jakarta.servlet.MultipartConfigElement;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-import org.salavion.security.service.CookieBearerTokenResolver;
+import org.salavion.security.service.JwtAuthenticationFilter;
 import org.springframework.boot.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.workswap.datasource.testers.HttpRequestStatisticsFilter;
-import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
 
 @Configuration
 @EnableWebSecurity
@@ -32,8 +30,8 @@ import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
 public class SecurityConfig {
     
     private final CorsConfig corsConfig;
-    private final CachedPermissionsJwtTokenConverter jwtTokenConverter;
     private final HttpRequestStatisticsFilter statisticFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationConverter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,20 +46,10 @@ public class SecurityConfig {
                 // для вызова методов вебсокета
                 .requestMatchers( "/app/**").authenticated()
 
-                .requestMatchers("/learn").permitAll()
-
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .bearerTokenResolver(new CookieBearerTokenResolver("accessToken"))
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtTokenConverter))
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\":\"unauthorized\"}");
-                })
-            )
+            .addFilterBefore(jwtAuthenticationConverter, AuthorizationFilter.class)
             .addFilterBefore(statisticFilter, AuthorizationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

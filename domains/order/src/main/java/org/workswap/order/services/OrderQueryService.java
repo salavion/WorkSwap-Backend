@@ -1,7 +1,7 @@
 package org.workswap.order.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.order.dto.OrderDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface OrderQueryService {
     

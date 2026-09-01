@@ -6,8 +6,8 @@ import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.ChatDetails;
 import org.workswap.chat.dto.MessageDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
-import org.workswap.security.dto.UserAuthData;
 
 public interface ChatQueryService {
     

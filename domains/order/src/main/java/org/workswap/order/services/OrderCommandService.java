@@ -1,9 +1,9 @@
 package org.workswap.order.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.order.dto.OrderDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 public interface OrderCommandService {

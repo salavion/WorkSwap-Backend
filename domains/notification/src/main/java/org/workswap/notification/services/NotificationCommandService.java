@@ -1,9 +1,9 @@
 package org.workswap.notification.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.notification.dto.FullNotificationDTO;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface NotificationCommandService {
     

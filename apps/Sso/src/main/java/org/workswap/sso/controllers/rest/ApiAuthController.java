@@ -2,10 +2,6 @@ package org.workswap.sso.controllers.rest;
 
 import java.io.IOException;
 
-import org.workswap.security.annotations.controllers.Authenticated;
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +17,10 @@ import org.workswap.sso.core.user.UserCommandService;
 import org.workswap.sso.dto.AuthResponse;
 import org.workswap.sso.dto.LoginRequest;
 import org.workswap.sso.dto.RegisterRequest;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -3,14 +3,14 @@ package org.workswap.security.service;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.UserStatus;
-import org.workswap.security.jwt.JwtAuthenticationConverter;
-import org.workswap.security.jwt.UserJwtAuthenticationToken;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
+import org.workswap.sso.security.jwt.JwtAuthenticationConverter;
+import org.workswap.sso.security.jwt.UserJwtAuthenticationToken;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,6 @@
 package org.workswap.task.services;
 
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.task.dto.TaskCreateDTO;
 import org.workswap.task.dto.TaskDTO;
 

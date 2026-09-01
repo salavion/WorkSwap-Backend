@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-import org.workswap.security.service.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.workswap.sso.core.security.oauth.CustomOAuth2FailureHandler;
 import org.workswap.sso.core.security.oauth.CustomOAuth2SuccessHandler;
+import org.workswap.sso.security.service.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity

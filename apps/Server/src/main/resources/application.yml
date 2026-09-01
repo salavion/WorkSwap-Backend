@@ -11,8 +11,10 @@ spring:
     group:
       dev:
         - server
+        - api
       prod:
         - server
+        - api
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
   web:

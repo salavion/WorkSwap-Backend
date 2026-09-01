@@ -3,11 +3,11 @@ package org.workswap.task.services.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.task.datasource.model.Task;
 import org.workswap.task.datasource.repository.TaskCommentRepository;
 import org.workswap.task.datasource.repository.TaskRepository;

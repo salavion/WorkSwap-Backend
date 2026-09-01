@@ -2,7 +2,6 @@ package org.workswap.forum.services.impl;
 
 import java.util.Optional;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import org.workswap.forum.dto.ForumTopicDTO;
 import org.workswap.forum.services.ForumCommandService;
 import org.workswap.shared.locale.LanguageMapper;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 import com.github.pemistahl.lingua.api.LanguageDetector;

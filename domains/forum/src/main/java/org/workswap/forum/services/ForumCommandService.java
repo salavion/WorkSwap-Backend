@@ -1,10 +1,10 @@
 package org.workswap.forum.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.forum.datasource.model.ForumComment;
 import org.workswap.forum.datasource.model.ForumPost;
 import org.workswap.forum.datasource.model.ForumTopic;
 import org.workswap.forum.dto.ForumTopicDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface ForumCommandService {
     ForumTopic createTopic(UserAuthData authData, ForumTopicDTO topicDto);

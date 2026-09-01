@@ -3,7 +3,6 @@ package org.workswap.listing.services.impl;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.workswap.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -19,6 +18,7 @@ import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingStorageService;
 import org.workswap.listing.services.SecurityFilterService;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.storage.ImageStorageService;
 import org.workswap.storage.S3StorageService;
 import org.workswap.storage.util.HashUtil;

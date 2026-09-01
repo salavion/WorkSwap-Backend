@@ -2,6 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "SsoApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.sso.SsoApplication",
+            "projectName": "sso"
+        },
+        {
+            "type": "java",
+            "name": "StatisticApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.statistic.StatisticApplication",
+            "projectName": "statistic"
+        },
+        {
+            "type": "java",
+            "name": "ServerApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.ServerApplication",
+            "projectName": "server"
+        },
+        {
             "name": "Server",
             "type": "node-terminal",
             "request": "launch",

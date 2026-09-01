@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.enums.ListingType;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.subscription.datasource.model.Subscription;
 import org.workswap.subscription.datasource.repository.SubscriptionRepository;
 import org.workswap.subscription.enums.SubscriptionType;
 import org.workswap.subscription.services.SubscriptionCommandService;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.workswap.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityManager;
 

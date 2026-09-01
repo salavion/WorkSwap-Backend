@@ -1,9 +1,9 @@
 package org.workswap.sso.core.user;
 
-import org.workswap.security.dto.UserInfoDTO;
 import org.springframework.stereotype.Service;
 import org.workswap.sso.datasource.model.User;
 import org.workswap.sso.datasource.repository.UserRepository;
+import org.workswap.sso.security.dto.UserInfoDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -35,15 +35,13 @@ import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.shared.events.listing.ListingDeletedEvent;
 import org.workswap.shared.locale.LanguageMapper;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 import com.github.pemistahl.lingua.api.LanguageDetector;
 import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 
 import jakarta.persistence.EntityManager;
-
-import org.workswap.security.dto.UserAuthData;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -3,8 +3,8 @@ package org.workswap.listing.services.event;
 import java.util.List;
 import java.util.Optional;
 
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.listing.dto.EventDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
 
 public interface EventQueryService {

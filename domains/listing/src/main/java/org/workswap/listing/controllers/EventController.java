@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.annotations.parameters.OptionalAuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.controllers.RequiredPermission;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.annotations.parameters.OptionalAuthUser;
-import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

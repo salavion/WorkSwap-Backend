@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.datasource.repository.UserSettingsRepository;
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.UserStatus;
 import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.ShortUserDTO;

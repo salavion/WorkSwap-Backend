@@ -1,6 +1,5 @@
 package org.workswap.user.datasource.repository;
 
-import org.workswap.security.enums.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.workswap.user.datasource.model.permission.Role;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 
 import java.time.LocalDateTime;

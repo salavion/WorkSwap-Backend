@@ -5,10 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.AuthProvider;
-import org.workswap.security.enums.UserStatus;
-import org.workswap.security.service.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,6 +20,10 @@ import org.workswap.sso.dto.AuthResponse;
 import org.workswap.sso.dto.LoginRequest;
 import org.workswap.sso.dto.RegisterRequest;
 import org.workswap.sso.dto.UserDeviceDTO;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.AuthProvider;
+import org.workswap.sso.security.enums.UserStatus;
+import org.workswap.sso.security.service.JwtService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

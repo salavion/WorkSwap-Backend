@@ -5,8 +5,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.stereotype.Service;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;

@@ -2,13 +2,13 @@ package org.workswap.statistic.sheduler;
 
 import java.time.LocalDateTime;
 
-import org.workswap.security.enums.UserStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.workswap.statistic.dto.UsersStatSnapshotDTO;
-import org.workswap.statistic.ampq.producers.UsersStatProducer;
+import org.workswap.sso.security.enums.UserStatus;
+import org.workswap.statistic.amqp.producers.UsersStatProducer;
 import org.workswap.user.datasource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;

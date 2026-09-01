@@ -3,7 +3,6 @@ package org.workswap.sso.core.security.service;
 import java.time.Duration;
 import java.util.Objects;
 
-import org.workswap.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.workswap.sso.core.security.jwt.JwtIssuer;
 import org.workswap.sso.datasource.model.User;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import com.nimbusds.jose.JOSEException;
 

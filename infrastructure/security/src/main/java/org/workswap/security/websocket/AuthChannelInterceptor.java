@@ -24,9 +24,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.service.JwtService;
 import org.workswap.user.services.OnlineCounter;
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
 

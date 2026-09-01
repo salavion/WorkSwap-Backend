@@ -3,7 +3,6 @@ package org.workswap.chat.services.impl;
 import java.util.List;
 import java.util.Objects;
 
-import org.workswap.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +16,7 @@ import org.workswap.chat.enums.ChatStatus;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatMappingService;
 import org.workswap.chat.services.ChatQueryService;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.datasource.model.Message;
 import org.workswap.chat.datasource.repository.ChatParticipantRepository;

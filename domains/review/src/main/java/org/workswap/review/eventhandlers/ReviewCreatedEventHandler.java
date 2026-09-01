@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.workswap.review.ampq.ReviewProducer;
+import org.workswap.review.amqp.ReviewProducer;
 import org.workswap.shared.events.review.ReviewCreatedEvent;
 
 import lombok.RequiredArgsConstructor;

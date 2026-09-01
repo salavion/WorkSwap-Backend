@@ -12,11 +12,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.MessageDTO;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatQueryService;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
 
 import java.util.List;

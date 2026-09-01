@@ -3,8 +3,6 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Locale;
 
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.controllers.RequiredPermission;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.workswap.category.datasource.Category;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.category.services.CategoryFacade;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 
 import lombok.RequiredArgsConstructor;
 

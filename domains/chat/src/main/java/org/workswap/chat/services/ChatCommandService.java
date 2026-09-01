@@ -2,7 +2,7 @@ package org.workswap.chat.services;
 
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.MessageDTO;
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.springframework.security.access.AccessDeniedException;
 import org.workswap.chat.datasource.model.Chat;
 

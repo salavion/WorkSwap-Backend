@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.workswap.security.enums.AuthProvider;
-import org.workswap.security.enums.UserStatus;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.sso.security.enums.AuthProvider;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.permission.Role;
 
 import java.time.LocalDateTime;

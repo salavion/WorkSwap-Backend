@@ -28,9 +28,9 @@ import org.workswap.order.datasource.model.Order;
 import org.workswap.shared.enums.Importance;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
 import org.workswap.shared.util.WebhookSigner;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;

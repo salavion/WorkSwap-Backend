@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.subscription.datasource.repository.SubscriptionRepository;
 import org.workswap.subscription.enums.SubscriptionType;
 import org.workswap.subscription.services.SubscriptionCommandService;
-import org.workswap.security.annotations.controllers.Authenticated;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

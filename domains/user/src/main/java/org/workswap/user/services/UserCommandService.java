@@ -2,7 +2,7 @@ package org.workswap.user.services;
 
 import java.util.Map;
 
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface UserCommandService {
 

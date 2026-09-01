@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +21,7 @@ import org.workswap.listing.enums.ListingType;
 import org.workswap.listing.enums.ProductType;
 import org.workswap.listing.enums.ServiceType;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 import jakarta.persistence.EntityManager;

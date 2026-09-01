@@ -2,8 +2,6 @@ package org.workswap.location.controllers;
 
 import java.util.List;
 
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.controllers.RequiredPermission;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +14,8 @@ import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.location.dto.LocationDTO;
 import org.workswap.location.services.LocationCommandService;
 import org.workswap.location.services.LocationQueryService;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 
 import lombok.RequiredArgsConstructor;
 

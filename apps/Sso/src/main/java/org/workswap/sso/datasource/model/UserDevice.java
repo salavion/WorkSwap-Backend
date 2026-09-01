@@ -2,7 +2,7 @@ package org.workswap.sso.datasource.model;
 
 import java.time.LocalDateTime;
 
-import org.workswap.security.enums.UserStatus;
+import org.workswap.sso.security.enums.UserStatus;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

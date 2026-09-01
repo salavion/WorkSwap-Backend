@@ -5,9 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.AuthProvider;
-import org.workswap.security.enums.UserStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,6 +20,9 @@ import org.workswap.sso.datasource.repository.UserRepository;
 import org.workswap.sso.datasource.repository.VerifyCodeRepository;
 import org.workswap.sso.dto.RegisterRequest;
 import org.workswap.sso.dto.UserDeviceDTO;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.AuthProvider;
+import org.workswap.sso.security.enums.UserStatus;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;

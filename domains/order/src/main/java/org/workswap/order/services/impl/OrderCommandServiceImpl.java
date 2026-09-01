@@ -15,8 +15,8 @@ import org.workswap.order.services.OrderCommandService;
 import org.workswap.order.services.OrderMappingService;
 import org.workswap.shared.enums.Importance;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
-import org.workswap.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

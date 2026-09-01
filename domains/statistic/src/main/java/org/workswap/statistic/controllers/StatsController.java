@@ -3,12 +3,12 @@ package org.workswap.statistic.controllers;
 import java.util.List;
 import java.util.Map;
 
-import org.workswap.security.annotations.controllers.RequiredPermission;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 import org.workswap.statistic.dto.ListingsStatsMetricDTO;
 import org.workswap.statistic.dto.OnlineStatsMetricsDTO;
 import org.workswap.statistic.dto.UsersStatsMetricDTO;

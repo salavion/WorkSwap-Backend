@@ -6,8 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.UserStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +25,8 @@ import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.services.ListingQueryService;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.services.UserMappingService;

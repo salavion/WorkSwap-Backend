@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.workswap.security.enums.AuthProvider;
-import org.workswap.security.enums.UserStatus;
 import org.workswap.sso.datasource.config.Constants;
+import org.workswap.sso.security.enums.AuthProvider;
+import org.workswap.sso.security.enums.UserStatus;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 

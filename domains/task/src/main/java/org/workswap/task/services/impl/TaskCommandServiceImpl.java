@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.task.datasource.model.Task;
 import org.workswap.task.datasource.model.TaskComment;
 import org.workswap.task.datasource.repository.TaskCommentRepository;
@@ -15,7 +16,6 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskMappingService;
 import org.workswap.task.services.TaskQueryService;
-import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

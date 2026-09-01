@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.statistic.dto.AllListingsStatSnapshotDTO;
-import org.workswap.statistic.ampq.producers.ListingsStatProducer;
+import org.workswap.statistic.amqp.producers.ListingsStatProducer;
 
 import lombok.RequiredArgsConstructor;
 

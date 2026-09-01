@@ -13,7 +13,7 @@ import org.workswap.listing.datasource.repository.types.EventSettingsRepository;
 import org.workswap.listing.enums.EventStatus;
 import org.workswap.listing.enums.RecurrencePattern;
 import org.workswap.listing.services.SecurityFilterService;
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

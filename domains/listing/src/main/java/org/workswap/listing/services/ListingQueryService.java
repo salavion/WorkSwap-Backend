@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.dto.CatalogFilterDTO;
@@ -13,6 +12,7 @@ import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.dto.ShortListingDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface ListingQueryService {
 

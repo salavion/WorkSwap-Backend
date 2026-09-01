@@ -1,1 +1,1 @@
-org.workswap.security.config.SecurityAutoConfiguration
+org.workswap.sso.security.config.SecurityAutoConfiguration

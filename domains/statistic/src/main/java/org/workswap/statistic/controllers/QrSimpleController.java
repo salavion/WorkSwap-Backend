@@ -3,7 +3,6 @@ package org.workswap.statistic.controllers;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.workswap.security.annotations.controllers.PublicEndpoint;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.workswap.statistic.ampq.producers.SiteViewProducer;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.statistic.amqp.producers.SiteViewProducer;
 import org.workswap.statistic.dto.SiteViewDTO;
 import org.springframework.http.ResponseCookie;
 

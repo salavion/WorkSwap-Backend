@@ -79,6 +79,11 @@
 			<artifactId>workswap-sso-security-core-module</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-security-module</artifactId>
+		</dependency>
+
         <dependency>
 			<groupId>org.workswap</groupId>
             <artifactId>workswap-datasource-module</artifactId>

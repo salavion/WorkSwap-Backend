@@ -28,12 +28,12 @@ import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.listing.services.ListingCommandService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.ListingStorageService;
-import org.workswap.security.annotations.controllers.Authenticated;
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.controllers.RequiredPermission;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.annotations.parameters.OptionalAuthUser;
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.annotations.parameters.OptionalAuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

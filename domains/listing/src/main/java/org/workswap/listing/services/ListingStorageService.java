@@ -1,8 +1,8 @@
 package org.workswap.listing.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.ImageDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 
 public interface ListingStorageService {
     

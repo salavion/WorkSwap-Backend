@@ -2,7 +2,6 @@ package org.workswap.user.controllers;
 
 import java.util.List;
 
-import org.workswap.security.annotations.controllers.RequiredPermission;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.datasource.repository.permission.PermissionRepository;
 import org.workswap.user.dto.PermissionDTO;

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.task.dto.TaskCommentDTO;
 import org.workswap.task.dto.TaskCreateDTO;
 import org.workswap.task.dto.TaskDTO;
@@ -19,9 +22,6 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.enums.TaskType;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskQueryService;
-import org.workswap.security.annotations.controllers.RequiredPermission;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

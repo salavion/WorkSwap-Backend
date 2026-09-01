@@ -10,7 +10,7 @@ import org.workswap.order.datasource.repository.OrderRepository;
 import org.workswap.order.dto.OrderDTO;
 import org.workswap.order.services.OrderMappingService;
 import org.workswap.order.services.OrderQueryService;
-import org.workswap.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

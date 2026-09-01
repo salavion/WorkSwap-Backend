@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.workswap.security.annotations.controllers.PublicEndpoint;
-import org.workswap.security.annotations.controllers.RequiredPermission;
-import org.workswap.security.annotations.parameters.AuthUser;
-import org.workswap.security.dto.UserAuthData;
 import org.workswap.category.dto.CategoryDTO;
 import org.workswap.forum.dto.ForumActivityItemDTO;
 import org.workswap.forum.dto.ForumCommentDTO;
@@ -20,6 +16,10 @@ import org.workswap.forum.dto.ForumPostDTO;
 import org.workswap.forum.dto.ForumTopicDTO;
 import org.workswap.forum.services.ForumCommandService;
 import org.workswap.forum.services.ForumQueryService;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

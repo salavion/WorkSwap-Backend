@@ -42,11 +42,11 @@ import org.workswap.listing.services.category.query.ServiceCategoryQueryService;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.services.UserMappingService;
-import org.workswap.security.dto.UserAuthData;
-import org.workswap.security.enums.UserStatus;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

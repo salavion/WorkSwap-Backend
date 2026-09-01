@@ -2,11 +2,11 @@ package org.workswap.sso.core.security.service;
 
 import java.util.Objects;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.workswap.sso.datasource.model.User;
 import org.workswap.sso.datasource.repository.UserRepository;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

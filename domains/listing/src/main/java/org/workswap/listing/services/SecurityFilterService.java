@@ -1,11 +1,11 @@
 package org.workswap.listing.services;
 
-import org.workswap.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.exceptions.ListingAccessDeniedException;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

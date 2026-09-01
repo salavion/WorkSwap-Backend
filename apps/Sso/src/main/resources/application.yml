@@ -1,4 +1,14 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+    group:
+      dev:
+        - sso
+        - api
+      prod:
+        - sso
+        - api
+
   web:
     resources:
       static-locations: classpath:/static/,classpath:/images/
@@ -19,9 +29,6 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: "20s"
 
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
-
 server:
   port: 8001
   tomcat:
@@ -29,5 +36,3 @@ server:
     max-swallow-size: -1 # Allows unlimited size for multipart requests, if needed
     max-part-count: 1000
     max-http-form-post-size: 20971520  # 20MB
-
-management.endpoints.web.exposure.include: health,info,beans,conditions

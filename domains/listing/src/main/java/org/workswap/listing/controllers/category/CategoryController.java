@@ -3,7 +3,6 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Map;
 
-import org.workswap.security.annotations.controllers.PublicEndpoint;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +11,7 @@ import org.workswap.category.dto.CategoryDTO;
 import org.workswap.category.services.CategoryMappingService;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
 
 import lombok.RequiredArgsConstructor;
 

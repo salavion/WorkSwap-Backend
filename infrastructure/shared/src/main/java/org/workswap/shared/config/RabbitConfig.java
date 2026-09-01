@@ -1,6 +1,7 @@
 package org.workswap.shared.config;
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
@@ -39,5 +40,19 @@ public class RabbitConfig {
             CachingConnectionFactory connectionFactory
     ) {
         return new RabbitTemplate(connectionFactory);
+    }
+
+    @Bean(name = "rabbitListenerContainerFactory")
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            CachingConnectionFactory connectionFactory,
+            MessageConverter jsonMessageConverter
+    ) {
+        SimpleRabbitListenerContainerFactory factory =
+                new SimpleRabbitListenerContainerFactory();
+
+        factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(jsonMessageConverter);
+
+        return factory;
     }
 }

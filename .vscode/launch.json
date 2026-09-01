@@ -28,7 +28,8 @@
             "name": "Run applications",
             "configurations": [
                 "Server",
-                "Statistic"
+                "Statistic",
+                "Sso"
             ],
             "stopAll": true
         }

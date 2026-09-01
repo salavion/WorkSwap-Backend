@@ -45,8 +45,8 @@ import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.services.UserMappingService;
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.enums.UserStatus;
+import org.workswap.security.dto.UserAuthData;
+import org.workswap.security.enums.UserStatus;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

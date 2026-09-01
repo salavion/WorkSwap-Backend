@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.workswap.notification.dto.FullNotificationDTO;
 import org.workswap.notification.services.NotificationCommandService;
 import org.workswap.notification.services.NotificationQueryService;
-import org.salavion.security.annotations.controllers.RequiredPermission;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

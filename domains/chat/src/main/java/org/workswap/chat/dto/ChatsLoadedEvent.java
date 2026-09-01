@@ -1,6 +1,6 @@
 package org.workswap.chat.dto;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import java.util.List;
 
 public record ChatsLoadedEvent(

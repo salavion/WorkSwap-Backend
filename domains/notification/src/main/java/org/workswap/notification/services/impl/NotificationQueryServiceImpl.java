@@ -11,7 +11,7 @@ import org.workswap.notification.datasource.repository.NotificationRepository;
 import org.workswap.notification.dto.FullNotificationDTO;
 import org.workswap.notification.services.NotificationMappingService;
 import org.workswap.notification.services.NotificationQueryService;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

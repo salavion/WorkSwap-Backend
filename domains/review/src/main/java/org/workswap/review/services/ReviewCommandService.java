@@ -11,7 +11,7 @@ import org.workswap.review.datasource.model.Review;
 import org.workswap.review.datasource.repository.ReviewRepository;
 import org.workswap.shared.events.review.ReviewCreatedEvent;
 import org.workswap.user.datasource.model.User;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

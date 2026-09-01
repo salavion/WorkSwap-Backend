@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.enums.UserStatus;
+import org.workswap.security.dto.UserAuthData;
+import org.workswap.security.enums.UserStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

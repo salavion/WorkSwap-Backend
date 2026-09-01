@@ -1,6 +1,6 @@
 package org.workswap.listing.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.ImageDTO;
 

@@ -2,7 +2,7 @@ package org.workswap.forum.services.impl;
 
 import java.util.Optional;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

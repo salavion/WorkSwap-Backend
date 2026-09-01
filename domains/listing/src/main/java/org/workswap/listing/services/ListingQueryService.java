@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.dto.CatalogFilterDTO;

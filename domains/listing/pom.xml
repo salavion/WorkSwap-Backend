@@ -17,8 +17,8 @@
 
     <dependencies>
         <dependency>
-			<groupId>org.salavion</groupId>
-			<artifactId>sso-core</artifactId>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-sso-security-core-module</artifactId>
 		</dependency>
 
         <dependency>
@@ -44,11 +44,6 @@
         <dependency>
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-shared</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.salavion</groupId>
-			<artifactId>sso-core</artifactId>
 		</dependency>
 
         <dependency>

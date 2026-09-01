@@ -19,11 +19,11 @@ import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
 import org.workswap.user.dto.ShortUserDTO;
-import org.salavion.security.annotations.controllers.PublicEndpoint;
-import org.salavion.security.annotations.controllers.RequiredPermission;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.annotations.parameters.OptionalAuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.annotations.parameters.OptionalAuthUser;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

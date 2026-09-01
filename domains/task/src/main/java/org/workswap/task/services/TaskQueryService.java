@@ -2,7 +2,7 @@ package org.workswap.task.services;
 
 import java.util.List;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.task.datasource.model.Task;
 import org.workswap.task.dto.TaskCommentDTO;
 import org.workswap.task.dto.TaskDTO;

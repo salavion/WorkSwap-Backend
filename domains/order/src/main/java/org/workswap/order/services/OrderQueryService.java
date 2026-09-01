@@ -1,6 +1,6 @@
 package org.workswap.order.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.order.dto.OrderDTO;
 
 public interface OrderQueryService {

@@ -3,10 +3,10 @@ package org.workswap.security.service;
 import java.util.Collection;
 import java.util.Objects;
 
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.enums.UserStatus;
-import org.salavion.security.jwt.JwtAuthenticationConverter;
-import org.salavion.security.jwt.UserJwtAuthenticationToken;
+import org.workswap.security.dto.UserAuthData;
+import org.workswap.security.enums.UserStatus;
+import org.workswap.security.jwt.JwtAuthenticationConverter;
+import org.workswap.security.jwt.UserJwtAuthenticationToken;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;

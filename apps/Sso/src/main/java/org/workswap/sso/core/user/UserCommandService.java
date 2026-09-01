@@ -1,0 +1,273 @@
+package org.workswap.sso.core.user;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+
+import org.workswap.security.dto.UserAuthData;
+import org.workswap.security.enums.AuthProvider;
+import org.workswap.security.enums.UserStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.workswap.sso.core.notification.EmailService;
+import org.workswap.sso.datasource.model.User;
+import org.workswap.sso.datasource.model.VerifyCode;
+import org.workswap.sso.datasource.repository.UserRepository;
+import org.workswap.sso.datasource.repository.VerifyCodeRepository;
+import org.workswap.sso.dto.RegisterRequest;
+import org.workswap.sso.dto.UserDeviceDTO;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserCommandService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserCommandService.class);
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
+
+    private final UserRepository userRepository;
+    private final VerifyCodeRepository verifyCodeRepository;
+
+    public UserDeviceDTO createUserDeviceDto(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null) {
+            ip = request.getRemoteAddr();
+        }
+        String userAgent = request.getHeader("User-Agent");
+        String fingerprint = request.getHeader("X-Fingerprint");
+
+        logger.debug("ip: {}", ip);
+        logger.debug("userAgent: {}", userAgent);
+        logger.debug("fingerprint: {}", fingerprint);
+        
+        return new UserDeviceDTO(fingerprint, userAgent, ip);
+    }
+
+    public User registerOrUpdateUser(OidcUser oidcUser, Optional<String> tempUserId, HttpServletRequest request) {
+        String email = oidcUser.getEmail();
+        User existingUser = userRepository.findByEmail(email).orElse(null);
+        boolean isNew = existingUser == null || existingUser.getStatus() == UserStatus.PENDING;
+
+        User user = isNew
+            ? (existingUser != null ? existingUser : createNewUser(oidcUser, request))
+            : existingUser;
+
+        if (user == null) {
+            throw new IllegalStateException("User creation failed: user is null for " + email);
+        }
+
+        if (isNew) {
+            Long id = tempUserId
+                .map(Long::parseLong)
+                .orElse(null);
+
+            if (id != null) {
+                User tempUser = userRepository.findById(id).orElseThrow(
+                    () -> new EntityNotFoundException("Пользователь не найден")
+                );
+
+                if (tempUser.getStatus() == UserStatus.TEMP) {
+                    userRepository.delete(tempUser);
+                }
+            }
+        }
+
+        if (user.getAvatarUrl() == null) {
+            user.setAvatarUrl(oidcUser.getPicture());
+        }
+        return userRepository.save(user);
+    }
+
+    public User createNewUser(OidcUser oidcUser, HttpServletRequest request) {
+        UserDeviceDTO dto = createUserDeviceDto(request);
+
+        User user = new User(
+            oidcUser.getClaim("name"),
+            oidcUser.getEmail(),
+            oidcUser.getPicture(),
+            AuthProvider.GOOGLE,
+            false, 
+            dto.fingerprint(), 
+            dto.userAgent(), 
+            dto.ip()
+        );
+
+        User newUser = userRepository.save(user);
+
+        newUser.setNew(true);
+        
+        return newUser;
+    }
+
+    public User registerOauthUser(UserAuthData authData) {
+
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        user.setStatus(UserStatus.ACTIVE);
+        user.setTermsAccepted(true);
+        user.setTermsAcceptanceDate(LocalDateTime.now());
+
+        return userRepository.save(user);
+    }
+
+    public User createTempUser(HttpServletRequest request) {
+
+        UserDeviceDTO dto = createUserDeviceDto(request);
+
+        User user = new User(
+            UserStatus.TEMP,
+            dto.fingerprint(), 
+            dto.userAgent(), 
+            dto.ip()
+        );
+
+        return userRepository.save(user);
+    }
+
+    public User registerLocal(RegisterRequest regRequest, HttpServletRequest request) {
+        UserDeviceDTO dto = createUserDeviceDto(request);
+        
+        String hashed = passwordEncoder.encode(regRequest.password());
+
+        String email = regRequest.email();
+        User user = new User(
+            regRequest.name(), 
+            email, 
+            hashed,
+            true, 
+            dto.fingerprint(), 
+            dto.userAgent(), 
+            dto.ip()
+        );
+
+        return userRepository.save(user);
+    }
+
+    public void sendVerificationCode(UserAuthData authData) {
+
+        if (!authData.status().equals(UserStatus.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ваш аккаунт не нуждается в верификации");
+        }
+
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        String email = user.getEmail();
+
+        VerifyCode verifyCode = verifyCodeRepository.findByEmail(email);
+
+        if (verifyCode == null) {
+            verifyCode = verifyCodeRepository.save(new VerifyCode(email));
+        } 
+
+        if (verifyCode.getSentAt() != null && verifyCode.getSentAt().isAfter(LocalDateTime.now().minus(Duration.ofSeconds(45)))) {
+            throw new ResponseStatusException(HttpStatus.TOO_EARLY, "Нельзя отправлять запросы на письма так часто");
+        }
+
+        emailService.sendVerificationEmail(email, verifyCode.getCode());
+
+        verifyCode.setSentAt(LocalDateTime.now());
+        verifyCodeRepository.save(verifyCode);
+    }
+
+    @Transactional
+    public boolean verifyEmail(UserAuthData authData, String code) {
+
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        String email = user.getEmail();
+
+        if (verifyCodeRepository.existsByEmailAndCode(email, code)) {
+            user.setStatus(UserStatus.ACTIVE);
+            userRepository.save(user);
+            verifyCodeRepository.deleteByEmail(email);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean authenticate(User user, String rawPassword) {
+        if (user == null) return false;
+        return passwordEncoder.matches(rawPassword, user.getPasswordHash());
+    }
+
+    @Transactional
+    public void deleteUser(UserAuthData authData) {
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        try {
+            if (user == null) {
+                throw new RuntimeException("Пользователя не зарегистрировано.");
+            }
+
+            logger.debug("Пользователь {} найден, начинаем удаление", user.getId());
+
+            // Удаление пользователя
+            try {
+                Long userId = user.getId();
+
+                if (userId == null) {
+                    throw new RuntimeException("Id пользователя не найдено!");
+                }
+                logger.debug("Удаление пользователя {}", userId);
+                userRepository.deleteById(userId);
+            } catch (Exception e) {
+                logger.error("Ошибка при удалении пользователя {}: {}", user.getId(), e.getMessage(), e);
+                throw new RuntimeException("Ошибка при удалении пользователя", e);
+            }
+
+        } catch (Exception e) {
+            logger.error("Не удалось удалить пользователя через OAuth2: {}", e.getMessage(), e);
+            throw new RuntimeException("Ошибка при удалении пользователя через OAuth2", e);
+        }
+    }
+
+    public void modifyUserParam(UserAuthData authData, Map<String, Object> updates) {
+
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        if (user != null) {
+            updates.forEach((key, value) -> {
+                switch (key) {
+                    case "name":
+                        user.setName((String) value);
+                        break;
+                    case "phone":
+                        user.setPhone((String) value);
+                        break;
+                }
+            });
+
+            userRepository.save(user);
+        }
+    }
+
+    public void acceptTerms(UserAuthData authData) {
+        User user = userRepository.findById(authData.id()).orElseThrow(
+            () -> new EntityNotFoundException("Пользователь не найден"));
+
+        user.setTermsAcceptanceDate(LocalDateTime.now());
+        user.setTermsAccepted(true);
+        
+        userRepository.save(user);
+    }
+}

@@ -7,7 +7,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.enums.ListingTranslateType;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 public interface ListingCommandService {
 

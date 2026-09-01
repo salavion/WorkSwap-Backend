@@ -42,7 +42,7 @@ import com.github.pemistahl.lingua.api.LanguageDetectorBuilder;
 
 import jakarta.persistence.EntityManager;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

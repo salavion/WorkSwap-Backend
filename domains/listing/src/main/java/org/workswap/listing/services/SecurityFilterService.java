@@ -1,6 +1,6 @@
 package org.workswap.listing.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.listing.datasource.model.Listing;

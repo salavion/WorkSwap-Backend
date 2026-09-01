@@ -1,6 +1,6 @@
 package org.workswap.notification.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.notification.dto.FullNotificationDTO;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.shared.events.notification.CreateNotificationCommand;

@@ -1,6 +1,6 @@
 package org.workswap.task.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.task.dto.TaskCreateDTO;
 import org.workswap.task.dto.TaskDTO;
 

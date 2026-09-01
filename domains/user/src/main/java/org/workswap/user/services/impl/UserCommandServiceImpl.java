@@ -32,9 +32,9 @@ import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.model.UserSettings;
 import org.workswap.user.datasource.repository.permission.RoleRepository;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.dto.UserInfoDTO;
-import org.salavion.security.enums.UserStatus;
+import org.workswap.security.dto.UserAuthData;
+import org.workswap.security.dto.UserInfoDTO;
+import org.workswap.security.enums.UserStatus;
 
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.JsonNode;

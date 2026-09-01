@@ -15,7 +15,7 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskMappingService;
 import org.workswap.task.services.TaskQueryService;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

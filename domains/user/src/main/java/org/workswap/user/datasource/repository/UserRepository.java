@@ -1,6 +1,6 @@
 package org.workswap.user.datasource.repository;
 
-import org.salavion.security.enums.UserStatus;
+import org.workswap.security.enums.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

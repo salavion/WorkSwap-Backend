@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatQueryService;
-import org.salavion.security.annotations.controllers.Authenticated;
-import org.salavion.security.annotations.controllers.RequiredPermission;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.Authenticated;
+import org.workswap.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

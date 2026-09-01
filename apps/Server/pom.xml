@@ -12,7 +12,7 @@
 
 	<groupId>org.workswap</groupId>
 	<artifactId>server</artifactId>
-	<name>api</name>
+	<name>sso</name>
 	
 	<properties>
 		<java.version>21</java.version>
@@ -75,8 +75,8 @@
 		</dependency>
 
         <dependency>
-			<groupId>org.salavion</groupId>
-			<artifactId>sso-core</artifactId>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-sso-security-core-module</artifactId>
 		</dependency>
 
         <dependency>

@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active:
+      - "api"
+
+app:
+  url: ${AUTH_URL}
+  cookie:
+    secure: true
+    domain: ".workswap.org"
+    sameSite: "None"
+
+frontend:
+  url: ${FRONTEND_URL}
+
+salavion:
+  code: ${SSO_CODE}
+
+mailjet:
+  api-key: ${MAILJET_API_KEY}
+  secret-key: ${MAILJET_SECRET_KEY}
+  sender: ${MAILJET_SENDER}

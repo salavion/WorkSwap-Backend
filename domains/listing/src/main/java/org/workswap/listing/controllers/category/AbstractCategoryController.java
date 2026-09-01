@@ -3,8 +3,8 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Locale;
 
-import org.salavion.security.annotations.controllers.PublicEndpoint;
-import org.salavion.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.RequiredPermission;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

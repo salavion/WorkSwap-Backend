@@ -1,6 +1,6 @@
 package org.workswap.subscription.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.subscription.datasource.model.Subscription;
 import org.workswap.subscription.enums.SubscriptionType;
 

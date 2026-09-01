@@ -2,7 +2,7 @@ package org.workswap.security.websocket;
 
 import java.security.Principal;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

@@ -3,10 +3,10 @@ package org.workswap.user.controllers;
 import java.util.List;
 import java.util.Map;
 
-import org.salavion.security.annotations.controllers.PublicEndpoint;
-import org.salavion.security.annotations.controllers.RequiredPermission;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;

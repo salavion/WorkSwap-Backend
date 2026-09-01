@@ -2,6 +2,7 @@ spring:
   profiles:
     active:
       - "server"
+      - "api"
   
 api:
   url: ${API_URL}

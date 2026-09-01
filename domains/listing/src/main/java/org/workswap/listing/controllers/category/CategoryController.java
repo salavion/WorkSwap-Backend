@@ -3,7 +3,7 @@ package org.workswap.listing.controllers.category;
 import java.util.List;
 import java.util.Map;
 
-import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

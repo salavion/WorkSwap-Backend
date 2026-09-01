@@ -11,7 +11,7 @@ import org.workswap.subscription.enums.SubscriptionType;
 import org.workswap.subscription.services.SubscriptionCommandService;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityManager;
 

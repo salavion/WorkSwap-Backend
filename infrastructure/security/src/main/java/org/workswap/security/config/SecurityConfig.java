@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-import org.salavion.security.service.JwtAuthenticationFilter;
+import org.workswap.security.service.JwtAuthenticationFilter;
 import org.springframework.boot.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

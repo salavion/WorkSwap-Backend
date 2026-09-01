@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.workswap.review.dto.ReviewDTO;
 import org.workswap.review.services.ReviewCommandService;
 import org.workswap.review.services.ReviewQueryService;
-import org.salavion.security.annotations.controllers.PublicEndpoint;
-import org.salavion.security.annotations.controllers.RequiredPermission;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.RequiredPermission;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

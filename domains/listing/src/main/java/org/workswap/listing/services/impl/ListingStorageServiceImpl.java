@@ -3,7 +3,7 @@ package org.workswap.listing.services.impl;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;

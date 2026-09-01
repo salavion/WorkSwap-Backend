@@ -7,7 +7,7 @@ import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.ChatDetails;
 import org.workswap.chat.dto.MessageDTO;
 import org.workswap.user.dto.ShortUserDTO;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 public interface ChatQueryService {
     

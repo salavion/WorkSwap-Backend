@@ -28,11 +28,6 @@
 
     <repositories>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/salavion/SecurityCore</url>
-        </repository>
-
-        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -55,10 +50,12 @@
         <module>infrastructure/storage</module>
         <module>infrastructure/shared</module>
         <module>infrastructure/security</module>
+        <module>infrastructure/sso-security-core</module>
         <module>infrastructure/datasource</module>
         <module>infrastructure/webflux</module>
 
         <module>apps/Server</module>
+        <module>apps/Sso</module>
         <module>apps/Statistic</module>
     </modules>
 
@@ -165,19 +162,14 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ===================== -->
-            <!-- External libs         -->
-            <!-- ===================== -->
-
             <dependency>
-                <groupId>org.salavion</groupId>
-                <artifactId>sso-core</artifactId>
-                <version>1.0.7</version>
+                <groupId>org.workswap</groupId>
+                <artifactId>workswap-sso-security-core-module</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- ===================== -->
             <!-- Optional overrides    -->
-            <!-- (если захочешь фиксировать явно) -->
             <!-- ===================== -->
 
             <dependency>

@@ -30,7 +30,7 @@ import org.workswap.shared.events.notification.CreateNotificationCommand;
 import org.workswap.shared.util.WebhookSigner;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;

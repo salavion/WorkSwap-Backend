@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.workswap.order.dto.OrderDTO;
 import org.workswap.order.services.OrderCommandService;
 import org.workswap.order.services.OrderQueryService;
-import org.salavion.security.annotations.controllers.Authenticated;
-import org.salavion.security.annotations.parameters.AuthUser;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.annotations.controllers.Authenticated;
+import org.workswap.security.annotations.parameters.AuthUser;
+import org.workswap.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 

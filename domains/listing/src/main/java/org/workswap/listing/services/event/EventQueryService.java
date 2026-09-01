@@ -3,7 +3,7 @@ package org.workswap.listing.services.event;
 import java.util.List;
 import java.util.Optional;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.listing.dto.EventDTO;
 import org.workswap.user.dto.ShortUserDTO;
 

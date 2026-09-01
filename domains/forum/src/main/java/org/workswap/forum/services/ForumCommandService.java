@@ -1,6 +1,6 @@
 package org.workswap.forum.services;
 
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.security.dto.UserAuthData;
 import org.workswap.forum.datasource.model.ForumComment;
 import org.workswap.forum.datasource.model.ForumPost;
 import org.workswap.forum.datasource.model.ForumTopic;

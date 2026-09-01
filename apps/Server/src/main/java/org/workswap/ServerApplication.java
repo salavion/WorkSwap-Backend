@@ -9,17 +9,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @SpringBootApplication(
-	scanBasePackages = {
-		"org.workswap", 
-		"org.salavion"
-	},
+	scanBasePackages = { "org.workswap" },
 	exclude = DataSourceAutoConfiguration.class
 )
 @EnableScheduling
 @EnableTransactionManagement
-public class WorkSwapServerApplication {
+public class ServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorkSwapServerApplication.class, args);
+		SpringApplication.run(ServerApplication.class, args);
 	}
 }

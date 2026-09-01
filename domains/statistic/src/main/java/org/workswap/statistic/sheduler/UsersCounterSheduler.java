@@ -2,7 +2,7 @@ package org.workswap.statistic.sheduler;
 
 import java.time.LocalDateTime;
 
-import org.salavion.security.enums.UserStatus;
+import org.workswap.security.enums.UserStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;

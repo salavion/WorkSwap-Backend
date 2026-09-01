@@ -3,7 +3,7 @@ package org.workswap.statistic.controllers;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.salavion.security.annotations.controllers.PublicEndpoint;
+import org.workswap.security.annotations.controllers.PublicEndpoint;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

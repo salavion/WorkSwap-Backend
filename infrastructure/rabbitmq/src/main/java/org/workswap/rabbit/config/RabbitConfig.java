@@ -1,4 +1,4 @@
-package org.workswap.shared.config;
+package org.workswap.rabbit.config;
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;

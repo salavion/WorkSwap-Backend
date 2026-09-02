@@ -84,6 +84,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-rabbitmq</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -37,6 +37,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         Method method = handlerMethod.getMethod();
 
+        Package controllerPackage =
+                method.getDeclaringClass().getPackage();
+
+        if (!controllerPackage.getName().startsWith("org.workswap")) {
+            return true;
+        }
+        
         log.debug("Handled method: {}", method.getName());
 
         boolean isPublic =

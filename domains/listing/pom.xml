@@ -61,10 +61,5 @@
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-webflux-module</artifactId>
 		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-rabbitmq</artifactId>
-		</dependency>
     </dependencies>
 </project>

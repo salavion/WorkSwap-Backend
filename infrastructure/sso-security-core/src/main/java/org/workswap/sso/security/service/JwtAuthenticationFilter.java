@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @PostConstruct
     public void init() {
-        log.info(
+        log.debug(
             "Registered JwtAuthenticationConverter: {}",
             jwtTokenConverter.getClass().getName()
         );

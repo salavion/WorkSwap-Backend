@@ -23,6 +23,6 @@ public class SecurityAutoConfiguration {
 
     @PostConstruct
     public void init() {
-        log.info("securityAutoConfiguration is loaded");
+        log.debug("securityAutoConfiguration is loaded");
     }
 }

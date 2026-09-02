@@ -1,4 +1,4 @@
-package org.workswap.security.config;
+package org.workswap.sso.security.config;
 
 import java.util.ArrayList;
 import java.util.List;

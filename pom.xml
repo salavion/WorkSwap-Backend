@@ -48,6 +48,7 @@
         <module>domains/user</module>
 
         <module>infrastructure/storage</module>
+        <module>infrastructure/rabbitmq</module>
         <module>infrastructure/shared</module>
         <module>infrastructure/security</module>
         <module>infrastructure/sso-security-core</module>
@@ -165,6 +166,12 @@
             <dependency>
                 <groupId>org.workswap</groupId>
                 <artifactId>workswap-sso-security-core-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.workswap</groupId>
+                <artifactId>workswap-rabbitmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

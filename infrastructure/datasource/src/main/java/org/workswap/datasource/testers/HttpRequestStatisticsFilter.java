@@ -4,17 +4,16 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class HttpRequestStatisticsFilter extends OncePerRequestFilter {
-
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequestStatisticsFilter.class);
 
     private final QueryCounter queryCounter;
 
@@ -40,7 +39,7 @@ public class HttpRequestStatisticsFilter extends OncePerRequestFilter {
             double durationMs = duration / 1_000_000.0;
 
             if (durationMs > 100 || queryCounter.getCount() > 10) {
-                logger.warn(
+                log.warn(
                     "SLOW REQUEST: {} {} -> {} | {} ms | {} SQL",
                     request.getMethod(),
                     request.getRequestURI(),
@@ -49,7 +48,7 @@ public class HttpRequestStatisticsFilter extends OncePerRequestFilter {
                     queryCounter.getCount()
                 );
             } else {
-                logger.info(
+                log.info(
                     "{} {} -> {} | {} ms | {} SQL queries",
                     request.getMethod(),
                     request.getRequestURI(),

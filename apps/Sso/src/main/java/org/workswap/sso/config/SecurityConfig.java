@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.workswap.sso.core.security.oauth.CustomOAuth2FailureHandler;
 import org.workswap.sso.core.security.oauth.CustomOAuth2SuccessHandler;
+import org.workswap.sso.security.config.CorsConfig;
 import org.workswap.sso.security.service.JwtAuthenticationFilter;
 
 @Configuration

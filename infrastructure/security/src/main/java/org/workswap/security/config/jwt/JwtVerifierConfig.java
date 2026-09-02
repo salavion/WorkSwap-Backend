@@ -20,11 +20,13 @@ import com.nimbusds.jose.jwk.RSAKey;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableConfigurationProperties
 @Profile("server")
 @RequiredArgsConstructor
+@Slf4j
 public class JwtVerifierConfig {
 
     @Value("${jwt.public-key-location:file:./ssl/jwt-public.pem}")
@@ -61,6 +63,6 @@ public class JwtVerifierConfig {
 
     @PostConstruct
     public void init() {
-        System.out.println(">>> JwtVerifierConfig CREATED");
+        log.debug("JwtVerifierConfig CREATED");
     }
 }

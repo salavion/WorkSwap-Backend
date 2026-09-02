@@ -13,8 +13,3 @@ spring:
       - optional:file:./config-dev/main.yml
       - optional:file:./config-dev/logging.yml
       - optional:file:./config-dev/cors.yml
-
-  jpa:
-    properties:
-      hibernate: 
-        dialect: org.hibernate.dialect.MariaDBDialect

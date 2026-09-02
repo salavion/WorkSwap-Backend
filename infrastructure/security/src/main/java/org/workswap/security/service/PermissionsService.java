@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.workswap.user.datasource.model.permission.Permission;
 import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.user.datasource.repository.permission.RoleRepository;
-import org.workswap.user.services.UserCommandService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,15 +19,12 @@ import lombok.RequiredArgsConstructor;
 public class PermissionsService {
 
     private final RoleRepository roleRepository;
-    private final UserCommandService userCommandService;
 
     @Cacheable(
         value = "user-permissions",
         key = "#userId"
     )
     public Collection<GrantedAuthority> getUserPermissions(Long userId) {
-
-        userCommandService.createUser(userId);
 
         Set<Role> roles = roleRepository.findRolesWithPermissionsByUserId(userId);
 

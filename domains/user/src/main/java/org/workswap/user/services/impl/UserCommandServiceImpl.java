@@ -9,17 +9,14 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -28,8 +25,8 @@ import org.workswap.user.services.UserCommandService;
 import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
+import org.workswap.rabbit.queues.events.UserCreatedEvent;
 import org.workswap.sso.security.dto.UserAuthData;
-import org.workswap.sso.security.dto.UserInfoDTO;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.model.UserSettings;
@@ -50,12 +47,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
-
-    @Value("${salavion.url}")
-    private String authServiceUrl;
-
-    @Value("${salavion.code}")
-    private String salavionCode;
 
     @Transactional
     public void deleteUser(UserAuthData authData) {
@@ -186,30 +177,18 @@ public class UserCommandServiceImpl implements UserCommandService {
         userRepository.save(user);
     }
 
-    public void createUser(Long userId) {
-
-        if (userRepository.existsById(userId)) {
-            return;
-        }
-
-        WebClient client = WebClient.create(Objects.requireNonNull(authServiceUrl));
-
-        UserInfoDTO info = client.get()
-                .uri("/api/user/info/" + userId)
-                .header("X-SALAVION-CODE", salavionCode)
-                .retrieve()
-                .bodyToMono(UserInfoDTO.class)
-                .block();
+    public void createUser(UserCreatedEvent event) {
 
         Role role = roleRepository.findByName("TEMP_USER");
         User user = new User(
-            info.id(),
-            info.openId(),
-            info.name(), 
-            info.email(), 
-            info.avatarUrl(), 
+            event.id(),
+            event.openId(),
+            event.name(), 
+            event.email(), 
+            event.avatarUrl(), 
             Set.of(role), 
-            info.status());
+            UserStatus.valueOf(event.status()));
+            
         userRepository.save(user);
     }
 }

@@ -8,9 +8,6 @@ app:
 frontend:
   url: ${FRONTEND_URL}
 
-salavion:
-  code: ${SSO_CODE}
-
 mailjet:
   api-key: ${MAILJET_API_KEY}
   secret-key: ${MAILJET_SECRET_KEY}

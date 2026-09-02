@@ -2,7 +2,6 @@ package org.workswap.sso.core.user;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.workswap.sso.amqp.UserProducer;
 import org.workswap.sso.core.notification.EmailService;
 import org.workswap.sso.datasource.model.User;
 import org.workswap.sso.datasource.model.VerifyCode;
@@ -38,7 +38,7 @@ public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
-
+    private final UserProducer userProducer;
     private final UserRepository userRepository;
     private final VerifyCodeRepository verifyCodeRepository;
 
@@ -122,7 +122,11 @@ public class UserCommandService {
         user.setTermsAccepted(true);
         user.setTermsAcceptanceDate(LocalDateTime.now());
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+
+        userProducer.userCreated(saved);
+        
+        return saved;
     }
 
     public User createTempUser(HttpServletRequest request) {
@@ -136,7 +140,11 @@ public class UserCommandService {
             dto.ip()
         );
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+
+        userProducer.userCreated(saved);
+        
+        return saved;
     }
 
     public User registerLocal(RegisterRequest regRequest, HttpServletRequest request) {
@@ -155,7 +163,11 @@ public class UserCommandService {
             dto.ip()
         );
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+
+        userProducer.userCreated(saved);
+        
+        return saved;
     }
 
     public void sendVerificationCode(UserAuthData authData) {
@@ -237,27 +249,6 @@ public class UserCommandService {
         } catch (Exception e) {
             logger.error("Не удалось удалить пользователя через OAuth2: {}", e.getMessage(), e);
             throw new RuntimeException("Ошибка при удалении пользователя через OAuth2", e);
-        }
-    }
-
-    public void modifyUserParam(UserAuthData authData, Map<String, Object> updates) {
-
-        User user = userRepository.findById(authData.id()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-
-        if (user != null) {
-            updates.forEach((key, value) -> {
-                switch (key) {
-                    case "name":
-                        user.setName((String) value);
-                        break;
-                    case "phone":
-                        user.setPhone((String) value);
-                        break;
-                }
-            });
-
-            userRepository.save(user);
         }
     }
 

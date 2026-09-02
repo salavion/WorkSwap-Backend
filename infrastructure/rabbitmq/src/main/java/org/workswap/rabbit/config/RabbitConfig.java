@@ -3,6 +3,7 @@ package org.workswap.rabbit.config;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -37,9 +38,15 @@ public class RabbitConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate(
-            CachingConnectionFactory connectionFactory
+            CachingConnectionFactory connectionFactory,
+            MessageConverter jsonMessageConverter
     ) {
-        return new RabbitTemplate(connectionFactory);
+        RabbitTemplate rabbitTemplate =
+                new RabbitTemplate(connectionFactory);
+
+        rabbitTemplate.setMessageConverter(jsonMessageConverter);
+
+        return rabbitTemplate;
     }
 
     @Bean(name = "rabbitListenerContainerFactory")
@@ -54,5 +61,12 @@ public class RabbitConfig {
         factory.setMessageConverter(jsonMessageConverter);
 
         return factory;
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(
+            CachingConnectionFactory connectionFactory
+    ) {
+        return new RabbitAdmin(connectionFactory);
     }
 }

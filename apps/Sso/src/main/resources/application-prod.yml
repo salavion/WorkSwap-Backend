@@ -6,8 +6,10 @@ spring:
       - classpath:config/main.yml
       - classpath:config/logging.yml
       - classpath:config/cors.yml
+      - classpath:config/rabbitmq.yml
       - optional:file:./config/oauth.yml
       - optional:file:./config/database.yml
       - optional:file:./config/main.yml
       - optional:file:./config/logging.yml
       - optional:file:./config/cors.yml
+      - optional:file:./config/rabbitmq.yml

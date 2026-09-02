@@ -89,6 +89,11 @@
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-rabbitmq</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-shared</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

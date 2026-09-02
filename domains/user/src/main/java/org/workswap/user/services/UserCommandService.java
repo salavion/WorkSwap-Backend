@@ -2,6 +2,7 @@ package org.workswap.user.services;
 
 import java.util.Map;
 
+import org.workswap.rabbit.queues.events.UserCreatedEvent;
 import org.workswap.sso.security.dto.UserAuthData;
 
 public interface UserCommandService {
@@ -13,5 +14,5 @@ public interface UserCommandService {
     void acceptTerms(UserAuthData authData);
 
     void modifyUserParam(UserAuthData authData, Map<String, Object> updates);
-    void createUser(Long userId);
+    void createUser(UserCreatedEvent event);
 }

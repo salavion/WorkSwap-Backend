@@ -12,7 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.workswap.review.datasource.model.Review;
 import org.workswap.review.datasource.repository.ReviewRepository;
+import org.workswap.review.dto.MyReviews;
 import org.workswap.review.dto.ReviewDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 
@@ -58,5 +60,19 @@ public class ReviewQueryService {
             dtos != null ? dtos : new ArrayList<>(), 
             pageable, 
             reviews.getTotalElements());
+    }
+
+    public MyReviews getMyReviews(UserAuthData authData) {
+        List<Review> given = reviewRepository.findByAuthorId(authData.id());
+        List<Review> recived = reviewRepository.findByProfileIdOrderByCreatedAtDesc(authData.id());
+
+        return new MyReviews(
+            given.stream()
+                .map(r -> reviewMappingService.toDTO(r))
+                .toList(), 
+            recived.stream()
+                .map(r -> reviewMappingService.toDTO(r))
+                .toList()
+            );
     }
 }

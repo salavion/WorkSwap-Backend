@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.dto.CatalogFilterDTO;
-import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
@@ -20,7 +19,7 @@ public interface ListingQueryService {
 
     boolean isFavorite(UserAuthData authData, Long listingId);
 
-    CatalogRequest getSortedCatalog(
+    Page<ShortListingDTO> getSortedCatalog(
         Optional<UserAuthData> optAuthData, 
         CatalogFilterDTO filters, 
         String locale

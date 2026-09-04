@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.CatalogFilterDTO;
-import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
@@ -58,7 +58,7 @@ public class ListingsController {
         return listingQueryService.getListingDTO(listingId, authData, locale);
     }
 
-    @PostMapping
+    @PutMapping
     @RequiredPermission("CREATE_LISTING")
     public Long createListing(
             @RequestParam String type,
@@ -89,7 +89,7 @@ public class ListingsController {
 
     @PostMapping("/catalog") 
     @PublicEndpoint
-    public CatalogRequest getSortedCatalog(
+    public Page<ShortListingDTO> getSortedCatalog(
             @RequestBody CatalogFilterDTO filters,
             @RequestParam String locale,
             @OptionalAuthUser Optional<UserAuthData> authData
@@ -214,17 +214,17 @@ public class ListingsController {
         return listingQueryService.getListingToken(authData, listingId);
     }
 
-    @PatchMapping("/{listingId}/modify")
+    @PostMapping("/{listingId}/update")
     @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
             @AuthUser UserAuthData authData,
             @PathVariable Long listingId,
-            @RequestBody Map<String, Object> updates
+            @RequestBody ListingDTO.Update updates
     ) throws AccessDeniedException {
         listingCommandService.modifyListingParam(authData, listingId, updates);
     }
 
-    @PatchMapping("/{listingId}/modify/translations")
+    @PostMapping("/{listingId}/modify/translations")
     @RequiredPermission("UPDATE_LISTING")
     public Set<String> updateListingTranslations(
             @AuthUser UserAuthData authData,

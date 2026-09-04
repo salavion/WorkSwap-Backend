@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.workswap.listing.datasource.model.Listing;
+import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.sso.security.dto.UserAuthData;
@@ -17,7 +18,12 @@ public interface ListingCommandService {
     void addListingToFavorite(UserAuthData authData, Long listingId);
     void removeListingFromFavorite(UserAuthData authData, Long listingId);
 
-    void modifyListingParam(UserAuthData authData, Long id, Map<String, Object> updates) throws AccessDeniedException;
+    void modifyListingParam(
+        UserAuthData authData, 
+        Long listingId, 
+        ListingDTO.Update updates
+    ) throws AccessDeniedException;
+
     Set<String> updateListingTranslations(
         UserAuthData authData,
         Long listingId, 

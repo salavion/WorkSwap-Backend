@@ -138,6 +138,8 @@ public class EventQueryServiceImpl implements EventQueryService {
             null,
             null,
             loc != null ? loc.getId() : null,
+            null,
+            null,
             listing.getViews(),
             listing.isActive(),
             listing.isTestMode(),

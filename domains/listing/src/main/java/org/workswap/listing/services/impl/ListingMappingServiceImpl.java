@@ -73,6 +73,14 @@ public class ListingMappingServiceImpl implements ListingMappingService {
             default: 
                 break;
         }
+
+        Image mainImage = listing.getImages()
+            .stream()
+            .filter(i -> 
+                listing.getImagePath().equals(getImageLink(i))
+            )
+            .findFirst()
+            .orElse(null);
         
         ListingDTO.Full dto = new ListingDTO.Full(
             listing.getId(),
@@ -93,6 +101,8 @@ public class ListingMappingServiceImpl implements ListingMappingService {
             categoryName,
             categoryId,
             loc != null ? loc.getId() : null,
+            mainImage != null ? mainImage.getId() : null,
+            listing.getAccessToken(), 
             listing.getViews(),
             listing.isActive(),
             listing.isTestMode(),

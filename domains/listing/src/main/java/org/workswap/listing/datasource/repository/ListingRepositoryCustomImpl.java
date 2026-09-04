@@ -413,6 +413,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
             case "price" -> List.of(cb.asc(root.get("price")));
             case "rating" -> List.of(cb.desc(root.get("rating")));
             case "date" -> List.of(cb.desc(root.get("publishedAt")));
+            case "views" -> List.of(cb.desc(root.get("views")));
             case "likes" -> List.of(cb.desc(likesCountSubquery));
             default -> List.of(cb.desc(root.get("createdAt")));
         };

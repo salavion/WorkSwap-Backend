@@ -15,18 +15,22 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.workswap.listing.datasource.model.Image;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.datasource.model.category.ServiceCategory;
+import org.workswap.listing.datasource.repository.ImageRepository;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.datasource.repository.ListingTranslationRepository;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
+import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
+import org.workswap.listing.enums.ListingPublicType;
 import org.workswap.listing.enums.ListingTranslateType;
-import org.workswap.listing.enums.PriceType;
 import org.workswap.listing.services.ListingCommandService;
+import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.listing.services.translations.DeepLTranslationService;
@@ -53,6 +57,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
 
     private final ListingRepository listingRepository;
     private final LocationRepository locationRepository;
+    private final ImageRepository imageRepository;
 
     private final EntityManager entityManager;
     private final SecurityFilterService securityFilterService;
@@ -62,6 +67,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
 
     private final ListingTranslationRepository listingTranslationRepository;
     private final DeepLTranslationService deepLTranslationService;
+    private final ListingMappingService listingMappingService;
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -106,73 +112,67 @@ public class ListingCommandServiceImpl implements ListingCommandService {
         listingRepository.save(listing);
     }
 
-    public void modifyListingParam(UserAuthData authData, Long listingId, Map<String, Object> updates) throws AccessDeniedException {
+    public void modifyListingParam(
+        UserAuthData authData, 
+        Long listingId, 
+        ListingDTO.Update updates
+    ) throws AccessDeniedException {
+
         securityFilterService.listingUpdateFilter(authData, listingId);
+
+        log.debug("listing update \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n{}",
+            updates.price(),
+            updates.priceType(),
+            updates.locationId(),
+            updates.categoryId(),
+            updates.mainImageId(),
+            updates.accessToken(),
+            updates.active(),
+            updates.testMode()
+        );
 
         Listing listing = listingQueryService.getListingById(listingId);
 
-        updates.forEach((key, value) -> {
-            log.debug("Обновляем часть объявления: {}", key );
+        Image image = imageRepository.findById(updates.mainImageId()).orElse(null);
 
-            if (value == null) {
-                throw new IllegalStateException("Вы передали пустой параметр");
-            }
+        listing.setPrice(updates.price());
+        
+        if (image.getListingId() == listingId) {
+            listing.setImagePath(listingMappingService.getImageLink(image));
+        }
 
-            switch (key) {
-                case "price":
-                    Double price;
-                    if (value instanceof Number) {
-                        price = ((Number) value).doubleValue();
-                    } else {
-                        price = Double.parseDouble(value.toString());
-                    }
-                    listing.setPrice(price);
-                    break;
-                case "mainImage":
-                    listing.setImagePath((String) value);
-                    break;
-                case "priceType":
-                    switch (listing.getPublicType()) {
-                        case PRODUCT_GIVEAWAY, PRODUCT_SWAP, PRODUCT_WANTED_FREE:
-                            
-                            break;
-                    
-                        default:
-                            listing.setPriceType(PriceType.valueOf((String) value));
-                            break;
-                    }
-                    break;
-                case "active":
-                    listing.setActive((Boolean) value);
-                    break;
-                case "testMode":
-                    listing.setTestMode((Boolean) value);
-                    break;
-                case "location":
-                    Long locId = ((Number) value).longValue(); // безопасно для Integer и Long
-                    Location loc = locationRepository.findById(locId).orElse(null);
-                    listing.setLocation(loc);
-                    break;
-                case "accessToken":
-                    listing.setAccessToken((String) value);
-                    break;
-                case "category":
-                    Long catId = ((Number) value).longValue(); // безопасно для Integer и Long
-                    switch (listing.getType()) {
-                        case PRODUCT:
-                            ProductCategory pCat = productCategoryRepository.findById(catId).orElse(null);
-                            listing.getProductSettings().setCategory(pCat);
-                            break;
-                        case SERVICE:
-                            ServiceCategory sCat = serviceCategoryRepository.findById(catId).orElse(null);
-                            listing.getServiceSettings().setCategory(sCat);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-            }
-        });
+        if (!listing.getPublicType().equals(ListingPublicType.PRODUCT_GIVEAWAY) && 
+            !listing.getPublicType().equals(ListingPublicType.PRODUCT_SWAP) &&
+            !listing.getPublicType().equals(ListingPublicType.PRODUCT_WANTED_FREE)) {
+
+            listing.setPriceType(updates.priceType());
+        }
+
+        listing.setActive(updates.active());
+        
+        if (updates.accessToken() != null) {
+            listing.setAccessToken(updates.accessToken());
+        }
+
+        listing.setTestMode(updates.testMode());
+
+        Long locId = updates.locationId(); // безопасно для Integer и Long
+        Location loc = locationRepository.findById(locId).orElse(null);
+        listing.setLocation(loc);
+
+        Long catId = updates.categoryId(); // безопасно для Integer и Long
+        switch (listing.getType()) {
+            case PRODUCT:
+                ProductCategory pCat = productCategoryRepository.findById(catId).orElse(null);
+                listing.getProductSettings().setCategory(pCat);
+                break;
+            case SERVICE:
+                ServiceCategory sCat = serviceCategoryRepository.findById(catId).orElse(null);
+                listing.getServiceSettings().setCategory(sCat);
+                break;
+            default:
+                break;
+        }
 
         listingRepository.save(listing);
     }

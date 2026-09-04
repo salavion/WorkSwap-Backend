@@ -25,7 +25,6 @@ import org.workswap.listing.datasource.model.ListingTranslation;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.datasource.repository.ListingTranslationRepository;
 import org.workswap.listing.dto.CatalogFilterDTO;
-import org.workswap.listing.dto.CatalogRequest;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
@@ -106,7 +105,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         );
     }
 
-    public CatalogRequest getSortedCatalog(
+    public Page<ShortListingDTO> getSortedCatalog(
         Optional<UserAuthData> optAuthData, 
         CatalogFilterDTO filters, 
         String locale
@@ -191,8 +190,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
                     t -> t
                 ));
 
-        List<ShortListingDTO> enriched = listings.getContent().stream()
-            .map(l -> {
+        Page<ShortListingDTO> mapped = listings.map(l -> {
                 ListingTranslation t = translationByListing.get(l.id());
 
                 return new ShortListingDTO(
@@ -209,14 +207,13 @@ public class ListingQueryServiceImpl implements ListingQueryService {
                     l.likes(),
                     l.liked()
                 );
-            })
-            .toList();
+            });
 
 
         logger.debug("⏱️ DB query: {} ms", System.currentTimeMillis() - t0);
         logger.debug("Пришёл запрос из бд");
 
-        return new CatalogRequest(listings.getTotalPages(), enriched);
+        return mapped;
     }
 
     public List<ListingDTO.Full> getListingDtosByUser(Long userId, String locale) {
@@ -330,6 +327,8 @@ public class ListingQueryServiceImpl implements ListingQueryService {
                 null,
                 null,
                 loc != null ? loc.getId() : null,
+                null,
+                null,
                 listing.getViews(),
                 listing.isActive(),
                 listing.isTestMode(),

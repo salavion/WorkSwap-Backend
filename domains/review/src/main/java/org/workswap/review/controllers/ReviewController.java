@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.review.dto.MyReviews;
 import org.workswap.review.dto.ReviewDTO;
 import org.workswap.review.services.ReviewCommandService;
 import org.workswap.review.services.ReviewQueryService;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
 import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
 import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 import org.workswap.sso.security.annotations.parameters.AuthUser;
@@ -47,6 +49,12 @@ public class ReviewController {
         @RequestParam(required = false) Long profileId
     ) {
         return reviewQueryService.getRewiewsList(listingId, profileId);
+    }
+
+    @GetMapping("/my")
+    @Authenticated
+    public MyReviews getMyReviews(@AuthUser UserAuthData authData) {
+        return reviewQueryService.getMyReviews(authData);
     }
 
     @GetMapping("/page")

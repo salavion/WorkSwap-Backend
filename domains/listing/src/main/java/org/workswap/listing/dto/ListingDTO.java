@@ -29,11 +29,25 @@ public class ListingDTO {
         String category,
         Long categoryId,
         Long locationId,
+        Long mainImageId,
+        String accessToken,
         int views,
         boolean active,
         boolean testmode,
         boolean temporary
     ) {}
+
+    public record Update(
+        double price,
+        PriceType priceType,
+        Long locationId,
+        Long categoryId,
+        Long mainImageId,
+        String accessToken,
+        boolean active,
+        boolean testMode
+    ) {
+    }
 
     public record Page(
         ListingDTO.Full listing,

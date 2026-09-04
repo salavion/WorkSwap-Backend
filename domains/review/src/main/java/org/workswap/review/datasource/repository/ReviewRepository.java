@@ -15,6 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Пример кастомного метода:
     List<Review> findByListingIdOrderByCreatedAtDesc(Long listingId);
     List<Review> findByProfileIdOrderByCreatedAtDesc(Long profileId);
+    List<Review> findByAuthorId(Long userId);
 
     Page<Review> findAll(Pageable pageable);
 

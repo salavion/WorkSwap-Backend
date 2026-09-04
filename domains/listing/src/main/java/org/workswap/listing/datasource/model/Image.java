@@ -37,4 +37,7 @@ public class Image {
     @ManyToOne
     @JoinColumn(name = "listing_id")
     private Listing listing;
+
+    @Column(name = "listing_id", insertable = false, updatable = false)
+    private Long listingId;
 }

@@ -13,8 +13,10 @@ import org.workswap.sso.security.jwt.JwtAuthenticationConverter;
 import org.workswap.sso.security.jwt.UserJwtAuthenticationToken;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class CachedPermissionsJwtTokenConverter implements JwtAuthenticationConverter {
 
@@ -23,7 +25,12 @@ public class CachedPermissionsJwtTokenConverter implements JwtAuthenticationConv
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
 
+        log.debug("JWT claims: {}", jwt.getClaims());
+        log.debug("JWT subject: {}", jwt.getSubject());
+
         String userSub = Objects.requireNonNull(jwt.getSubject());
+
+        log.debug("jwt parsed: {}", userSub);
 
         Collection<GrantedAuthority> authorities =
             permissionsService.getUserPermissions(userSub);

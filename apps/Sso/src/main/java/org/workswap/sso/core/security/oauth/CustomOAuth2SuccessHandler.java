@@ -17,8 +17,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
@@ -46,9 +48,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         Optional<String> optionalRedirectUrl = Optional.ofNullable(request.getSession().getAttribute("redirectUrl"))
             .map(Object::toString);
 
+        log.debug("Optional Редирект " + optionalRedirectUrl.get());
+
         String redirect = optionalRedirectUrl.isPresent() ? optionalRedirectUrl.get() : baseUrl;
 
-        System.out.println("Редирект " + redirect);
+        log.debug("Редирект " + redirect);
 
         User user = userCommandService.registerOrUpdateUser(oidcUser, tempUserSub, request);
         cookiesService.setAuthCookies(response, user);

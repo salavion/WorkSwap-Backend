@@ -13,8 +13,10 @@ import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.user.datasource.repository.permission.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j 
 @RequiredArgsConstructor
 public class PermissionsService {
 
@@ -22,9 +24,11 @@ public class PermissionsService {
 
     @Cacheable(
         value = "user-permissions",
-        key = "#userId"
+        key = "#userSub"
     )
     public Collection<GrantedAuthority> getUserPermissions(String userSub) {
+
+        log.debug("get permissions for user {}", userSub);
 
         Set<Role> roles = roleRepository.findRolesWithPermissionsByUserSub(userSub);
 
@@ -44,6 +48,8 @@ public class PermissionsService {
             .map(roleName -> "ROLE_" + roleName)
             .map(SimpleGrantedAuthority::new)
             .forEach(authorities::add);
+
+        log.debug("found authorities {}", authorities);
 
         return authorities;
     }

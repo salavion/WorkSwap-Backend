@@ -19,8 +19,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j 
 @RequiredArgsConstructor
 public class JwtIssuer {
     
@@ -30,6 +32,8 @@ public class JwtIssuer {
 
         Instant now = Instant.now();
         JWSSigner signer = new RSASSASigner(rsaKey);
+
+        log.debug("auth {}", auth.sub());
 
         // Строим JWT
         JWTClaimsSet set = new JWTClaimsSet.Builder()

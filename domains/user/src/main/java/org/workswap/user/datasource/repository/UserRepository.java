@@ -35,14 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRoles_NameIn(List<String> roleNames);
     List<User> findByStatus(UserStatus status);
 
-    @Query("""
-        select distinct u from User u
-        left join fetch u.roles r
-        left join fetch r.permissions
-        where u.id = :userId
-    """)
-    User findAuthUserById(@Param("userId") Long userId);
-
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.settings WHERE u.sub = :userSub")
     User findBySubWithSettings(@Param("userSub") String userSub);
 

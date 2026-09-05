@@ -97,7 +97,7 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
     } */
 
     public void markAsRead(UserAuthData authData, Long notificationId) {
-        notificationRepository.markAsRead(notificationId, authData.id());
+        notificationRepository.markAsRead(notificationId, authData.sub());
     }
 
     public void sendOrderCompleteNotification(Order order) {

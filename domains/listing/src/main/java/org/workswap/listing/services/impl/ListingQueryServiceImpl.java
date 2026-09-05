@@ -69,7 +69,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     private final ApplicationEventPublisher eventPublisher;
 
     public boolean isFavorite(UserAuthData authData, Long listingId) {
-        return listingRepository.existsFavoriteListing(authData.id(), listingId);
+        return listingRepository.existsFavoriteListing(authData.sub(), listingId);
     }
 
     public Page<ListingDTO.Full> getListingsPage(int page, int amount, String sortParam, String locale) {
@@ -223,12 +223,12 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     }
 
     public List<ListingDTO.Full> getOwnListingsByUser(UserAuthData authData, String locale) {
-        List<Listing> listings = listingRepository.findByAuthorIdWithAllDetails(authData.id());
+        List<Listing> listings = listingRepository.findByAuthorIdWithAllDetails(authData.sub());
         return mappingService.toDTOList(listings, locale);
     }
 
     public List<ShortListingDTO> getFavorites(UserAuthData authData, String locale) {
-        return listingRepository.findLikedListings(authData.id(), locale);
+        return listingRepository.findLikedListings(authData.sub(), locale);
     }
 
     public Map<String, ListingTranslationDTO> getTranslations(Long listingId) {
@@ -271,7 +271,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
     public List<ListingDTO.Full> getDrafts(UserAuthData authData, String locale) {
 
-        List<Listing> listings = listingRepository.findByAuthorIdAndTemporary(authData.id(), true);
+        List<Listing> listings = listingRepository.findByAuthorIdAndTemporary(authData.sub(), true);
 
         return mappingService.toDTOList(listings, locale);
     }
@@ -300,7 +300,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
             
             eventPublisher.publishEvent(
                 new ListingViewedEvent(
-                    authData.id(), 
+                    authData.sub(), 
                     listingId, 
                     authData.status().equals(UserStatus.TEMP), 
                     LocalDateTime.now()

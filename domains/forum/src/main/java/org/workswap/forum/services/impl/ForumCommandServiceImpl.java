@@ -49,7 +49,7 @@ public class ForumCommandServiceImpl implements ForumCommandService {
 
         ForumTag tag = tagRepository.findByName(topicDto.tagName());
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumTopic newTopic = new ForumTopic(authorProxy, tag, topicDto.title(), topicDto.content(), lang);
 
         return topicRepository.save(newTopic);
@@ -64,7 +64,7 @@ public class ForumCommandServiceImpl implements ForumCommandService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No topics exist with this OpenId");
         }
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumPost post = new ForumPost(topic.get(), authorProxy, content);
         return postRepository.save(post);
     }
@@ -78,20 +78,20 @@ public class ForumCommandServiceImpl implements ForumCommandService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No posts exist with this OpenId");
         }
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumComment comment = new ForumComment(post.get(), authorProxy, content);
         return commentRepository.save(comment);
     }
 
     public void deleteTopic(UserAuthData authData, String topicOpenId) {
-        topicRepository.deleteByOpenIdAndAuthorId(topicOpenId, authData.id());
+        topicRepository.deleteByOpenIdAndAuthorId(topicOpenId, authData.sub());
     }
 
     public void deletePost(UserAuthData authData, String postOpenId) {
-        postRepository.deleteByOpenIdAndAuthorId(postOpenId, authData.id());
+        postRepository.deleteByOpenIdAndAuthorId(postOpenId, authData.sub());
     }
 
     public void deleteComment(UserAuthData authData, Long commentId) {
-        commentRepository.deleteByIdAndAuthorId(commentId, authData.id());
+        commentRepository.deleteByIdAndAuthorId(commentId, authData.sub());
     }
 }

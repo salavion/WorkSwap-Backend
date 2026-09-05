@@ -49,7 +49,7 @@ public class EventQueryServiceImpl implements EventQueryService {
     private final ApplicationEventPublisher eventPublisher;
     
     public boolean existEventParticipant(UserAuthData authData, Long eventId) {
-        return listingRepository.existsParticipant(eventId, authData.id());
+        return listingRepository.existsParticipant(eventId, authData.sub());
     }
 
     public EventDTO.Settings getEventSettingsDTO(UserAuthData authData, Long eventId) {
@@ -112,7 +112,7 @@ public class EventQueryServiceImpl implements EventQueryService {
 
             eventPublisher.publishEvent(
                 new ListingViewedEvent(
-                    authData.id(), 
+                    authData.sub(), 
                     eventId, 
                     authData.status().equals(UserStatus.TEMP), 
                     LocalDateTime.now()

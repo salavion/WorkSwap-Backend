@@ -27,5 +27,5 @@ public interface ChatQueryService {
 
     List<ShortUserDTO> getChatInterlocutors(Long chatId, UserAuthData authData);
 
-    List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale);
+    List<ChatDetails> getChatDetails(String userSsoId, List<ChatDTO> chats, String locale);
 }

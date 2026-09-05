@@ -51,7 +51,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public boolean checkTelegramConnect(UserAuthData authData) {
-        return userSettingsRepository.existsByUserIdAndTelegramConnectedTrue(authData.id());
+        return userSettingsRepository.existsByUserIdAndTelegramConnectedTrue(authData.sub());
     }
 
     public List<User> findAllStandartUsers() {
@@ -59,7 +59,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public UserDTO getCurrentUser(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.id()).orElseThrow(
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
         return userMappingService.toDTO(user);
     }
@@ -90,7 +90,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public FullUserDTO getFullUserDTO(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.id()).orElseThrow(
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
         return userMappingService.toFullDto(user);
     }

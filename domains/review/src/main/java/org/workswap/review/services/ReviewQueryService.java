@@ -63,8 +63,8 @@ public class ReviewQueryService {
     }
 
     public MyReviews getMyReviews(UserAuthData authData) {
-        List<Review> given = reviewRepository.findByAuthorId(authData.id());
-        List<Review> recived = reviewRepository.findByProfileIdOrderByCreatedAtDesc(authData.id());
+        List<Review> given = reviewRepository.findByAuthorId(authData.sub());
+        List<Review> recived = reviewRepository.findByProfileIdOrderByCreatedAtDesc(authData.sub());
 
         return new MyReviews(
             given.stream()

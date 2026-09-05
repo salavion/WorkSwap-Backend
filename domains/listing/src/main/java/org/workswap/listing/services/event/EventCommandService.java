@@ -29,16 +29,16 @@ public class EventCommandService {
     private final EventSettingsRepository eventRepository;
     
     public void addEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.addParticipantById(eventId, authData.id());
+        eventRepository.addParticipantById(eventId, authData.sub());
     }
 
     public void removeEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.removeParticipantById(eventId, authData.id());
+        eventRepository.removeParticipantById(eventId, authData.sub());
     }
 
     public void modifyEventParam(UserAuthData authData, Long eventId, Map<String, Object> updates) throws AccessDeniedException {
 
-        logger.debug("Айди пользователя: {}", authData.id());
+        logger.debug("Айди пользователя: {}", authData.sub());
 
         if (eventId == null) {
             throw new IllegalStateException("ID события отсутствует");

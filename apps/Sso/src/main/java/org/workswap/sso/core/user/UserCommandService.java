@@ -115,8 +115,7 @@ public class UserCommandService {
 
     public User registerOauthUser(UserAuthData authData) {
 
-        User user = userRepository.findById(authData.id()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         user.setStatus(UserStatus.ACTIVE);
         user.setTermsAccepted(true);
@@ -176,7 +175,7 @@ public class UserCommandService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ваш аккаунт не нуждается в верификации");
         }
 
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         String email = user.getEmail();
@@ -200,7 +199,7 @@ public class UserCommandService {
     @Transactional
     public boolean verifyEmail(UserAuthData authData, String code) {
 
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         String email = user.getEmail();
@@ -222,7 +221,7 @@ public class UserCommandService {
 
     @Transactional
     public void deleteUser(UserAuthData authData) {
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         try {
@@ -253,7 +252,7 @@ public class UserCommandService {
     }
 
     public void acceptTerms(UserAuthData authData) {
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         user.setTermsAcceptanceDate(LocalDateTime.now());

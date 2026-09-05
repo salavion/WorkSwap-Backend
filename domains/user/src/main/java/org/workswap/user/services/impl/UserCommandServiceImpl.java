@@ -50,7 +50,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Transactional
     public void deleteUser(UserAuthData authData) {
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         if (user == null) {
@@ -66,7 +66,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     public void modifyUserParam(UserAuthData authData, Map<String, Object> updates) {
 
-        User user = userRepository.findByIdWithSettings(authData.id());
+        User user = userRepository.findByIdWithSettings(authData.sub());
         UserSettings settings = user.getSettings();
 
         if (user != null) {
@@ -131,7 +131,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     public String connectTelegram(UserAuthData authData) {
-        User user = userRepository.findByIdWithSettings(authData.id());
+        User user = userRepository.findByIdWithSettings(authData.sub());
         String email = user.getEmail();
 
         String body = "{\"websiteUserId\":\"" + email + "\"}";
@@ -168,7 +168,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     public void acceptTerms(UserAuthData authData) {
-        User user = userRepository.findById(authData.id()).orElseThrow(
+        User user = userRepository.findBySub(authData.sub()).orElseThrow(
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         user.setTermsAcceptanceDate(LocalDateTime.now());

@@ -51,6 +51,6 @@ public class SubscriptionController {
         @RequestParam String type
     ) {
         return subscriptionRepository.existsBySubscriberIdAndTypeAndTargetId(
-                authData.id(), SubscriptionType.valueOf(type), targetId);
+                authData.sub(), SubscriptionType.valueOf(type), targetId);
     }
 }

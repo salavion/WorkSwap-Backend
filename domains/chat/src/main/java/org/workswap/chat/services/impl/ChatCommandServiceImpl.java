@@ -58,13 +58,13 @@ public class ChatCommandServiceImpl implements ChatCommandService {
         Long chatId = dto.chatId();
 
         // 1. Проверка доступа (1 быстрый EXISTS)
-        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.id())) {
+        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.sub())) {
             throw new AccessDeniedException("That is not your chat");
         }
 
         // 2. Создание сообщения (без Chat entity)
         Message message = messageRepository.save(
-            Message.create(chatId, authData.id(), dto.text())
+            Message.create(chatId, authData.sub(), dto.text())
         );
 
         MessageDTO msgDto = Objects.requireNonNull(
@@ -76,7 +76,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         // 4. Готовим DTO чата ОДИН РАЗ
         ChatDTO chatDto = Objects.requireNonNull(
-            chatQueryService.getChatDTO(chatId, authData.id())
+            chatQueryService.getChatDTO(chatId, authData.sub())
         );
 
         // 5. Участники — 1 запрос
@@ -85,7 +85,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         for (ChatParticipantView p : participants) {
 
-            if (p.getUserId().equals(authData.id())) {
+            if (p.getUserId().equals(authData.sub())) {
                 continue;
             }
 
@@ -103,14 +103,14 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
     @Transactional
     public void markMessagesAsRead(Long chatId, UserAuthData authData) {
-        List<Message> messages = messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.id());
+        List<Message> messages = messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.sub());
         for (Message m : messages) {
             m.setRead(true);
         }
-        messageRepository.markMessagesAsRead(chatId, authData.id());
+        messageRepository.markMessagesAsRead(chatId, authData.sub());
 
         ChatDTO chatDto = Objects.requireNonNull(
-            chatQueryService.getChatDTO(chatId, authData.id()));
+            chatQueryService.getChatDTO(chatId, authData.sub()));
         notifyChatUpdate(chatDto, authData.openId());
 
         List<MessageDTO> dtos = Objects.requireNonNull(
@@ -149,7 +149,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     public void acceptChatTerms(Long chatId, UserAuthData authData) {
         int updated = chatParticipantRepository.acceptChatTerms(
             chatId,
-            authData.id()
+            authData.sub()
         );
 
         if (updated == 0) {
@@ -158,9 +158,9 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     }
 
     public void deleteTemporaryChats(UserAuthData authData) {
-        logger.debug("Запрос на удаление временных диалогов от пользователя: {}", authData.id());
+        logger.debug("Запрос на удаление временных диалогов от пользователя: {}", authData.sub());
 
-        chatRepository.deleteEmptyChatsByStatus(authData.id(), ChatStatus.TEMPORARY);
+        chatRepository.deleteEmptyChatsByStatus(authData.sub(), ChatStatus.TEMPORARY);
     }
 
     public void deleteUserFromChats(Long userId) {

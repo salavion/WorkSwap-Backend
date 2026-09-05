@@ -72,7 +72,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
     private final ApplicationEventPublisher eventPublisher;
 
     public Listing create(UserAuthData authData, String type) {
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         Listing listing = new Listing(authorProxy, type);
         return listingRepository.save(listing);
     }
@@ -91,11 +91,11 @@ public class ListingCommandServiceImpl implements ListingCommandService {
     }
 
     public void addListingToFavorite(UserAuthData authData, Long listingId) {
-        listingRepository.addFavoriteListing(authData.id(), listingId);
+        listingRepository.addFavoriteListing(authData.sub(), listingId);
     }
 
     public void removeListingFromFavorite(UserAuthData authData, Long listingId) {
-        listingRepository.removeFavoriteListing(authData.id(), listingId);
+        listingRepository.removeFavoriteListing(authData.sub(), listingId);
     }
 
     public void publish(UserAuthData authData, Long listingId) {

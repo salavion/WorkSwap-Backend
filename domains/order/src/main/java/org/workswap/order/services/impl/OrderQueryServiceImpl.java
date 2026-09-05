@@ -29,7 +29,7 @@ public class OrderQueryServiceImpl implements OrderQueryService{
         Order order = orderRepository.findByChatId(chatId);
         logger.debug("Заказ: {}", order.getId());
 
-        if (!orderRepository.existsByIdAndUserIsBuyerOrSeller(order.getId(), authData.id())) {
+        if (!orderRepository.existsByIdAndUserIsBuyerOrSeller(order.getId(), authData.sub())) {
             throw new AccessDeniedException("Вы не являетесь участником сделки");
         }
 
@@ -38,7 +38,7 @@ public class OrderQueryServiceImpl implements OrderQueryService{
 
     public OrderDTO findOrderById(String orderId, UserAuthData authData) {
 
-        if (!orderRepository.existsByIdAndUserIsBuyerOrSeller(orderId, authData.id())) {
+        if (!orderRepository.existsByIdAndUserIsBuyerOrSeller(orderId, authData.sub())) {
             throw new AccessDeniedException("Вы не являетесь участником сделки");
         }
 

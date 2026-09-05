@@ -38,19 +38,19 @@ public class ReviewCommandService {
         logger.debug("listingId {}", listingId);
 
         if (listingId != null) {
-            alreadyReviewed = reviewRepository.existsByAuthorIdAndListingId(authData.id(), listingId);
+            alreadyReviewed = reviewRepository.existsByAuthorIdAndListingId(authData.sub(), listingId);
             listing = entityManager.getReference(Listing.class, listingId);
         } else if (profileId != null) {
-            alreadyReviewed = reviewRepository.existsByAuthorIdAndProfileId(authData.id(), profileId);
+            alreadyReviewed = reviewRepository.existsByAuthorIdAndProfileId(authData.sub(), profileId);
         } else {
             throw new IllegalStateException("Was no listing or profile");
         }
 
         if (rating == null) throw new IllegalStateException("Рейтинг не может быть нулевой");
-        if (authData.id() == profileId) throw new IllegalStateException("Нельзя оставлять отзыв самому себе");
+        if (authData.sub() == profileId) throw new IllegalStateException("Нельзя оставлять отзыв самому себе");
         if (alreadyReviewed) throw new IllegalStateException("Такой отзыв уже остален");
 
-        User author = entityManager.getReference(User.class, authData.id());
+        User author = entityManager.getReference(User.class, authData.sub());
         User profile = entityManager.getReference(User.class, profileId);
 
         Review review = reviewRepository.save(new Review(text, rating, author, listing, profile));

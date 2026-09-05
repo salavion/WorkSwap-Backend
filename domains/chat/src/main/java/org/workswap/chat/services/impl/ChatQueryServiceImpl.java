@@ -67,13 +67,13 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Long sellerId = listingRepository.findAuthorIdByListingId(listingId);
 
         Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(
-                sellerId, authData.id(), ChatType.LISTING_DISCUSSION, listingId);
+                sellerId, authData.sub(), ChatType.LISTING_DISCUSSION, listingId);
         if (existing.isPresent()) {
             return existing.get();
         }
 
         User sellerProxy = entityManager.getReference(User.class, sellerId);
-        User clientProxy = entityManager.getReference(User.class, authData.id());
+        User clientProxy = entityManager.getReference(User.class, authData.sub());
         Set<User> participants = Set.of(clientProxy, sellerProxy);
         Chat listingDiscussion = new Chat(participants, ChatType.LISTING_DISCUSSION, listingId);
 
@@ -81,13 +81,13 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     public Chat getOrCreatePrivateChat(UserAuthData authData, Long interlocutorId) {
-        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(authData.id(), interlocutorId, ChatType.PRIVATE_CHAT, null);
+        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(authData.sub(), interlocutorId, ChatType.PRIVATE_CHAT, null);
         if (existing.isPresent()) {
             return existing.get();
         }
 
         User user1Proxy = entityManager.getReference(User.class, interlocutorId);
-        User user2Proxy = entityManager.getReference(User.class, authData.id());
+        User user2Proxy = entityManager.getReference(User.class, authData.sub());
         Set<User> participants = Set.of(user1Proxy, user2Proxy);
         Chat chat = new Chat(participants, ChatType.PRIVATE_CHAT, null);
         return chatRepository.save(chat);
@@ -100,14 +100,14 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Listing event = listingQueryService.getListingById(eventId);
         Optional<Chat> chat = chatRepository.findChatByTargetId(ChatType.EVENT_TOPIC, event.getId());
 
-        User userProxy = entityManager.getReference(User.class, authData.id());
+        User userProxy = entityManager.getReference(User.class, authData.sub());
 
         if (chat.isPresent()) {
             Chat existing = chat.get();
             
             // TODO Реализовать систему проверки блокировки пользователя в чате перед добавленим его.
 
-            boolean alreadyParticipant = chatParticipantRepository.existsByChatIdAndUserId(existing.getId(), authData.id());
+            boolean alreadyParticipant = chatParticipantRepository.existsByChatIdAndUserId(existing.getId(), authData.sub());
 
             if (!alreadyParticipant) {
                 existing.getParticipants().add(new ChatParticipant(existing, userProxy));
@@ -122,7 +122,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     @Transactional
     public List<ChatDTO> getChatsDTOForUser(UserAuthData authData, String locale) {
-        List<ChatDTO> chats = chatRepository.findChatsForUser(authData.id());
+        List<ChatDTO> chats = chatRepository.findChatsForUser(authData.sub());
 
         logger.debug("Chats for DTO found: " + chats.size());
         eventPublisher.publishEvent(new ChatsLoadedEvent(authData, chats, locale));
@@ -167,7 +167,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     public List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData) {
         logger.debug("Получение сообщений для разговора с ID: {}", chatId);
 
-        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.id())) {
+        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.sub())) {
             throw new AccessDeniedException("That is not your chat");
         }
 
@@ -184,7 +184,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     public long getUnreadMessageCount(Long chatId, UserAuthData authData) {
         // Получаем все непрочитанные сообщения для конкретного разговора и пользователя
-        return messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.id()).size();
+        return messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.sub()).size();
     }
 
     public Chat getChatById(Long chatId) {
@@ -196,7 +196,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     public Boolean isChatTermsAccepted(Long chatId, UserAuthData authData) {
-        Boolean accepted = chatParticipantRepository.isChatTermsAccepted(authData.id(), chatId);
+        Boolean accepted = chatParticipantRepository.isChatTermsAccepted(authData.sub(), chatId);
         if (accepted == null) {
             throw new AccessDeniedException("That is not your chat");
         }
@@ -209,19 +209,19 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         if (chatType == ChatType.PRIVATE_CHAT || chatType == ChatType.LISTING_DISCUSSION) {
             boolean isParticipant = chatParticipantRepository.existsByChatIdAndUserIdAndChatTypeIn(
-                chatId, authData.id(), List.of(ChatType.PRIVATE_CHAT, ChatType.LISTING_DISCUSSION)
+                chatId, authData.sub(), List.of(ChatType.PRIVATE_CHAT, ChatType.LISTING_DISCUSSION)
             );
             if (!isParticipant) throw new AccessDeniedException("Нет доступа к приватному чату");
         }
 
-        List<User> interlocutors = chatParticipantRepository.findChatInterlocutorsExcludingUser(chatId, authData.id());
+        List<User> interlocutors = chatParticipantRepository.findChatInterlocutorsExcludingUser(chatId, authData.sub());
 
         return interlocutors.stream().map(user -> userMappingService.toShortDTO(user)).toList();
     }
 
     public List<MessageDTO> getChatUnreadMessages(UserAuthData authData) {
-        List<Message> unreads = messageRepository.findUnreadMessagesByUserId(authData.id());
-        logger.debug("Найдены непрочитанные сообщения для " + authData.name() + ": " + unreads.size());
+        List<Message> unreads = messageRepository.findUnreadMessagesByUserId(authData.sub());
+        logger.debug("Найдены непрочитанные сообщения для " + authData.ssoUserId() + ": " + unreads.size());
         return unreads.stream().map(m -> mappingService.toDTO(m)).toList();
     }
 

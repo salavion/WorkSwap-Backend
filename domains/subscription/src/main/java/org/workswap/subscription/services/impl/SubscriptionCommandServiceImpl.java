@@ -29,7 +29,7 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
     private final EntityManager entityManager;
     
     public Subscription createSubscription(UserAuthData authData, String type, Long targetId) {
-        Subscription existing = subscriptionRepository.findBySubscriberIdAndTypeAndTargetId(authData.id(), SubscriptionType.valueOf(type), targetId);
+        Subscription existing = subscriptionRepository.findBySubscriberIdAndTypeAndTargetId(authData.sub(), SubscriptionType.valueOf(type), targetId);
         if (targetId == null) {
             throw new IllegalStateException("У подписки нет цели!");
         }
@@ -37,7 +37,7 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
         if (existing == null) { 
             SubscriptionType subType = SubscriptionType.valueOf(type);
             Subscription newSub = null;
-            User subscriber = entityManager.getReference(User.class, authData.id());
+            User subscriber = entityManager.getReference(User.class, authData.sub());
             if (subType == SubscriptionType.EVENT && listingRepository.findById(targetId).orElse(null).getType().equals(ListingType.EVENT)) {
                 newSub = new Subscription(subscriber, subType, targetId);
             } else if (subType == SubscriptionType.USER && userRepository.findById(targetId).orElse(null).isOpen()) {
@@ -56,6 +56,6 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
 
     @Transactional
     public void deleteSubscription(UserAuthData authData, SubscriptionType type, Long targetId) {
-        subscriptionRepository.deleteBySubscriberIdAndTypeAndTargetId(authData.id(), type, targetId);
+        subscriptionRepository.deleteBySubscriberIdAndTypeAndTargetId(authData.sub(), type, targetId);
     }
 }

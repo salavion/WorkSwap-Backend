@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.workswap.location.datasource.model.Location;
-import org.workswap.sso.security.enums.AuthProvider;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.permission.Role;
 
@@ -24,18 +23,16 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
-    //google регистрация
+    // sso регистрация
     public User(
-        Long id,
-        String openId,
+        String sub,
         String name,
         String email,
         String avatarUrl,
         Set<Role> roles,
         UserStatus status
     ) {
-        this.id = id;
-        this.openId = openId;
+        this.sub = sub;
         this.name = name;
         this.email = email;
         this.avatarUrl = avatarUrl;
@@ -47,10 +44,11 @@ public class User {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
-    private String openId;
+    private String sub;
 
     @Setter
     @OneToOne(
@@ -66,9 +64,6 @@ public class User {
 
     @Column(nullable = true, unique = true)
     private String email;
-
-    @Setter
-    private String passwordHash;
 
     @Setter
     private String bio;
@@ -89,24 +84,13 @@ public class User {
     private Set<Role> roles;
 
     @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AuthProvider provider = AuthProvider.LOCAL;
-
-    @Setter
-    private Double rating = 0.0; // Средний рейтинг пользователя
+    private Double rating = 0.0;
 
     @Setter
     private String phone;
 
-    @Setter
-    private Integer completedJobs;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-    @Setter
-    private boolean termsAccepted = false; // Приняты ли условия использования
 
     @Setter
     private boolean open = true;

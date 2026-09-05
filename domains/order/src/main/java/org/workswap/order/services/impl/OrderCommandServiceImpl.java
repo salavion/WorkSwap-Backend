@@ -48,7 +48,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         User author = listing.getAuthor();
 
-        User userProxy = entityManager.getReference(User.class, authData.id());
+        User userProxy = entityManager.getReference(User.class, authData.sub());
 
         Order order = getOrCreateOrder(userProxy, author, listing);
 

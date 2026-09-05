@@ -36,7 +36,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
                              dto.description(), 
                              dto.deadline(), 
                              dto.type(), 
-                             authData.id());
+                             authData.sub());
 
         Task saved = taskRepository.save(task);
         return taskMappingService.toDTO(saved);
@@ -48,7 +48,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         String commentContent
     ) {
         Task task = taskQueryService.getTaskById(taskId);
-        TaskComment comment = new TaskComment(commentContent, authData.id(), task);
+        TaskComment comment = new TaskComment(commentContent, authData.sub(), task);
         taskCommentRepository.save(comment);
     }
 
@@ -59,7 +59,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
 
         TaskComment comment = taskCommentRepository.findById(commentId).orElse(null);
         
-        if (!comment.getAuthorId().equals(authData.id())) {
+        if (!comment.getAuthorId().equals(authData.sub())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете удалять только свои комментарии!");
         }
 
@@ -75,7 +75,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     public void pickupTask(UserAuthData authData, Long taskId) {
         Task task = taskQueryService.getTaskById(taskId);
 
-        task.setExecutorId(authData.id());
+        task.setExecutorId(authData.sub());
         task.setStatus(TaskStatus.IN_PROGRESS);
 
         taskRepository.save(task);
@@ -84,7 +84,7 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     public void completeTask(UserAuthData authData, Long taskId) {
         Task task = taskQueryService.getTaskById(taskId);
 
-        if (authData.id() != task.getExecutorId()) {
+        if (authData.sub() != task.getExecutorId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете завершать только свои задачи!");
         }
         

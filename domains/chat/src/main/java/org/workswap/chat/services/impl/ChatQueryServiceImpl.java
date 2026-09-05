@@ -28,6 +28,7 @@ import org.workswap.listing.services.ListingQueryService;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.services.UserMappingService;
 
@@ -59,36 +60,40 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final UserMappingService userMappingService;
     private final ChatMappingService mappingService;
     private final ListingQueryService listingQueryService;
+    private final UserRepository userRepository;
 
     private final ApplicationEventPublisher eventPublisher;
     
     public Chat getOrCreateListingDiscussion(UserAuthData authData, Long listingId) {
 
-        Long sellerId = listingRepository.findAuthorIdByListingId(listingId);
+        String sellerSub = listingRepository.findAuthorSubByListingId(listingId);
 
         Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(
-                sellerId, authData.sub(), ChatType.LISTING_DISCUSSION, listingId);
+                sellerSub, authData.sub(), ChatType.LISTING_DISCUSSION, listingId);
         if (existing.isPresent()) {
             return existing.get();
         }
 
-        User sellerProxy = entityManager.getReference(User.class, sellerId);
-        User clientProxy = entityManager.getReference(User.class, authData.sub());
+        User sellerProxy = userRepository.findBySub(sellerSub).orElseThrow();
+        User clientProxy = userRepository.findBySub(authData.sub()).orElseThrow();
+
         Set<User> participants = Set.of(clientProxy, sellerProxy);
         Chat listingDiscussion = new Chat(participants, ChatType.LISTING_DISCUSSION, listingId);
 
         return chatRepository.save(listingDiscussion);
     }
 
-    public Chat getOrCreatePrivateChat(UserAuthData authData, Long interlocutorId) {
-        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(authData.sub(), interlocutorId, ChatType.PRIVATE_CHAT, null);
+    public Chat getOrCreatePrivateChat(UserAuthData authData, String interlocutorSub) {
+        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(
+            authData.sub(), interlocutorSub, ChatType.PRIVATE_CHAT, null);
         if (existing.isPresent()) {
             return existing.get();
         }
 
-        User user1Proxy = entityManager.getReference(User.class, interlocutorId);
-        User user2Proxy = entityManager.getReference(User.class, authData.sub());
-        Set<User> participants = Set.of(user1Proxy, user2Proxy);
+        User interlocutor = userRepository.findBySub(interlocutorSub).orElseThrow();
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+
+        Set<User> participants = Set.of(interlocutor, user);
         Chat chat = new Chat(participants, ChatType.PRIVATE_CHAT, null);
         return chatRepository.save(chat);
     }
@@ -129,14 +134,14 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return chats;
     }
 
-    public List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale) {
+    public List<ChatDetails> getChatDetails(String userSub, List<ChatDTO> chats, String locale) {
         List<Long> chatIds = chats.stream().map(c -> c.id()).toList();
         List<Long> listingIds = chats.stream()
             .filter(c -> Set.of(ChatType.EVENT_TOPIC, ChatType.LISTING_DISCUSSION).contains(c.type()))
             .map(ChatDTO::targetId).toList();
 
         List<ChatMemberDTO> members = chatParticipantRepository.findMembersByChatIds(chatIds);
-        List<ShortListingDTO> listings = listingRepository.findShortListingsByIds(listingIds, userId, locale);
+        List<ShortListingDTO> listings = listingRepository.findShortListingsByIds(listingIds, userSub, locale);
 
         List<ChatDetails> chatDetails = chats.stream()
             .map(c -> {
@@ -184,7 +189,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     public long getUnreadMessageCount(Long chatId, UserAuthData authData) {
         // Получаем все непрочитанные сообщения для конкретного разговора и пользователя
-        return messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.sub()).size();
+        return messageRepository.findByChatIdAndSenderSubNotAndReadFalse(chatId, authData.sub()).size();
     }
 
     public Chat getChatById(Long chatId) {
@@ -208,7 +213,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         ChatType chatType = chatRepository.findTypeById(chatId);
 
         if (chatType == ChatType.PRIVATE_CHAT || chatType == ChatType.LISTING_DISCUSSION) {
-            boolean isParticipant = chatParticipantRepository.existsByChatIdAndUserIdAndChatTypeIn(
+            boolean isParticipant = chatParticipantRepository.existsByChatIdAndUserSubAndChatTypeIn(
                 chatId, authData.sub(), List.of(ChatType.PRIVATE_CHAT, ChatType.LISTING_DISCUSSION)
             );
             if (!isParticipant) throw new AccessDeniedException("Нет доступа к приватному чату");
@@ -220,13 +225,13 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     public List<MessageDTO> getChatUnreadMessages(UserAuthData authData) {
-        List<Message> unreads = messageRepository.findUnreadMessagesByUserId(authData.sub());
-        logger.debug("Найдены непрочитанные сообщения для " + authData.ssoUserId() + ": " + unreads.size());
+        List<Message> unreads = messageRepository.findUnreadMessagesByUserSub(authData.sub());
+        logger.debug("Найдены непрочитанные сообщения для " + authData.sub() + ": " + unreads.size());
         return unreads.stream().map(m -> mappingService.toDTO(m)).toList();
     }
 
-    public ChatDTO getChatDTO(Long chatId, Long userId) {
+    public ChatDTO getChatDTO(Long chatId, String userSub) {
         Chat chat = getChatById(chatId);
-        return mappingService.convertToDTO(chat, userId);
+        return mappingService.convertToDTO(chat, userSub);
     }
 }

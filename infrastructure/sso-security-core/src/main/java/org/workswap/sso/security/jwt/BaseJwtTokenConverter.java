@@ -19,15 +19,11 @@ public class BaseJwtTokenConverter implements JwtAuthenticationConverter {
         
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        String userIdStr = jwt.getSubject();
-        log.debug("userId: {}", userIdStr);
-        Long userId = Long.valueOf(userIdStr);
+        String userSub = jwt.getSubject();
 
-        String userOpenId = Objects.requireNonNull(jwt.getClaim("openId"));
         UserStatus userStatus = UserStatus.valueOf(Objects.requireNonNull(jwt.getClaim("status")));
-        String userName = jwt.getClaim("name");
 
-        UserAuthData authData = new UserAuthData(userId, userOpenId, userName, userStatus);
+        UserAuthData authData = new UserAuthData(userSub, userStatus);
 
         return new UserJwtAuthenticationToken(jwt, authorities, authData);
     }

@@ -23,10 +23,10 @@ public interface ForumPostRepository extends JpaRepository<ForumPost, Long> {
         """)
     List<ForumPost> fetchCommentsForPosts(@Param("posts") List<ForumPost> posts);
 
-    List<ForumPost> findByAuthorId(Long authorId);
+    List<ForumPost> findByAuthorSub(String authorSub);
 
     Page<ForumPost> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     // можно удалить напрямую по openId и authorId без загрузки сущности
-    void deleteByOpenIdAndAuthorId(String openId, Long authorId);
+    void deleteByOpenIdAndAuthorSub(String openId, String authorSub);
 }

@@ -29,7 +29,7 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
     private final EntityManager entityManager;
     
     public Subscription createSubscription(UserAuthData authData, String type, Long targetId) {
-        Subscription existing = subscriptionRepository.findBySubscriberIdAndTypeAndTargetId(authData.sub(), SubscriptionType.valueOf(type), targetId);
+        Subscription existing = subscriptionRepository.findBySubscriberSubAndTypeAndTargetId(authData.sub(), SubscriptionType.valueOf(type), targetId);
         if (targetId == null) {
             throw new IllegalStateException("У подписки нет цели!");
         }
@@ -56,6 +56,6 @@ public class SubscriptionCommandServiceImpl implements SubscriptionCommandServic
 
     @Transactional
     public void deleteSubscription(UserAuthData authData, SubscriptionType type, Long targetId) {
-        subscriptionRepository.deleteBySubscriberIdAndTypeAndTargetId(authData.sub(), type, targetId);
+        subscriptionRepository.deleteBySubscriberSubAndTypeAndTargetId(authData.sub(), type, targetId);
     }
 }

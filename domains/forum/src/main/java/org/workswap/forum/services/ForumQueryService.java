@@ -15,6 +15,6 @@ public interface ForumQueryService {
         int count
     );
     List<CategoryDTO> getForumtags();
-    UserForumContent getUserForumContent(Long userId);
+    UserForumContent getUserForumContent(String userSub);
     List<ForumActivityItemDTO> getForumActivity();
 }

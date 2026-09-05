@@ -19,9 +19,7 @@ public record FullUserDTO(
     String avatarType,
     Double rating,
     boolean telegramConnected,
-    boolean termsAccepted,
     LocalDateTime createdAt,
-    LocalDateTime termsAcceptanceDate,
 
     String googleAvatar,
     String uploadedAvatar,

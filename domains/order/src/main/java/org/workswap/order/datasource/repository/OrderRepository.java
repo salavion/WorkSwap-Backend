@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         SELECT CASE WHEN COUNT(o) > 0 THEN true ELSE false END
         FROM Order o
         WHERE o.id = :orderId
-          AND (o.buyer.id = :userId OR o.seller.id = :userId)
+          AND (o.buyer.sub = :userSub OR o.seller.sub = :userSub)
     """)
-    boolean existsByIdAndUserIsBuyerOrSeller(@Param("orderId") String orderId, @Param("userId") Long userId);
+    boolean existsByIdAndUserIsBuyerOrSeller(@Param("orderId") String orderId, @Param("userSub") String userSub);
 }

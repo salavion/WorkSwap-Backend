@@ -84,14 +84,14 @@ public class ForumCommandServiceImpl implements ForumCommandService {
     }
 
     public void deleteTopic(UserAuthData authData, String topicOpenId) {
-        topicRepository.deleteByOpenIdAndAuthorId(topicOpenId, authData.sub());
+        topicRepository.deleteByOpenIdAndAuthorSub(topicOpenId, authData.sub());
     }
 
     public void deletePost(UserAuthData authData, String postOpenId) {
-        postRepository.deleteByOpenIdAndAuthorId(postOpenId, authData.sub());
+        postRepository.deleteByOpenIdAndAuthorSub(postOpenId, authData.sub());
     }
 
     public void deleteComment(UserAuthData authData, Long commentId) {
-        commentRepository.deleteByIdAndAuthorId(commentId, authData.sub());
+        commentRepository.deleteByIdAndAuthorSub(commentId, authData.sub());
     }
 }

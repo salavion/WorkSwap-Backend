@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ShortUserProfileDTO(
     Long id,
-    String openId,
+    String sub,
 
     String name,
     String phone,

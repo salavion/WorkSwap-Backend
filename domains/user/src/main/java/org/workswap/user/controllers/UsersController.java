@@ -48,13 +48,7 @@ public class UsersController {
     public Boolean checkTelegramConnect(@AuthUser UserAuthData authData) {
         return userQueryService.checkTelegramConnect(authData);
     }
-
-    @PostMapping("/accept-terms")
-    @RequiredPermission("ACCEPT_TERMS")
-    public void acceptTerms(@AuthUser UserAuthData authData) {
-        userCommandService.acceptTerms(authData);
-    }
-
+    
     @DeleteMapping
     @RequiredPermission("DELETE_OWN_ACCOUNT")
     public void deleteAccount(@AuthUser UserAuthData authData) {

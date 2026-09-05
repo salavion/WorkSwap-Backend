@@ -27,7 +27,7 @@ public class ChatMappingServiceImpl implements ChatMappingService {
 
     private final MessageRepository messageRepository;
 
-    public ChatDTO convertToDTO(Chat chat, Long userId) {
+    public ChatDTO convertToDTO(Chat chat, String userSub) {
         logger.debug("Конвертация в дто начата разговора: " + chat.getId());
 
         ChatStatus status = chat.getStatus();
@@ -35,7 +35,7 @@ public class ChatMappingServiceImpl implements ChatMappingService {
 
         logger.debug("Определяем, есть ли новые сообщения");
 
-        long unreadcount = messageRepository.countByChatIdAndSenderIdNotAndReadFalse(chat.getId(), userId);
+        long unreadcount = messageRepository.countByChatIdAndSenderSubNotAndReadFalse(chat.getId(), userSub);
 
         logger.debug("Обработка последнего сообщения");
         // Обработка последнего сообщения

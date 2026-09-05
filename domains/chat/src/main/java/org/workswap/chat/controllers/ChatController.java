@@ -36,10 +36,10 @@ public class ChatController {
     @GetMapping("/private-chat")
     @Authenticated
     public Long getOrCreatePrivateChat(
-        @RequestParam Long interlocutorId,
+        @RequestParam String interlocutorSub,
         @AuthUser UserAuthData authData
     ) {
-        return chatQueryService.getOrCreatePrivateChat(authData, interlocutorId).getId();
+        return chatQueryService.getOrCreatePrivateChat(authData, interlocutorSub).getId();
     }
 
     @GetMapping("/event-chat")

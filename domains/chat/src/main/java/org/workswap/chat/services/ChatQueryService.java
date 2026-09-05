@@ -12,10 +12,10 @@ import org.workswap.user.dto.ShortUserDTO;
 public interface ChatQueryService {
     
     Chat getOrCreateListingDiscussion(UserAuthData authData, Long listingId);
-    Chat getOrCreatePrivateChat(UserAuthData authData, Long interlocutorId);
+    Chat getOrCreatePrivateChat(UserAuthData authData, String interlocutorSub);
     Chat getOrCreateEventChat(UserAuthData authData, Long eventId);
 
-    ChatDTO getChatDTO(Long chatId, Long userId);
+    ChatDTO getChatDTO(Long chatId, String userSub);
     List<ChatDTO> getChatsDTOForUser(UserAuthData authData, String locale);
     List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData);
     List<MessageDTO> getChatUnreadMessages(UserAuthData authData);
@@ -27,5 +27,5 @@ public interface ChatQueryService {
 
     List<ShortUserDTO> getChatInterlocutors(Long chatId, UserAuthData authData);
 
-    List<ChatDetails> getChatDetails(String userSsoId, List<ChatDTO> chats, String locale);
+    List<ChatDetails> getChatDetails(String userSub, List<ChatDTO> chats, String locale);
 }

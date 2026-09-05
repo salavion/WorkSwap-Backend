@@ -6,7 +6,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +65,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     public void modifyUserParam(UserAuthData authData, Map<String, Object> updates) {
 
-        User user = userRepository.findByIdWithSettings(authData.sub());
+        User user = userRepository.findBySubWithSettings(authData.sub());
         UserSettings settings = user.getSettings();
 
         if (user != null) {
@@ -131,7 +130,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     public String connectTelegram(UserAuthData authData) {
-        User user = userRepository.findByIdWithSettings(authData.sub());
+        User user = userRepository.findBySubWithSettings(authData.sub());
         String email = user.getEmail();
 
         String body = "{\"websiteUserId\":\"" + email + "\"}";
@@ -167,22 +166,11 @@ public class UserCommandServiceImpl implements UserCommandService {
         }
     }
 
-    public void acceptTerms(UserAuthData authData) {
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-
-        user.setTermsAcceptanceDate(LocalDateTime.now());
-        user.setTermsAccepted(true);
-        
-        userRepository.save(user);
-    }
-
     public void createUser(UserCreatedEvent event) {
 
         Role role = roleRepository.findByName("TEMP_USER");
         User user = new User(
-            event.id(),
-            event.openId(),
+            event.sub(),
             event.name(), 
             event.email(), 
             event.avatarUrl(), 

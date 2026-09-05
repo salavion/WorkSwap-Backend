@@ -38,7 +38,7 @@ public class UserMappingServiceImpl implements UserMappingService {
                               
         UserDTO dto = new UserDTO(
             user.getId(), 
-            user.getOpenId(), 
+            user.getSub(), 
             user.getName(), 
             phoneVisible ? user.getPhone() : null, 
             emailVisible ? user.getEmail() : null, 
@@ -67,7 +67,7 @@ public class UserMappingServiceImpl implements UserMappingService {
 
         FullUserDTO dto = new FullUserDTO(
             user.getId(),
-            user.getOpenId(),
+            user.getSub(),
             user.getName(),
             user.getPhone(),
             user.getEmail(),
@@ -79,9 +79,7 @@ public class UserMappingServiceImpl implements UserMappingService {
             settings.getAvatarType(),
             user.getRating(),
             settings.isTelegramConnected(),
-            user.isTermsAccepted(),
             user.getCreatedAt(),
-            user.getTermsAcceptanceDate(),
             settings.getGoogleAvatar(),
             settings.getUploadedAvatar(),
             settings.isPhoneVisible(),
@@ -92,7 +90,7 @@ public class UserMappingServiceImpl implements UserMappingService {
     }
 
     public ShortUserDTO toShortDTO(User user) {
-        return new ShortUserDTO(user.getId(), user.getOpenId(), user.getName(), user.getAvatarUrl());
+        return new ShortUserDTO(user.getId(), user.getSub(), user.getName(), user.getAvatarUrl());
     }
 
     public ShortUserProfileDTO toShortProfileDTO(User user) {
@@ -107,7 +105,7 @@ public class UserMappingServiceImpl implements UserMappingService {
         
         return new ShortUserProfileDTO(
             user.getId(),
-            user.getOpenId(), 
+            user.getSub(), 
             user.getName(), 
             phoneVisible ? user.getPhone() : null, 
             emailVisible ? user.getEmail() : null, 

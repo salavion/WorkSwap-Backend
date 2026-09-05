@@ -18,6 +18,8 @@ import org.workswap.task.dto.UserTasksTable;
 import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskMappingService;
 import org.workswap.task.services.TaskQueryService;
+import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,14 +30,17 @@ public class TaskQueryServiceImpl implements TaskQueryService{
     private final TaskRepository taskRepository;
     private final TaskMappingService taskMappingService;
     private final TaskCommentRepository taskCommentRepository;
+    private final UserRepository userRepository;
 
     public TasksPageRequest getTasksPage(UserAuthData authData) {
 
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+
         Pageable pageable = PageRequest.of(0, 15);
         Page<Task> newTasks = taskRepository.findPageWithUsersFiltered(TaskStatus.NEW, null, "created", pageable);
-        List<Task> executing = taskRepository.findByExecutorIdAndStatus(authData.sub(), TaskStatus.IN_PROGRESS);
-        List<Task> completed = taskRepository.findCompletedAfter(authData.sub(), LocalDateTime.now().minusMonths(1));
-        long completedBefore = taskRepository.countCompletedBefore(authData.sub(), LocalDateTime.now().minusMonths(1));
+        List<Task> executing = taskRepository.findByExecutorIdAndStatus(user.getId(), TaskStatus.IN_PROGRESS);
+        List<Task> completed = taskRepository.findCompletedAfter(user.getId(), LocalDateTime.now().minusMonths(1));
+        long completedBefore = taskRepository.countCompletedBefore(user.getId(), LocalDateTime.now().minusMonths(1));
 
         UserTasksTable userTasks = new UserTasksTable(
             executing.stream().map(t -> taskMappingService.toDTO(t)).toList(), 

@@ -18,6 +18,14 @@ import java.util.Optional;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("""
+        SELECT cp.chat
+        FROM ChatParticipant cp
+        WHERE cp.chat.id = :chatId
+        AND cp.user.sub = :userSub
+    """)
+    Optional<Chat> fingByChatIdAndUserId(@Param("chatId") Long chatId, @Param("userSub") String userSub);
+
+    @Query("""
         SELECT c
         FROM Chat c
         WHERE c.chatType = :chatType
@@ -27,16 +35,16 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
         )
         AND EXISTS (
                 SELECT 1 FROM ChatParticipant p1
-                WHERE p1.chat.id = c.id AND p1.user.id = :userId1
+                WHERE p1.chat.id = c.id AND p1.user.sub = :userSub1
         )
         AND EXISTS (
                 SELECT 1 FROM ChatParticipant p2
-                WHERE p2.chat.id = c.id AND p2.user.id = :userId2
+                WHERE p2.chat.id = c.id AND p2.user.sub = :userSub2
         )
     """)
     Optional<Chat> findChatBetweenUsersAndChatTypeAndTargetId(
-            @Param("userId1") Long userId1,
-            @Param("userId2") Long userId2,
+            @Param("userSub1") String userSub1,
+            @Param("userSub2") String userSub2,
             @Param("chatType") ChatType chatType,
             @Param("targetId") Long targetId);
 
@@ -67,7 +75,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
         WHERE c.status = :status
         AND EXISTS (
             SELECT 1 FROM c.participants p
-            WHERE p.id = :userId
+            WHERE p.id = :userSub
         )
         AND NOT EXISTS (
             SELECT 1 FROM Message m
@@ -75,7 +83,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
         )
     """)
     int deleteEmptyChatsByStatus(
-        @Param("userId") Long userId,
+        @Param("userSub") String userSub,
         @Param("status") ChatStatus status
     );
 
@@ -110,10 +118,10 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
         WHERE EXISTS (
             SELECT 1
             FROM ChatParticipant cp
-            WHERE cp.chat = c AND cp.user.id = :userId
+            WHERE cp.chat = c AND cp.user.sub = :userSub
         )
         GROUP BY c.id, lm.text, lm.sentAt, c.status, c.chatType, c.targetId
         ORDER BY lm.sentAt DESC
     """)
-    List<ChatDTO> findChatsForUser(@Param("userId") Long userId);
+    List<ChatDTO> findChatsForUser(@Param("userSub") String userSub);
 }

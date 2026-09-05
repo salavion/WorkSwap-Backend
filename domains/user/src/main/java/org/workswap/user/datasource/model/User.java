@@ -96,9 +96,6 @@ public class User {
     private boolean open = true;
 
     @Setter
-    private LocalDateTime termsAcceptanceDate = LocalDateTime.now();
-
-    @Setter
     private LocalDateTime lastUsed;
 
     @Setter

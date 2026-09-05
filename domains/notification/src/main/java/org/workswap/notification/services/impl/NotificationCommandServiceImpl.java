@@ -176,14 +176,14 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
        
         User receiver = userRepository.getReferenceById(event.userId());
 
-        String receiverOpenId = receiver.getOpenId();
+        String receiverSub = receiver.getSub();
 
-        if (receiverOpenId == null) {
+        if (receiverSub == null) {
             throw new IllegalStateException("У пользователя нет почты!");
         }
 
         messagingTemplate.convertAndSendToUser(
-                receiverOpenId,
+                receiverSub,
                 "/queue/notifications",
                 fullNotification
         );

@@ -30,16 +30,16 @@ public class ReviewQueryService {
         return reviewRepository.findByListingIdOrderByCreatedAtDesc(listingId); // Получаем отзывы для объявления
     }
 
-    public List<Review> getReviewsByProfileId(Long profileId) {
-        return reviewRepository.findByProfileIdOrderByCreatedAtDesc(profileId); // Получаем отзывы для объявления
+    public List<Review> getReviewsByProfileSub(String profileSub) {
+        return reviewRepository.findByProfileSubOrderByCreatedAtDesc(profileSub); // Получаем отзывы для объявления
     }
 
-    public List<ReviewDTO> getRewiewsList(Long listingId, Long profileId) {
+    public List<ReviewDTO> getRewiewsList(Long listingId, String profileSub) {
         List<Review> reviews = new ArrayList<>();
         if (listingId != null) {
             reviews = getReviewsByListingId(listingId);
-        } else if (profileId != null) {
-            reviews = getReviewsByProfileId(profileId);
+        } else if (profileSub != null) {
+            reviews = getReviewsByProfileSub(profileSub);
         }
 
         return reviews.stream()
@@ -63,8 +63,8 @@ public class ReviewQueryService {
     }
 
     public MyReviews getMyReviews(UserAuthData authData) {
-        List<Review> given = reviewRepository.findByAuthorId(authData.sub());
-        List<Review> recived = reviewRepository.findByProfileIdOrderByCreatedAtDesc(authData.sub());
+        List<Review> given = reviewRepository.findByAuthorSub(authData.sub());
+        List<Review> recived = reviewRepository.findByProfileSubOrderByCreatedAtDesc(authData.sub());
 
         return new MyReviews(
             given.stream()

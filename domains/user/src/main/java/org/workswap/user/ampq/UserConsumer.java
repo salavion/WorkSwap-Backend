@@ -19,7 +19,7 @@ public class UserConsumer {
 
     @RabbitListener(queues = "userCreateQueue")
     public void userCreateQueue(UserCreatedEvent event) {
-        log.debug("Creating user {} {} by command", event.status(), event.id());
+        log.debug("Creating user {} {} by command", event.status(), event.sub());
 
         userCommandService.createUser(event);
     }

@@ -16,14 +16,14 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // Получить все непрочитанные сообщения для пользователя
-    List<Message> findBySenderIdNotAndReadFalse(Long senderId);
+    List<Message> findBySenderSubNotAndReadFalse(String senderSub);
 
     // Получить все непрочитанные сообщения для пользователя в конкретном разговоре
-    List<Message> findByChatIdAndSenderIdNotAndReadFalse(Long chatId, Long senderId);
+    List<Message> findByChatIdAndSenderSubNotAndReadFalse(Long chatId, String senderSub);
 
     List<Message> findByChatIdOrderBySentAtAsc(Long chatId);
 
-    long countByChatIdAndSenderIdNotAndReadFalse(Long chatId, Long senderId);
+    long countByChatIdAndSenderSubNotAndReadFalse(Long chatId, String senderSub);
 
     // Новый метод: получить сообщения по ID разговора (с сортировкой по времени)
     Page<Message> findByChatIdOrderBySentAtDesc(Long chatId, Pageable pageable);
@@ -33,12 +33,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         UPDATE Message m
         SET m.read = true
         WHERE m.chatId = :chatId
-        AND m.senderId <> :userId
+        AND m.sender.sub <> :userSub
         AND m.read = false
     """)
     void markMessagesAsRead(
             @Param("chatId") Long chatId,
-            @Param("userId") Long userId
+            @Param("userSub") String userSub
     );
 
     @Query("""
@@ -47,12 +47,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         WHERE m.chatId IN (
             SELECT cp.chat.id
             FROM ChatParticipant cp
-            WHERE cp.user.id = :userId
+            WHERE cp.user.sub = :userSub
         )
         AND m.read = false
-        AND m.senderId <> :userId
+        AND m.sender.sub <> :userSub
     """)
-    List<Message> findUnreadMessagesByUserId(@Param("userId") Long userId);
+    List<Message> findUnreadMessagesByUserSub(@Param("userSub") String userSub);
 
     Optional<Message> findTopByChatIdOrderByIdDesc(Long chatId);
 }

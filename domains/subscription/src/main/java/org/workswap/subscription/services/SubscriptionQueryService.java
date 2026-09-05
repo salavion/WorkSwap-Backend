@@ -2,6 +2,6 @@ package org.workswap.subscription.services;
 
 public interface SubscriptionQueryService {
         
-    boolean existsEventSubscription(Long subscriberId, Long eventId);
-    boolean existsUserSubscription(Long subscriberId, Long userId);
+    boolean existsEventSubscription(String subscriberSub, Long eventId);
+    boolean existsUserSubscription(String subscriberSub, Long userId);
 }

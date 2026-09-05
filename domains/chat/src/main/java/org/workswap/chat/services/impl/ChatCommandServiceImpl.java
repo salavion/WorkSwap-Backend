@@ -2,6 +2,7 @@ package org.workswap.chat.services.impl;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatMappingService;
 import org.workswap.chat.services.ChatQueryService;
 import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.datasource.model.Message;
 import org.workswap.chat.datasource.repository.ChatParticipantRepository;
@@ -37,6 +40,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatParticipantRepository chatParticipantRepository;
+    private final UserRepository userRepository;
 
     private final ChatQueryService chatQueryService;
     private final ChatMappingService mappingService;
@@ -57,15 +61,21 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         Long chatId = dto.chatId();
 
+        Optional<Chat> optChat = chatRepository.fingByChatIdAndUserId(chatId, authData.sub());
+
         // 1. Проверка доступа (1 быстрый EXISTS)
-        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.sub())) {
+        if (optChat.isEmpty()) {
             throw new AccessDeniedException("That is not your chat");
         }
 
+        User sender = userRepository.findBySub(authData.sub()).orElseThrow();
+
         // 2. Создание сообщения (без Chat entity)
-        Message message = messageRepository.save(
-            Message.create(chatId, authData.sub(), dto.text())
-        );
+        Message message = messageRepository.save(new Message(
+            optChat.get(),
+            sender,
+            dto.text()
+        ));
 
         MessageDTO msgDto = Objects.requireNonNull(
             mappingService.toDTO(message)
@@ -85,25 +95,23 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         for (ChatParticipantView p : participants) {
 
-            if (p.getUserId().equals(authData.sub())) {
+            if (p.getSub().equals(authData.sub())) {
                 continue;
             }
 
-            String openId = Objects.requireNonNull(p.getOpenId()); 
-
             messagingTemplate.convertAndSendToUser(
-                openId,
+                p.getSub(),
                 "/queue/chat/messages",
                 msgDto
             );
 
-            notifyChatUpdate(chatDto, openId);
+            notifyChatUpdate(chatDto, p.getSub());
         }
     }
 
     @Transactional
     public void markMessagesAsRead(Long chatId, UserAuthData authData) {
-        List<Message> messages = messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.sub());
+        List<Message> messages = messageRepository.findByChatIdAndSenderSubNotAndReadFalse(chatId, authData.sub());
         for (Message m : messages) {
             m.setRead(true);
         }
@@ -111,12 +119,12 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
         ChatDTO chatDto = Objects.requireNonNull(
             chatQueryService.getChatDTO(chatId, authData.sub()));
-        notifyChatUpdate(chatDto, authData.openId());
+        notifyChatUpdate(chatDto, authData.sub());
 
         List<MessageDTO> dtos = Objects.requireNonNull(
             messages.stream().map(m -> mappingService.toDTO(m)).toList());
 
-        messagingTemplate.convertAndSendToUser(authData.openId(), "/queue/chat/messages", dtos);
+        messagingTemplate.convertAndSendToUser(authData.sub(), "/queue/chat/messages", dtos);
     }
 
     public void setPermanentChat(Chat chat) {

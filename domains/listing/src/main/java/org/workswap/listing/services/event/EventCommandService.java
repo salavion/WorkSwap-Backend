@@ -29,11 +29,11 @@ public class EventCommandService {
     private final EventSettingsRepository eventRepository;
     
     public void addEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.addParticipantById(eventId, authData.sub());
+        eventRepository.addParticipant(eventId, authData.sub());
     }
 
     public void removeEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.removeParticipantById(eventId, authData.sub());
+        eventRepository.removeParticipant(eventId, authData.sub());
     }
 
     public void modifyEventParam(UserAuthData authData, Long eventId, Map<String, Object> updates) throws AccessDeniedException {

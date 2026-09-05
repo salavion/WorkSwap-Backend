@@ -10,8 +10,6 @@ public interface UserCommandService {
     String connectTelegram(UserAuthData authData);
 
     void deleteUser(UserAuthData authData);
-    
-    void acceptTerms(UserAuthData authData);
 
     void modifyUserParam(UserAuthData authData, Map<String, Object> updates);
     void createUser(UserCreatedEvent event);

@@ -116,7 +116,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
         logger.debug("Язык: {}", locale);
 
         if (filters.translationsFilter() && optAuthData.isPresent()) {
-            userRepository.findLanguagesByUserId(optAuthData.get().id());
+            userRepository.findLanguagesByUserSub(optAuthData.get().sub());
 
             if (!languages.contains(locale)) {
                 languages.add(locale);
@@ -223,7 +223,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     }
 
     public List<ListingDTO.Full> getOwnListingsByUser(UserAuthData authData, String locale) {
-        List<Listing> listings = listingRepository.findByAuthorIdWithAllDetails(authData.sub());
+        List<Listing> listings = listingRepository.findByAuthorSubWithAllDetails(authData.sub());
         return mappingService.toDTOList(listings, locale);
     }
 
@@ -271,7 +271,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
     public List<ListingDTO.Full> getDrafts(UserAuthData authData, String locale) {
 
-        List<Listing> listings = listingRepository.findByAuthorIdAndTemporary(authData.sub(), true);
+        List<Listing> listings = listingRepository.findByAuthorSubAndTemporary(authData.sub(), true);
 
         return mappingService.toDTOList(listings, locale);
     }

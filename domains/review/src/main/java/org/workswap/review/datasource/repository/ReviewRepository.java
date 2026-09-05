@@ -14,13 +14,13 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Пример кастомного метода:
     List<Review> findByListingIdOrderByCreatedAtDesc(Long listingId);
-    List<Review> findByProfileIdOrderByCreatedAtDesc(Long profileId);
-    List<Review> findByAuthorId(Long userId);
+    List<Review> findByProfileSubOrderByCreatedAtDesc(String profileSub);
+    List<Review> findByAuthorSub(String authorSub);
 
     Page<Review> findAll(Pageable pageable);
 
-    boolean existsByAuthorIdAndListingId(Long authorId, Long listingId);
-    boolean existsByAuthorIdAndProfileId(Long authorId, Long profileId);
+    boolean existsByAuthorSubAndListingId(String authorSub, Long listingId);
+    boolean existsByAuthorSubAndProfileSub(String authorSub, String profileDub);
 
     @Query("SELECT r FROM Review r JOIN FETCH r.author WHERE r.listing.id = :listingId")
     List<Review> findByListingIdWithAuthors(@Param("listingId") Long listingId);

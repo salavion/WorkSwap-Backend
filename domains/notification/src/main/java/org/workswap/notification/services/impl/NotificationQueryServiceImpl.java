@@ -28,7 +28,7 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
     public List<FullNotificationDTO> getUserNotifications(UserAuthData authData) {
         logger.debug("Отправляем уведомления пользователю с Id: {}", authData.sub());
 
-        List<FullNotificationDTO> notifications = notificationRepository.findByRecipientId(authData.sub()).stream()
+        List<FullNotificationDTO> notifications = notificationRepository.findByRecipientSub(authData.sub()).stream()
             .map(notification -> notificationMappingService.toDTO(notification))
             .collect(Collectors.toList());
 

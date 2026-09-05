@@ -20,7 +20,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByName(String name);
-    Optional<User> findByOpenId(String openId);
+    Optional<User> findBySub(String sub);
 
     boolean existsByEmail(String email);
 
@@ -43,11 +43,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     """)
     User findAuthUserById(@Param("userId") Long userId);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.settings WHERE u.id = :id")
-    User findByIdWithSettings(@Param("id") Long id);
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.settings WHERE u.sub = :userSub")
+    User findBySubWithSettings(@Param("userSub") String userSub);
 
-    @Query("SELECT u.languages FROM User u WHERE u.id = :userId")
-    List<String> findLanguagesByUserId(@Param("userId") Long userId);
+    @Query("SELECT u.languages FROM User u WHERE u.sub = :userSub")
+    List<String> findLanguagesByUserSub(@Param("userSub") String userSub);
 
     @Query("""
         select distinct u
@@ -58,9 +58,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
         left join fetch r.permissions
         left join fetch u.location loc
         left join fetch loc.country
-        where u.id = :id
+        where u.sub = :userSub
     """)
-    Optional<User> getFullUser(@Param("id") Long id);
+    Optional<User> getFullUser(@Param("userSub") String userSub);
 
     @Modifying
     @Transactional

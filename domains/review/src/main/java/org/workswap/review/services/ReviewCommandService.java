@@ -9,9 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.review.datasource.model.Review;
 import org.workswap.review.datasource.repository.ReviewRepository;
+import org.workswap.review.dto.ReviewCreateDTO;
 import org.workswap.shared.events.review.ReviewCreatedEvent;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -26,34 +28,42 @@ public class ReviewCommandService {
     private final EntityManager entityManager;
 
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public void createReview(UserAuthData authData, Long profileId, Long listingId, Double rating, String text) {
+    public void createReview(ReviewCreateDTO reviewDto, UserAuthData authData) {
 
         boolean alreadyReviewed = true;
         Listing listing = null;
 
-        logger.debug("profileId {}", profileId);
-        logger.debug("listingId {}", listingId);
+        logger.debug("profileSub {}", reviewDto.profileSub());
+        logger.debug("listingId {}", reviewDto.listingId());
 
-        if (listingId != null) {
-            alreadyReviewed = reviewRepository.existsByAuthorIdAndListingId(authData.sub(), listingId);
-            listing = entityManager.getReference(Listing.class, listingId);
-        } else if (profileId != null) {
-            alreadyReviewed = reviewRepository.existsByAuthorIdAndProfileId(authData.sub(), profileId);
+        if (reviewDto.listingId() != null) {
+            alreadyReviewed = reviewRepository.existsByAuthorSubAndListingId(authData.sub(), reviewDto.listingId());
+            listing = entityManager.getReference(Listing.class, reviewDto.listingId());
+        } else if (reviewDto.profileSub() != null) {
+            alreadyReviewed = reviewRepository.existsByAuthorSubAndProfileSub(authData.sub(), reviewDto.profileSub());
         } else {
             throw new IllegalStateException("Was no listing or profile");
         }
 
-        if (rating == null) throw new IllegalStateException("Рейтинг не может быть нулевой");
-        if (authData.sub() == profileId) throw new IllegalStateException("Нельзя оставлять отзыв самому себе");
+        if (reviewDto.rating() == null) throw new IllegalStateException("Рейтинг не может быть нулевой");
+        if (authData.sub() == reviewDto.profileSub()) throw new IllegalStateException("Нельзя оставлять отзыв самому себе");
         if (alreadyReviewed) throw new IllegalStateException("Такой отзыв уже остален");
 
-        User author = entityManager.getReference(User.class, authData.sub());
-        User profile = entityManager.getReference(User.class, profileId);
+        User author = userRepository.findBySub(authData.sub()).orElseThrow();
+        User profile = userRepository.findBySub(reviewDto.profileSub()).orElseThrow();
 
-        Review review = reviewRepository.save(new Review(text, rating, author, listing, profile));
+        Review review = reviewRepository.save(
+            new Review(
+                reviewDto.text(), 
+                reviewDto.rating(), 
+                author, 
+                listing, 
+                profile
+            ));
 
         logger.debug("Отзыв сохранён");
 

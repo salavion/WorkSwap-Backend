@@ -75,7 +75,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 UserAuthData authData = (UserAuthData) auth.getPrincipal();
 
                 logger.debug("Авторизуем вебсокет, authData: {}", authData.toString());
-                onlineCounter.userConnected(authData.openId());
+                onlineCounter.userConnected(authData.sub());
 
                 accessor.setUser(auth);
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -99,7 +99,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         Authentication auth = (Authentication) accessor.getUser();
         if (auth != null && auth.getPrincipal() instanceof UserAuthData) {
             UserAuthData authData = (UserAuthData) auth.getPrincipal();
-            onlineCounter.userDisconnected(authData.openId());
+            onlineCounter.userDisconnected(authData.sub());
         }
     }
 }

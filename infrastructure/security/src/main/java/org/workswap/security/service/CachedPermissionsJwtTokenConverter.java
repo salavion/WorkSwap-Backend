@@ -23,15 +23,13 @@ public class CachedPermissionsJwtTokenConverter implements JwtAuthenticationConv
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
 
-        Long userId = Objects.requireNonNull(Long.valueOf(jwt.getSubject()));
+        String userSub = Objects.requireNonNull(jwt.getSubject());
 
         Collection<GrantedAuthority> authorities =
-            permissionsService.getUserPermissions(userId);
+            permissionsService.getUserPermissions(userSub);
 
         UserAuthData authData = new UserAuthData(
-            Objects.requireNonNull(userId),
-            Objects.requireNonNull(jwt.getClaim("openId")),
-            jwt.getClaim("name"),
+            userSub,
             UserStatus.valueOf(jwt.getClaim("status"))
         );
 

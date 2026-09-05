@@ -7,7 +7,7 @@ import org.workswap.chat.datasource.model.Message;
 
 public interface ChatMappingService {
 
-    ChatDTO convertToDTO(Chat chat, Long userId);
+    ChatDTO convertToDTO(Chat chat, String userSub);
     
     MessageDTO toDTO(Message message);
 }

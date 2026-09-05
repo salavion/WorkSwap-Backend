@@ -31,7 +31,7 @@ public class UserJwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public String getName() {
-        return authData.openId();
+        return authData.sub();
     }
 
     public Jwt getJwt() {

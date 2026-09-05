@@ -24,9 +24,9 @@ public class PermissionsService {
         value = "user-permissions",
         key = "#userId"
     )
-    public Collection<GrantedAuthority> getUserPermissions(Long userId) {
+    public Collection<GrantedAuthority> getUserPermissions(String userSub) {
 
-        Set<Role> roles = roleRepository.findRolesWithPermissionsByUserId(userId);
+        Set<Role> roles = roleRepository.findRolesWithPermissionsByUserSub(userSub);
 
         Set<GrantedAuthority> authorities = new HashSet<>();
 

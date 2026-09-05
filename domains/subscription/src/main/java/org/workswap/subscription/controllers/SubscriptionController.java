@@ -50,7 +50,7 @@ public class SubscriptionController {
         @PathVariable Long targetId,
         @RequestParam String type
     ) {
-        return subscriptionRepository.existsBySubscriberIdAndTypeAndTargetId(
+        return subscriptionRepository.existsBySubscriberSubAndTypeAndTargetId(
                 authData.sub(), SubscriptionType.valueOf(type), targetId);
     }
 }

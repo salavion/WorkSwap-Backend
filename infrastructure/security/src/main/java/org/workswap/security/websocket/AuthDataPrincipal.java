@@ -14,7 +14,7 @@ public class AuthDataPrincipal implements Principal {
     @Override
     public String getName() {
         // имя пользователя для Spring /user/queue/…
-        return authData.openId();  
+        return authData.sub();  
     }
 
     public UserAuthData getAuthData() {

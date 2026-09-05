@@ -105,7 +105,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         
         // Подзапрос для проверки "liked" [web:12]
         Expression<Boolean> likedExpr = optAuthData.isPresent() 
-            ? buildLikedExpression(cb, query, root, optAuthData.get().id())
+            ? buildLikedExpression(cb, query, root, optAuthData.get().sub())
             : cb.literal(false);
 
         // Projection
@@ -199,7 +199,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         CriteriaBuilder cb,
         CriteriaQuery<?> parentQuery,
         Root<Listing> parentRoot,
-        Long userId
+        String userSub
     ) {
         
         Subquery<Long> subquery = parentQuery.subquery(Long.class);
@@ -209,7 +209,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         subquery.select(cb.literal(1L))
             .where(
                 cb.equal(subRoot.get("id"), parentRoot.get("id")),
-                cb.equal(favoritesJoin.get("id"), userId)
+                cb.equal(favoritesJoin.get("sub"), userSub)
             );
         
         return cb.exists(subquery);

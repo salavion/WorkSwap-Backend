@@ -22,21 +22,27 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     // Найти запись по пользователю и разговору
     ChatParticipant findByUserAndChat(User user, Chat chat);
 
-    boolean existsByChatIdAndUserId(Long chatId, Long userId);
+    @Query("""
+        SELECT COUNT(cp) > 0
+        FROM ChatParticipant cp
+        WHERE cp.chat.id = :chatId
+        AND cp.user.sub = :userSub
+    """)
+    boolean existsByChatIdAndUserId(@Param("chatId") Long chatId, @Param("userSub") String userSub);
 
-    @Query("SELECT cp.chatTermsAccepted FROM ChatParticipant cp WHERE cp.user.id = :userId AND cp.chat.id = :chatId")
-    Boolean isChatTermsAccepted(@Param("userId") Long userId, @Param("chatId") Long chatId);
+    @Query("SELECT cp.chatTermsAccepted FROM ChatParticipant cp WHERE cp.user.sub = :userSub AND cp.chat.id = :chatId")
+    Boolean isChatTermsAccepted(@Param("userSub") String userSub, @Param("chatId") Long chatId);
 
     @Query("""
         SELECT CASE WHEN COUNT(cp) > 0 THEN true ELSE false END
         FROM ChatParticipant cp
         WHERE cp.chat.id = :chatId
-        AND cp.user.id = :userId
+        AND cp.user.sub = :userSub
         AND cp.chat.chatType IN :types
     """)
-    boolean existsByChatIdAndUserIdAndChatTypeIn(
+    boolean existsByChatIdAndUserSubAndChatTypeIn(
             @Param("chatId") Long chatId,
-            @Param("userId") Long userId,
+            @Param("userSub") String userSub,
             @Param("types") List<ChatType> types
     );
 
@@ -84,32 +90,30 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
         UPDATE ChatParticipant cp
         SET cp.chatTermsAccepted = true
         WHERE cp.chat.id = :chatId
-        AND cp.user.id = :userId
+        AND cp.user.sub = :userSub
     """)
     int acceptChatTerms(
         @Param("chatId") Long chatId,
-        @Param("userId") Long userId
+        @Param("userSub") String userSub
     );
 
     @Query("""
-        select 
-            cp.user.id as userId,
-            cp.user.openId as openId
-        from ChatParticipant cp
-        where cp.chat.id = :chatId
+        SELECT cp.user.sub AS sub
+        FROM ChatParticipant cp
+        WHERE cp.chat.id = :chatId
     """)
     List<ChatParticipantView> findParticipantsView(@Param("chatId") Long chatId);
 
     @Query("""
         SELECT u
         FROM ChatParticipant cp
-        JOIN User u ON cp.user.id = u.id
+        JOIN User u ON cp.user.sub = u.sub
         WHERE cp.chat.id = :chatId
-        AND u.id <> :userId
+        AND u.sub <> :userSub
     """)
     List<User> findChatInterlocutorsExcludingUser(
             @Param("chatId") Long chatId,
-            @Param("userId") Long userId
+            @Param("userSub") String userSub
     );
 
     @Query("""

@@ -16,27 +16,35 @@ import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskCommandService;
 import org.workswap.task.services.TaskMappingService;
 import org.workswap.task.services.TaskQueryService;
+import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+// TODO Rewrite task to manyToOne and optimise the queries
 public class TaskCommandServiceImpl implements TaskCommandService {
 
     private final TaskCommentRepository taskCommentRepository;
     private final TaskRepository taskRepository;
     private final TaskQueryService taskQueryService;
     private final TaskMappingService taskMappingService;
+    private final UserRepository userRepository;
     
     public TaskDTO createTask(
         UserAuthData authData, 
         TaskCreateDTO dto
     ) {
-        Task task = new Task(dto.name(), 
-                             dto.description(), 
-                             dto.deadline(), 
-                             dto.type(), 
-                             authData.sub());
+
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        Task task = new Task(
+            dto.name(), 
+            dto.description(), 
+            dto.deadline(), 
+            dto.type(), 
+            user.getId()
+        );
 
         Task saved = taskRepository.save(task);
         return taskMappingService.toDTO(saved);
@@ -48,7 +56,8 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         String commentContent
     ) {
         Task task = taskQueryService.getTaskById(taskId);
-        TaskComment comment = new TaskComment(commentContent, authData.sub(), task);
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        TaskComment comment = new TaskComment(commentContent, user.getId(), task);
         taskCommentRepository.save(comment);
     }
 
@@ -58,8 +67,9 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         }
 
         TaskComment comment = taskCommentRepository.findById(commentId).orElse(null);
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
         
-        if (!comment.getAuthorId().equals(authData.sub())) {
+        if (!comment.getAuthorId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете удалять только свои комментарии!");
         }
 
@@ -75,7 +85,8 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     public void pickupTask(UserAuthData authData, Long taskId) {
         Task task = taskQueryService.getTaskById(taskId);
 
-        task.setExecutorId(authData.sub());
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        task.setExecutorId(user.getId());
         task.setStatus(TaskStatus.IN_PROGRESS);
 
         taskRepository.save(task);
@@ -84,7 +95,8 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     public void completeTask(UserAuthData authData, Long taskId) {
         Task task = taskQueryService.getTaskById(taskId);
 
-        if (authData.sub() != task.getExecutorId()) {
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        if (user.getId() != task.getExecutorId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете завершать только свои задачи!");
         }
         

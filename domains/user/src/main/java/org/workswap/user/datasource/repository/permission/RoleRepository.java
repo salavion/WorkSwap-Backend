@@ -24,9 +24,9 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
         from User u
         join u.roles r
         join fetch r.permissions
-        where u.id = :userId
+        where u.sub = :userSub
     """)
-    Set<Role> findRolesWithPermissionsByUserId(@Param("userId") Long userId);
+    Set<Role> findRolesWithPermissionsByUserSub(@Param("userSub") String userSub);
 
     @Modifying
     @Transactional

@@ -24,17 +24,17 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
         LEFT JOIN FETCH l.productSettings ps
         LEFT JOIN FETCH ps.category psc
         LEFT JOIN FETCH l.eventSettings es
-        WHERE l.author.id = :authorId
+        WHERE l.author.sub = :authorSub
     """)
-    List<Listing> findByAuthorIdWithAllDetails(@Param("authorId") Long authorId);
+    List<Listing> findByAuthorSubWithAllDetails(@Param("authorSub") String authorSub);
 
-    List<Listing> findByAuthorId(@Param("authorId") Long authorId);
+    List<Listing> findByAuthorId(Long userId);
 
     Listing findByAccessToken(String accessToken);
 
     List<Listing> findByAuthorIdAndActiveTrue(Long authorId);
 
-    List<Listing> findByAuthorIdAndTemporary(Long authorId, boolean temporary);
+    List<Listing> findByAuthorSubAndTemporary(String authorSub, boolean temporary);
 
     List<Listing> findByAuthorIdAndTemporaryAndActive(Long authorId, boolean temporary, boolean active);
 
@@ -59,13 +59,13 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
         FROM Listing l
         JOIN l.eventSettings es
         JOIN es.participants p
-        WHERE l.id = :listingId AND p.id = :authorId
+        WHERE l.id = :listingId AND p.sub = :userSub
     """)
-    boolean existsParticipant(@Param("listingId") Long listingId, @Param("authorId") Long authorId);
-    boolean existsByIdAndAuthorId(Long listingId, Long userId);
+    boolean existsParticipant(@Param("listingId") Long listingId, @Param("userSub") String userSub);
+    boolean existsByIdAndAuthorSub(Long listingId, String authorSub);
 
-    @Query("SELECT l.author.id FROM Listing l WHERE l.id = :listingId")
-    Long findAuthorIdByListingId(@Param("listingId") Long listingId);   
+    @Query("SELECT l.author.sub FROM Listing l WHERE l.id = :listingId")
+    String findAuthorSubByListingId(@Param("listingId") Long listingId);   
 
     @Query("""
         SELECT new org.workswap.listing.dto.ShortListingDTO(
@@ -89,7 +89,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
 
             COUNT(DISTINCT u.id),
 
-            CASE WHEN SUM(CASE WHEN u2.id = :userId THEN 1 ELSE 0 END) > 0
+            CASE WHEN SUM(CASE WHEN u2.sub = :userSub THEN 1 ELSE 0 END) > 0
                 THEN true ELSE false END
         )
         FROM Listing l
@@ -122,7 +122,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
     """)
     List<ShortListingDTO> findShortListingsByIds(
         @Param("listingIds") List<Long> listingIds,
-        @Param("userId") Long userId,
+        @Param("userSub") String userSub,
         @Param("lang") String lang
     );
 
@@ -163,7 +163,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
         LEFT JOIN l.location loc
         LEFT JOIN loc.country country
 
-        WHERE uMe.id = :userId
+        WHERE uMe.sub = :userSub
 
         GROUP BY
             l.id,
@@ -180,30 +180,47 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, Listing
             l.publishedAt
     """)
     List<ShortListingDTO> findLikedListings(
-        @Param("userId") Long userId,
+        @Param("userSub") String userSub,
         @Param("lang") String lang
     );
 
     @Query("""
         SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END
         FROM Listing l JOIN l.favoredByUsers u
-        WHERE l.id = :listingId AND u.id = :userId
+        WHERE l.id = :listingId AND u.sub = :userSub
         """)
     boolean existsFavoriteListing(
-            @Param("userId") Long userId,
+            @Param("userSub") String userSub,
             @Param("listingId") Long listingId
     );
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT IGNORE INTO favorite_listing(user_id, listing_id) VALUES (:userId, :listingId)", nativeQuery = true)
-    void addFavoriteListing(@Param("userId") Long userId, @Param("listingId") Long listingId);
+    @Query(value = """
+        INSERT IGNORE INTO favorite_listing(user_id, listing_id)
+        SELECT u.id, :listingId
+        FROM users u
+        WHERE u.sub = :userSub
+        """, nativeQuery = true)
+    void addFavoriteListing(
+        @Param("userSub") String userSub,
+        @Param("listingId") Long listingId
+    );
 
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM favorite_listing WHERE user_id = :userId AND listing_id = :listingId", nativeQuery = true)
-    void removeFavoriteListing(@Param("userId") Long userId, @Param("listingId") Long listingId);
+    @Query(value = """
+        DELETE fl
+        FROM favorite_listing fl
+        JOIN users u ON u.id = fl.user_id
+        WHERE u.sub = :userSub
+        AND fl.listing_id = :listingId
+        """, nativeQuery = true)
+    void removeFavoriteListing(
+        @Param("userSub") String userSub,
+        @Param("listingId") Long listingId
+    );
 
     @Modifying
     @Transactional

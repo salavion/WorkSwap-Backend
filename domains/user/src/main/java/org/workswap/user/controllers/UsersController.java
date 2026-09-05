@@ -67,10 +67,10 @@ public class UsersController {
         return userQueryService.getFullUserDTO(authData);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/{userSub}")
     @PublicEndpoint
-    public ShortUserDTO getUser(@PathVariable Long userId) {
-        return userQueryService.getById(userId);
+    public ShortUserDTO getUser(@PathVariable String userSub) {
+        return userQueryService.getBySub(userSub);
     }
 
     @GetMapping("/recent")

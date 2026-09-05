@@ -24,7 +24,6 @@ import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.AuthProvider;
 import org.workswap.sso.security.enums.UserStatus;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -171,8 +170,7 @@ public class UserCommandService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ваш аккаунт не нуждается в верификации");
         }
 
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         String email = user.getEmail();
 
@@ -195,8 +193,7 @@ public class UserCommandService {
     @Transactional
     public boolean verifyEmail(UserAuthData authData, String code) {
 
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         String email = user.getEmail();
 
@@ -217,8 +214,7 @@ public class UserCommandService {
 
     @Transactional
     public void deleteUser(UserAuthData authData) {
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         try {
             if (user == null) {
@@ -248,8 +244,7 @@ public class UserCommandService {
     }
 
     public void acceptTerms(UserAuthData authData) {
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         user.setTermsAcceptanceDate(LocalDateTime.now());
         user.setTermsAccepted(true);

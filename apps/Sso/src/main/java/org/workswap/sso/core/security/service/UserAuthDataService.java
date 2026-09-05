@@ -7,8 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.workswap.sso.datasource.model.User;
 import org.workswap.sso.datasource.repository.UserRepository;
 import org.workswap.sso.security.dto.UserAuthData;
-
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,8 +18,7 @@ public class UserAuthDataService {
     @Transactional(readOnly = true)
     public UserAuthData load(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findById(userId).orElseThrow();
 
         return new UserAuthData(
             Objects.requireNonNull(user.getSub()),

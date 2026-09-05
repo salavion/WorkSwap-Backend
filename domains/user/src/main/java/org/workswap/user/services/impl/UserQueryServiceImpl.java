@@ -11,9 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityNotFoundException;
-
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
@@ -39,8 +36,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     private final UserMappingService userMappingService;
 
     public User findUserFromOAuth2(OAuth2User oauth2User) {
-        User user = userRepository.findByEmail(oauth2User.getAttribute("email")).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findByEmail(oauth2User.getAttribute("email")).orElseThrow();
         return user;
     }
 
@@ -59,8 +55,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public UserDTO getCurrentUser(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow();
         return userMappingService.toDTO(user);
     }
 
@@ -68,14 +63,17 @@ public class UserQueryServiceImpl implements UserQueryService {
         if (userId == null) {
             throw new IllegalArgumentException("User must not be null");
         }
-        User user = userRepository.findById(userId).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findById(userId).orElseThrow();
+        return userMappingService.toShortDTO(user);
+    }
+
+    public ShortUserDTO getBySub(String userSub) {
+        User user = userRepository.findBySub(userSub).orElseThrow();
         return userMappingService.toShortDTO(user);
     }
 
     public ShortUserProfileDTO getUserProfile(String userSub) {
-        User user = userRepository.findBySub(userSub).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(userSub).orElseThrow();
 
         return userMappingService.toShortProfileDTO(user);
     }
@@ -90,8 +88,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public FullUserDTO getFullUserDTO(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow();
         return userMappingService.toFullDto(user);
     }
 

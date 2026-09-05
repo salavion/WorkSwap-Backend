@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.persistence.EntityNotFoundException;
-
 import org.workswap.user.services.UserCommandService;
 import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.location.datasource.model.Location;
@@ -49,8 +47,7 @@ public class UserCommandServiceImpl implements UserCommandService {
 
     @Transactional
     public void deleteUser(UserAuthData authData) {
-        User user = userRepository.findBySub(authData.sub()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
 
         if (user == null) {
             throw new RuntimeException("Пользователя не зарегистрировано.");

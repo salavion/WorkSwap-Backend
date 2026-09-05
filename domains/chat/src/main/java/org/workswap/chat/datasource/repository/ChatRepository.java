@@ -101,7 +101,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Query("""
         SELECT new org.workswap.chat.dto.ChatDTO(
             c.id,
-            SUM(CASE WHEN m.read = false AND m.senderId <> :userSub THEN 1 ELSE 0 END),
+            SUM(CASE WHEN m.read = false AND m.sender.sub <> :userSub THEN 1 ELSE 0 END),
             lm.text,
             lm.sentAt,
             c.status,

@@ -68,12 +68,13 @@ public class ChatMappingServiceImpl implements ChatMappingService {
 
     // Кастомные параметры которые сделаны для того чтобы можно было указать 
     // их сразу если они имеются в методе, и тем самым ускорить загрузку
+    // TODO оптимизировать message.getSender().getSub()
     public MessageDTO toDTO(Message message) {
         return new MessageDTO(
             message.getId(),
             message.getText(),
             message.getSentAt(),
-            message.getSenderId(),
+            message.getSender().getSub(),
             message.getChatId(),
             message.isRead()
         );

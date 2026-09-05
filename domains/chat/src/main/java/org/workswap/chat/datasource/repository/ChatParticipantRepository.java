@@ -119,8 +119,7 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
     @Query("""
         SELECT new org.workswap.chat.dto.ChatMemberDTO(
             cp.chat.id,
-            u.id,
-            u.openId,
+            u.sub,
             u.name,
             u.avatarUrl
         )

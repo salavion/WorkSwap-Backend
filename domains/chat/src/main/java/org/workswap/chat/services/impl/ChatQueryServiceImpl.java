@@ -149,8 +149,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
                 List<ShortUserDTO> chatMembers = members.stream()
                     .filter(m -> m.chatId().equals(c.id()))
                     .map(m -> new ShortUserDTO(
-                        m.id(),
-                        m.openId(),
+                        m.sub(),
                         m.name(),
                         m.avatarUrl()
                     ))

@@ -88,7 +88,7 @@ public class User {
     private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
-    private String openId = NanoIdUtils.randomNanoId(
+    private String sub = NanoIdUtils.randomNanoId(
         NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
         Constants.ALPHANUMERIC,
         20

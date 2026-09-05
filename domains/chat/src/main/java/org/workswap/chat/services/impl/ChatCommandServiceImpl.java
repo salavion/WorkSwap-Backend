@@ -46,11 +46,11 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final ChatMappingService mappingService;
     /* private final NotificationCommandService notificationCommandService; */
 
-    public void notifyChatUpdate(ChatDTO chatDto, String recipientOpenId) {
+    public void notifyChatUpdate(ChatDTO chatDto, String recipientSub) {
 
         // Отправляем обновление конкретному пользователю
         messagingTemplate.convertAndSendToUser(
-            recipientOpenId,
+            recipientSub,
             "/queue/chat.chats-updates",
             chatDto
         );

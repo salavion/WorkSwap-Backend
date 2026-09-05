@@ -39,7 +39,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
 
-        Optional<String> tempUserId = Optional.ofNullable(request.getSession().getAttribute("tempUserId"))
+        Optional<String> tempUserSub = Optional.ofNullable(request.getSession().getAttribute("tempUserSub"))
             .map(Object::toString);
 
 
@@ -50,7 +50,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         System.out.println("Редирект " + redirect);
 
-        User user = userCommandService.registerOrUpdateUser(oidcUser, tempUserId, request);
+        User user = userCommandService.registerOrUpdateUser(oidcUser, tempUserSub, request);
         cookiesService.setAuthCookies(response, user);
 
         response.sendRedirect(redirect);

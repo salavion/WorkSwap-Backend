@@ -9,7 +9,7 @@ import org.workswap.chat.datasource.model.Chat;
 public interface ChatCommandService {
 
     void sendMessage(MessageDTO messageDTO, UserAuthData authData) throws AccessDeniedException;
-    void notifyChatUpdate(ChatDTO chatDto, String recipientOpenId);
+    void notifyChatUpdate(ChatDTO chatDto, String recipientSub);
     void markMessagesAsRead(Long chatId, UserAuthData authData);
     void setPermanentChat(Chat chat);
     void acceptChatTerms(Long chatId, UserAuthData authData);

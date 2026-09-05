@@ -101,15 +101,15 @@ public class AuthService {
         logger.debug("Обновляем токен пользователя");
         try {
 
-            Long userId = jwtService.validateAndGetUserId(getTokenFromCookies(request, "refreshToken"));
+            String userSub = jwtService.validateAndGetUserSub(getTokenFromCookies(request, "refreshToken"));
 
-            logger.debug("userId: {}", userId);
+            logger.debug("userSub: {}", userSub);
 
             UserDeviceDTO dto = userCommandService.createUserDeviceDto(request);
 
             User user = null;
-            if (userId != null) {
-                user = userRepository.findById(userId).orElse(null);
+            if (userSub != null) {
+                user = userRepository.findBySub(userSub).orElse(null);
                 logger.debug("Пользователь найден по id: {}", user != null);
                 if (user != null) {
                     linkOrCreateDeviceForUser(user, dto);
@@ -156,9 +156,9 @@ public class AuthService {
     ) throws IOException {
         logger.debug("redirect: " + redirect);
 
-        Long userId = jwtService.validateAndGetUserId(getTokenFromCookies(request, "refreshToken"));
+        String userSub = jwtService.validateAndGetUserSub(getTokenFromCookies(request, "refreshToken"));
 
-        request.getSession().setAttribute("tempUserId", userId);
+        request.getSession().setAttribute("tempUserSub", userSub);
 
         if (redirect != null) {
             request.getSession().setAttribute("redirectUrl", redirect);

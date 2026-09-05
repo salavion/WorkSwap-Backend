@@ -125,27 +125,8 @@ public class JwtService {
         );
     }
 
-    public Long validateAndGetUserId(String token) {
-        JWTClaimsSet claims = validate(token);
-        return (claims != null) ? Long.valueOf(claims.getSubject()) : null;
-    }
-
-    public String validateAndGetUserIdStr(String token) {
+    public String validateAndGetUserSub(String token) {
         JWTClaimsSet claims = validate(token);
         return (claims != null) ? claims.getSubject() : null;
-    }
-
-    public String validateAndGetOpenId(String token) {
-        JWTClaimsSet claims = validate(token);
-        String openId = null;
-        try {
-
-            openId = claims.getStringClaim("openId");
-            log.debug("openId: " + openId);
-
-        } catch(ParseException e) {
-            e.printStackTrace();
-        }
-        return openId;
     }
 }

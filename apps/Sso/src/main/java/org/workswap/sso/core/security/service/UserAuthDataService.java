@@ -24,7 +24,7 @@ public class UserAuthDataService {
             () -> new EntityNotFoundException("Пользователь не найден"));
 
         return new UserAuthData(
-            Objects.requireNonNull(user.getOpenId()),
+            Objects.requireNonNull(user.getSub()),
             Objects.requireNonNull(user.getStatus())
         );
     }

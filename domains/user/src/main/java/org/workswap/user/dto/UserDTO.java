@@ -4,8 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record UserDTO(
-    Long id,
-    String openId,
+    String sub,
 
     String name,
     String phone,

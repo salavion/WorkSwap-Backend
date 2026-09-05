@@ -88,18 +88,18 @@ public class UsersController {
         userCommandService.modifyUserParam(authData, updates);
     }
 
-    @GetMapping("/{userOpenId}/profile")
+    @GetMapping("/{userSub}/profile")
     @PublicEndpoint
-    public ShortUserProfileDTO getUserProfile(@PathVariable String userOpenId) {
-        return userQueryService.getUserProfile(userOpenId);
+    public ShortUserProfileDTO getUserProfile(@PathVariable String userSub) {
+        return userQueryService.getUserProfile(userSub);
     }
 
-    @GetMapping("/{userOpenId}/full-info")
+    @GetMapping("/{userSub}/full-info")
     @RequiredPermission("GET_FULL_USER_INFO")
     public UserControlPageRequest getUserControlPage(
-        @PathVariable String userOpenId
+        @PathVariable String userSub
     ) {
-        return userQueryService.getUserControlPage(userOpenId);
+        return userQueryService.getUserControlPage(userSub);
     }
 
     @GetMapping("/list")

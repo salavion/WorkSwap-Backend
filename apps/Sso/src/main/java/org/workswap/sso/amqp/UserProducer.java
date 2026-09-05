@@ -20,7 +20,7 @@ public class UserProducer {
         log.debug("Created user {} {} and published to Rabbit", user.getStatus().toString(), user.getId());
 
         UserCreatedEvent event = new UserCreatedEvent(
-            user.getOpenId(), 
+            user.getSub(), 
             user.getName(), 
             user.getEmail(), 
             user.getAvatarUrl(), 

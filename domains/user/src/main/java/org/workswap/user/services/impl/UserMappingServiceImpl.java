@@ -37,7 +37,6 @@ public class UserMappingServiceImpl implements UserMappingService {
         List<String> roles = user.getRoles().stream().map(role -> role.getName()).toList();
                               
         UserDTO dto = new UserDTO(
-            user.getId(), 
             user.getSub(), 
             user.getName(), 
             phoneVisible ? user.getPhone() : null, 
@@ -90,7 +89,7 @@ public class UserMappingServiceImpl implements UserMappingService {
     }
 
     public ShortUserDTO toShortDTO(User user) {
-        return new ShortUserDTO(user.getId(), user.getSub(), user.getName(), user.getAvatarUrl());
+        return new ShortUserDTO(user.getSub(), user.getName(), user.getAvatarUrl());
     }
 
     public ShortUserProfileDTO toShortProfileDTO(User user) {

@@ -5,7 +5,7 @@ import java.util.List;
 
 public record FullUserDTO(
     Long id,
-    String openId,
+    String sub,
     String name,
     String phone,
     String email,

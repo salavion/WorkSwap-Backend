@@ -3,8 +3,7 @@ package org.workswap.sso.security.dto;
 import org.workswap.sso.security.enums.UserStatus;
 
 public record UserInfoDTO(
-    Long id,
-    String openId,
+    String sub,
     String name,
     String email,
     String avatarUrl,

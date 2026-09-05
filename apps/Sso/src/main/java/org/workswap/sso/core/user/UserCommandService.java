@@ -57,7 +57,7 @@ public class UserCommandService {
         return new UserDeviceDTO(fingerprint, userAgent, ip);
     }
 
-    public User registerOrUpdateUser(OidcUser oidcUser, Optional<String> tempUserId, HttpServletRequest request) {
+    public User registerOrUpdateUser(OidcUser oidcUser, Optional<String> tempUserSub, HttpServletRequest request) {
         String email = oidcUser.getEmail();
         User existingUser = userRepository.findByEmail(email).orElse(null);
         boolean isNew = existingUser == null || existingUser.getStatus() == UserStatus.PENDING;
@@ -71,14 +71,10 @@ public class UserCommandService {
         }
 
         if (isNew) {
-            Long id = tempUserId
-                .map(Long::parseLong)
-                .orElse(null);
+            String sub = tempUserSub.get();
 
-            if (id != null) {
-                User tempUser = userRepository.findById(id).orElseThrow(
-                    () -> new EntityNotFoundException("Пользователь не найден")
-                );
+            if (sub != null) {
+                User tempUser = userRepository.findBySub(sub).orElseThrow();
 
                 if (tempUser.getStatus() == UserStatus.TEMP) {
                     userRepository.delete(tempUser);

@@ -24,8 +24,8 @@ public interface UserQueryService {
 
     UserDTO getCurrentUser(UserAuthData authData);
     ShortUserDTO getById(Long userId);
-    ShortUserProfileDTO getUserProfile(String userOpenId);
-    UserControlPageRequest getUserControlPage(String userOpenId);
+    ShortUserProfileDTO getUserProfile(String userSub);
+    UserControlPageRequest getUserControlPage(String userSub);
 
     Page<UserDTO> getUsersList(int size, int page, String sortParam);
 }

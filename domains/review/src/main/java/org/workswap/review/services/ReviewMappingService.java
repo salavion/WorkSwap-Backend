@@ -17,8 +17,8 @@ public class ReviewMappingService{
             review.getId(),
             review.getText(),
             review.getRating(),
-            review.getAuthor() != null ? review.getAuthor().getId() : null,
-            review.getProfile() != null ? review.getProfile().getId() : null,
+            review.getAuthor() != null ? review.getAuthor().getSub() : null,
+            review.getProfile() != null ? review.getProfile().getSub() : null,
             review.getListing() != null ? review.getListing().getId() : null,
             review.getCreatedAt()
         );

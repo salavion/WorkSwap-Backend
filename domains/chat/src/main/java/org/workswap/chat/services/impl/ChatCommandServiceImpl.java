@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.MessageDTO;
+import org.workswap.chat.dto.SendMessageDTO;
 import org.workswap.chat.enums.ChatStatus;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatMappingService;
@@ -57,7 +58,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     }
 
     @Transactional
-    public void sendMessage(MessageDTO dto, UserAuthData authData) {
+    public void sendMessage(SendMessageDTO dto, UserAuthData authData) {
 
         Long chatId = dto.chatId();
 

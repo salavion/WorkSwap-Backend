@@ -1,7 +1,5 @@
 package org.workswap.review.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -17,13 +15,13 @@ import org.workswap.user.datasource.repository.UserRepository;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Profile({"server"})
 public class ReviewCommandService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ReviewCommandService.class);
 
     private final EntityManager entityManager;
 
@@ -37,8 +35,8 @@ public class ReviewCommandService {
         boolean alreadyReviewed = true;
         Listing listing = null;
 
-        logger.debug("profileSub {}", reviewDto.profileSub());
-        logger.debug("listingId {}", reviewDto.listingId());
+        log.debug("profileSub {}", reviewDto.profileSub());
+        log.debug("listingId {}", reviewDto.listingId());
 
         if (reviewDto.listingId() != null) {
             alreadyReviewed = reviewRepository.existsByAuthorSubAndListingId(authData.sub(), reviewDto.listingId());
@@ -65,7 +63,7 @@ public class ReviewCommandService {
                 profile
             ));
 
-        logger.debug("Отзыв сохранён");
+        log.debug("Отзыв сохранён");
 
         eventPublisher.publishEvent(new ReviewCreatedEvent(
             review.getId(), 

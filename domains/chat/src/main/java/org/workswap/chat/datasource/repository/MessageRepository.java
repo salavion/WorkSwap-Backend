@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.workswap.chat.datasource.model.Message;
+import org.workswap.chat.dto.MessageDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,20 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByChatIdAndSenderSubNotAndReadFalse(Long chatId, String senderSub);
 
     List<Message> findByChatIdOrderBySentAtAsc(Long chatId);
+
+    @Query("""
+        SELECT new org.workswap.chat.dto.MessageDTO(
+            m.id,
+            m.text,
+            m.sentAt,
+            m.sender.sub,
+            m.chat.id,
+            m.read
+        )
+        FROM Message m
+        WHERE m.chat.id = :chatId
+        """)
+    Page<MessageDTO> findByChatId(@Param("chatId") Long chatId, Pageable pageable);
 
     long countByChatIdAndSenderSubNotAndReadFalse(Long chatId, String senderSub);
 

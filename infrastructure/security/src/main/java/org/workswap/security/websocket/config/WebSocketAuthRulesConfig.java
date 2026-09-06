@@ -1,4 +1,4 @@
-package org.workswap.security.config.websocket;
+package org.workswap.security.websocket.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

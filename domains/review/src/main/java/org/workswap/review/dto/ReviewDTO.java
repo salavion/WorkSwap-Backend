@@ -8,8 +8,8 @@ public record ReviewDTO(
     String text,
     double rating,
 
-    Long authorId,
-    Long profileId,
+    String authorSub,
+    String profileSub,
     Long listingId,
 
     LocalDateTime createdAt

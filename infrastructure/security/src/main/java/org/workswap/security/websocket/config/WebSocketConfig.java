@@ -1,4 +1,4 @@
-package org.workswap.security.config.websocket;
+package org.workswap.security.websocket.config;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.security.messaging.context.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.messaging.context.SecurityContextChannelInterceptor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.workswap.security.websocket.AuthChannelInterceptor;
 import org.workswap.security.websocket.AuthHandshakeInterceptor;
+import org.workswap.security.websocket.AuthUserArgumentResolver;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -32,6 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthChannelInterceptor authChannelInterceptor;
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
+    private final AuthUserArgumentResolver authUserArgumentResolver;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -65,7 +66,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void addArgumentResolvers(
             List<HandlerMethodArgumentResolver> resolvers
     ) {
-        resolvers.add(new AuthenticationPrincipalArgumentResolver());
+        resolvers.add(authUserArgumentResolver);
     }
 
     @Override

@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -168,22 +170,25 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return Objects.requireNonNull(chatDetails);
     }
 
-    public List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData) {
-        logger.debug("Получение сообщений для разговора с ID: {}", chatId);
+    public List<MessageDTO> getMessagesByChatId(int page, Long chatId, UserAuthData authData) {
+        logger.debug("Получение сообщений для разговора с ID: {}, page: {}", chatId, page);
 
         if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.sub())) {
             throw new AccessDeniedException("That is not your chat");
         }
 
+        Pageable pageable = PageRequest.of(
+            page,
+            50,
+            Sort.by(Sort.Direction.DESC, "sentAt")
+        );
+
         // Получаем все сообщения для этого разговора
-        List<Message> messages = messageRepository.findByChatIdOrderBySentAtAsc(chatId);
+        List<MessageDTO> messages = messageRepository.findByChatId(chatId, pageable).getContent();
 
-        // Преобразуем сообщения в DTO и отправляем клиенту
-        List<MessageDTO> messageDtos = messages.stream()
-            .map(msg -> mappingService.toDTO(msg))
-            .collect(Collectors.toList());
+        logger.debug("Найдены сообщения {}", messages.size());
 
-        return messageDtos;
+        return messages;
     }
 
     public long getUnreadMessageCount(Long chatId, UserAuthData authData) {

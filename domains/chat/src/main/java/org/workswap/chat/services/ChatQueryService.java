@@ -17,7 +17,7 @@ public interface ChatQueryService {
 
     ChatDTO getChatDTO(Long chatId, String userSub);
     List<ChatDTO> getChatsDTOForUser(UserAuthData authData, String locale);
-    List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData);
+    List<MessageDTO> getMessagesByChatId(int page, Long chatId, UserAuthData authData);
     List<MessageDTO> getChatUnreadMessages(UserAuthData authData);
 
     long getUnreadMessageCount(Long chatId, UserAuthData authData);

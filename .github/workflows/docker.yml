@@ -55,6 +55,16 @@ jobs:
             - name: Build and push server
               uses: docker/build-push-action@v6
               with:
+                  context: ./apps/Sso
+                  file: ./apps/Sso/Dockerfile
+                  push: true
+                  tags: |
+                      ghcr.io/${{ github.repository_owner }}/workswap-sso:latest
+                      ghcr.io/${{ github.repository_owner }}/workswap-sso:${{ github.sha }}
+
+            - name: Build and push server
+              uses: docker/build-push-action@v6
+              with:
                   context: ./apps/Server
                   file: ./apps/Server/Dockerfile
                   push: true

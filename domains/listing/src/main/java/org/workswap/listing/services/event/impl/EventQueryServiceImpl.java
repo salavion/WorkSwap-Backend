@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.workswap.listing.datasource.model.Listing;
@@ -17,13 +16,11 @@ import org.workswap.listing.datasource.model.types.EventSettings;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.datasource.repository.ListingTranslationRepository;
 import org.workswap.listing.dto.EventDTO;
+import org.workswap.listing.dto.FullListingDTO;
 import org.workswap.listing.dto.ImageDTO;
-import org.workswap.listing.dto.ListingDTO;
-import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.listing.services.event.EventQueryService;
-import org.workswap.location.datasource.model.Location;
 import org.workswap.shared.events.listing.ListingViewedEvent;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.UserStatus;
@@ -41,7 +38,6 @@ public class EventQueryServiceImpl implements EventQueryService {
     private final ListingRepository listingRepository;
 
     private final ListingTranslationRepository translationRepository;
-    private final ListingMappingService listingMappingService;
     private final SecurityFilterService securityFilterService;
     private final ListingQueryService listingQueryService;
     private final ApplicationEventPublisher eventPublisher;
@@ -52,33 +48,26 @@ public class EventQueryServiceImpl implements EventQueryService {
 
     public EventDTO.Settings getEventSettingsDTO(UserAuthData authData, Long eventId) {
 
-        if (eventId == null) {
-            throw new IllegalStateException("ID события отсутствует");
-        }
+        securityFilterService.listingUpdateFilter(authData, eventId);
 
         Listing event = listingQueryService.getListingById(eventId);
 
-        securityFilterService.listingUpdateFilter(authData, eventId);
-
-        return listingMappingService.toEventSettingsDTO(event);
+        return EventDTO.Settings.ofListing(event);
     }
 
     public List<ShortUserDTO> getEventParticipants(UserAuthData authData, Long eventId) {
-        if (eventId == null) {
-            throw new IllegalStateException("ID события отсутствует");
-        }
-        Listing event = listingQueryService.getListingById(eventId);
-        try {
-            securityFilterService.listingUpdateFilter(authData, eventId);
 
+        Listing event = listingQueryService.getListingById(eventId);
+
+        if (securityFilterService.listingAuthorFilter(authData, eventId)) {
             List<ShortUserDTO> list = new ArrayList<>();
             for (User participant : event.getEventSettings().getParticipants()) {
                 list.add(ShortUserDTO.ofUser(participant));
             }
 
             return list;
-        } catch (AccessDeniedException e) {
-            return null;
+        } else {
+            return new ArrayList<>();
         }
     }
 
@@ -91,14 +80,13 @@ public class EventQueryServiceImpl implements EventQueryService {
 
         boolean isAuthor = false;
 
-        Location loc = listing.getLocation();
         ListingTranslation translation = translationRepository.findBestTranslation(eventId, locale);
 
         EventSettings event = listing.getEventSettings();
 
         ShortUserProfileDTO author = ShortUserProfileDTO.ofUser(listing.getAuthor());
         List<ImageDTO> images = listing.getImages().stream()
-            .map(image -> new ImageDTO(image.getId(), eventId, listingMappingService.getImageLink(image))).toList();
+            .map(image -> new ImageDTO(image.getId(), eventId, image.getLink())).toList();
 
         List<ShortUserDTO> participants = ShortUserDTO.ofList(event.getParticipants());
 
@@ -116,43 +104,9 @@ public class EventQueryServiceImpl implements EventQueryService {
                 ));
         }
 
-        ListingDTO.Full listingDto = new ListingDTO.Full(
-            listing.getId(),
-            translation != null ? translation.getTitle() : null,
-            translation != null ? translation.getDescription() : null,
-            listing.getPrice(),
-            listing.getPriceType(),
-            listing.getType(),
-            loc != null ? loc.getFullName() : null,
-            listing.getRating(),
-            listing.getImagePath(),
-            listing.getPublishedAt(),
-            0,
-            false,
+        FullListingDTO listingDto = FullListingDTO.ofListingForListingPage(listing, translation);
 
-            listing.getAuthor().getId(),
-            listing.getPublicType(),
-            null,
-            null,
-            loc != null ? loc.getId() : null,
-            null,
-            null,
-            listing.getViews(),
-            listing.isActive(),
-            listing.isTestMode(),
-            listing.isTemporary()
-        );
-
-        EventDTO.Settings settings = new EventDTO.Settings(
-            event.getEventDate(),
-            event.getRegistrationCloseTime(),
-            event.isRecurring(),
-            event.getRecurrencePattern(),
-            event.getEventStatus(),
-            event.isPublic(),
-            event.getMaxParticipants(),
-            event.getMinParticipants()
-        );
+        EventDTO.Settings settings = EventDTO.Settings.ofListing(listing);
 
         EventDTO.Page dto = new EventDTO.Page(
             listingDto,

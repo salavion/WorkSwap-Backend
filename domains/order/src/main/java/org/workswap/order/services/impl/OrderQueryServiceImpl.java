@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.order.datasource.repository.OrderRepository;
 import org.workswap.order.dto.OrderDTO;
-import org.workswap.order.services.OrderMappingService;
 import org.workswap.order.services.OrderQueryService;
 import org.workswap.sso.security.dto.UserAuthData;
 
@@ -23,7 +22,6 @@ public class OrderQueryServiceImpl implements OrderQueryService{
     private static final Logger logger = LoggerFactory.getLogger(OrderQueryService.class);
 
     private final OrderRepository orderRepository;
-    private final OrderMappingService orderMappingService;
 
     public OrderDTO findByChatId(Long chatId, UserAuthData authData) {
         Order order = orderRepository.findByChatId(chatId);
@@ -33,7 +31,7 @@ public class OrderQueryServiceImpl implements OrderQueryService{
             throw new AccessDeniedException("Вы не являетесь участником сделки");
         }
 
-        return orderMappingService.toDTO(order);
+        return OrderDTO.ofOrder(order);
     }
 
     public OrderDTO findOrderById(String orderId, UserAuthData authData) {
@@ -45,6 +43,6 @@ public class OrderQueryServiceImpl implements OrderQueryService{
         Order order = orderRepository.findById(orderId).orElseThrow(
             () -> new EntityNotFoundException("Заказ не найден"));
 
-        return orderMappingService.toDTO(order);
+        return OrderDTO.ofOrder(order);
     }
 }

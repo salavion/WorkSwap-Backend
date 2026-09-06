@@ -2,17 +2,14 @@ package org.workswap.location.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.location.dto.LocationDTO;
-import org.workswap.location.services.LocationMappingService;
 import org.workswap.location.services.LocationQueryService;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,13 +18,10 @@ import lombok.RequiredArgsConstructor;
 public class LocationQueryServiceImpl implements LocationQueryService {
     
     private final LocationRepository locationRepository;
-    private final LocationMappingService locationMappingService;
 
     public List<LocationDTO> getAllLocations() {
-        return locationRepository.findAll()
-                .stream()
-                .map(loc -> locationMappingService.toDTO(loc))
-                .collect(Collectors.toList());
+        List<Location> locations = locationRepository.findAll();
+        return LocationDTO.ofList(locations);
     }
 
     public List<Location> getAllDescendants(Location location) {
@@ -43,23 +37,17 @@ public class LocationQueryServiceImpl implements LocationQueryService {
     }
 
     public List<LocationDTO> getCountries() {
-        return locationRepository.findByCity(false)
-                                .stream()
-                                .map(loc -> locationMappingService.toDTO(loc))
-                                .collect(Collectors.toList());
+        List<Location> locations = locationRepository.findByCity(false);
+        return LocationDTO.ofList(locations);
     }
 
     public List<LocationDTO> getCities(Long coutryId) {
-        return locationRepository.findByCountryId(coutryId)
-                                .stream()
-                                .map(loc -> locationMappingService.toDTO(loc))
-                                .collect(Collectors.toList());
+        List<Location> locations = locationRepository.findByCountryId(coutryId);
+        return LocationDTO.ofList(locations);
     }
 
     public LocationDTO getLocation(Long locationId) {
-        return locationMappingService.toDTO(
-            locationRepository.findById(locationId).orElseThrow(
-                () -> new EntityNotFoundException("Локация не найдена")
-            ));
+        Location location = locationRepository.findById(locationId).orElseThrow();
+        return LocationDTO.ofLocation(location);
     }
 }

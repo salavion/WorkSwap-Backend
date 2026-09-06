@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.enums.TaskType;
+import org.workswap.user.datasource.model.User;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,12 +24,12 @@ public class Task {
                 String description,
                 LocalDateTime deadline,
                 TaskType taskType,
-                Long authorId) {
+                User author) {
         this.name = name;
         this.description = description;
         this.deadline = deadline;
         this.taskType = taskType;
-        this.authorId = authorId;
+        this.author = author;
     }
 
     @Id
@@ -56,9 +57,19 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskType taskType;
 
-    @Setter
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    @Setter 
+    @ManyToOne
+    @JoinColumn(name = "executor_id")
+    private User executor;
+
+    @Column(name = "executor_id", insertable = false, updatable = false)
     private Long executorId;
 
+    @Column(name = "author_id", insertable = false, updatable = false)
     private Long authorId;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -15,7 +15,6 @@ import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ImageRepository;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.dto.ImageDTO;
-import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingStorageService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.sso.security.dto.UserAuthData;
@@ -38,7 +37,6 @@ public class ListingStorageServiceImpl implements ListingStorageService {
     private final ListingRepository listingRepository;
     private final ImageRepository imageRepository;
     private final SecurityFilterService securityFilterService;
-    private final ListingMappingService mappingService;
     private final ImageStorageService imageStorageService;
     private final S3StorageService storageService;
     private final EntityManager entityManager;
@@ -74,7 +72,7 @@ public class ListingStorageServiceImpl implements ListingStorageService {
 
             listingRepository.setImagePathIfEmpty(listingId, imageKey);
 
-            return new ImageDTO(savedImage.getId(), listingId, mappingService.getImageLink(savedImage));
+            return ImageDTO.ofImage(savedImage);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка загрузки изображения");
         }

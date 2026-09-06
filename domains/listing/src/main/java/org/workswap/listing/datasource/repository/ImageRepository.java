@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    // Дополнительные методы, если нужны:
+
     List<Image> findByListingId(Long listingId);
 }

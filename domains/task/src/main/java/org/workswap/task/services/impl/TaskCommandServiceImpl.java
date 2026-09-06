@@ -14,8 +14,6 @@ import org.workswap.task.dto.TaskCreateDTO;
 import org.workswap.task.dto.TaskDTO;
 import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskCommandService;
-import org.workswap.task.services.TaskMappingService;
-import org.workswap.task.services.TaskQueryService;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
 
@@ -23,13 +21,10 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-// TODO Rewrite task to manyToOne and optimise the queries
 public class TaskCommandServiceImpl implements TaskCommandService {
 
     private final TaskCommentRepository taskCommentRepository;
     private final TaskRepository taskRepository;
-    private final TaskQueryService taskQueryService;
-    private final TaskMappingService taskMappingService;
     private final UserRepository userRepository;
     
     public TaskDTO createTask(
@@ -43,11 +38,11 @@ public class TaskCommandServiceImpl implements TaskCommandService {
             dto.description(), 
             dto.deadline(), 
             dto.type(), 
-            user.getId()
+            user
         );
 
         Task saved = taskRepository.save(task);
-        return taskMappingService.toDTO(saved);
+        return TaskDTO.ofTask(saved);
     }
     
     public void createComment(
@@ -55,9 +50,9 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         Long taskId, 
         String commentContent
     ) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
         User user = userRepository.findBySub(authData.sub()).orElseThrow();
-        TaskComment comment = new TaskComment(commentContent, user.getId(), task);
+        TaskComment comment = new TaskComment(commentContent, user, task);
         taskCommentRepository.save(comment);
     }
 
@@ -77,23 +72,23 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     }
 
     public void cancelTask(Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
         task.setStatus(TaskStatus.CANCELED);
         taskRepository.save(task);
     }
 
     public void pickupTask(UserAuthData authData, Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
 
         User user = userRepository.findBySub(authData.sub()).orElseThrow();
-        task.setExecutorId(user.getId());
+        task.setExecutor(user);
         task.setStatus(TaskStatus.IN_PROGRESS);
 
         taskRepository.save(task);
     }
 
     public void completeTask(UserAuthData authData, Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
 
         User user = userRepository.findBySub(authData.sub()).orElseThrow();
         if (user.getId() != task.getExecutorId()) {

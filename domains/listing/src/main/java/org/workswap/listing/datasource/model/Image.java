@@ -1,5 +1,7 @@
 package org.workswap.listing.datasource.model;
 
+import org.workswap.storage.util.ImageFormatRegistry;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,4 +42,10 @@ public class Image {
 
     @Column(name = "listing_id", insertable = false, updatable = false)
     private Long listingId;
+
+    public String getLink() {
+        return "https://cloud.workswap.org/listing-images/%s.%s".formatted(
+            objectKey, 
+            ImageFormatRegistry.extensionFromMime(contentType));
+    }
 }

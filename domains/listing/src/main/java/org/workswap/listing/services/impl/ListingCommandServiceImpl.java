@@ -30,7 +30,6 @@ import org.workswap.listing.dto.ListingTranslationDTO;
 import org.workswap.listing.enums.ListingPublicType;
 import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.listing.services.ListingCommandService;
-import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.SecurityFilterService;
 import org.workswap.listing.services.translations.DeepLTranslationService;
@@ -67,7 +66,6 @@ public class ListingCommandServiceImpl implements ListingCommandService {
 
     private final ListingTranslationRepository listingTranslationRepository;
     private final DeepLTranslationService deepLTranslationService;
-    private final ListingMappingService listingMappingService;
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -138,7 +136,7 @@ public class ListingCommandServiceImpl implements ListingCommandService {
         listing.setPrice(updates.price());
         
         if (image.getListingId() == listingId) {
-            listing.setImagePath(listingMappingService.getImageLink(image));
+            listing.setImagePath(image.getLink());
         }
 
         if (!listing.getPublicType().equals(ListingPublicType.PRODUCT_GIVEAWAY) && 

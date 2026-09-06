@@ -12,13 +12,12 @@ import org.workswap.order.datasource.repository.OrderRepository;
 import org.workswap.order.dto.OrderDTO;
 import org.workswap.order.enums.OrderStatus;
 import org.workswap.order.services.OrderCommandService;
-import org.workswap.order.services.OrderMappingService;
 import org.workswap.shared.enums.Importance;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,10 +27,9 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     
     private final OrderRepository orderRepository;
 
-    private final OrderMappingService orderMappingService;
     private final ListingRepository listingRepository;
+    private final UserRepository userRepository;
     private final SecurityFilterService securityFilterService;
-    private final EntityManager entityManager;
     private final ApplicationEventPublisher eventPublisher;
 
     public OrderDTO getOrderDTO(UserAuthData authData, Long listingId) {
@@ -48,13 +46,11 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         User author = listing.getAuthor();
 
-        User userProxy = entityManager.getReference(User.class, authData.sub());
+        User userProxy = userRepository.findBySub(authData.sub()).orElseThrow();
 
         Order order = getOrCreateOrder(userProxy, author, listing);
 
-        OrderDTO orderDto = orderMappingService.toDTO(order);
-
-        return orderDto;
+        return OrderDTO.ofOrder(order);
     }
 
     public Order getOrCreateOrder(User buyer, User seller, Listing listing) {

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.CatalogFilterDTO;
+import org.workswap.listing.dto.FullListingDTO;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
@@ -49,7 +50,7 @@ public class ListingsController {
 
     @GetMapping("/{listingId}")
     @RequiredPermission("GET_LISTING_BY_ID")
-    public ListingDTO.Full getListing(
+    public FullListingDTO getListing(
             @AuthUser UserAuthData authData, 
             @PathVariable Long listingId, 
             @RequestParam(required = false) String token,
@@ -99,7 +100,7 @@ public class ListingsController {
 
     @GetMapping("/drafts")
     @RequiredPermission("VIEW_LISTINGS_DRAFTS")
-    public List<ListingDTO.Full> getDraftListings(
+    public List<FullListingDTO> getDraftListings(
             @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
@@ -144,7 +145,7 @@ public class ListingsController {
 
     @GetMapping("/page")
     @RequiredPermission("GET_LISTINGS_LIST")
-    public Page<ListingDTO.Full> getListingsPage(
+    public Page<FullListingDTO> getListingsPage(
             @RequestParam int page, 
             @RequestParam int amount, 
             @RequestParam String sortParam,
@@ -155,7 +156,7 @@ public class ListingsController {
 
     @GetMapping("/recent")
     @RequiredPermission("GET_RECENT_LISTINGS")
-    public List<ListingDTO.Full> getRecentListings(
+    public List<FullListingDTO> getRecentListings(
             @RequestParam int amount,
             @RequestParam String locale
     ) {
@@ -164,7 +165,7 @@ public class ListingsController {
 
     @GetMapping("/my-listings")
     @RequiredPermission("GET_OWN_LISTINGS")
-    public List<ListingDTO.Full> getMyListings(
+    public List<FullListingDTO> getMyListings(
             @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
@@ -173,7 +174,7 @@ public class ListingsController {
 
     @GetMapping("/by-user")
     @PublicEndpoint
-    public List<ListingDTO.Full> getListingsByUser(
+    public List<FullListingDTO> getListingsByUser(
             @RequestParam Long userId, 
             @RequestParam String locale
     ) {

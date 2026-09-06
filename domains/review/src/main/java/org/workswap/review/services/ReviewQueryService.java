@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,9 +40,7 @@ public class ReviewQueryService {
             reviews = reviewRepository.findByProfileSubOrderByCreatedAtDesc(profileSub);
         }
 
-        return reviews.stream()
-            .map(r -> ReviewDTO.ofReview(r))
-            .toList();
+        return ReviewDTO.ofList(reviews);
     }
 
     public Page<ReviewDTO> getRewiewsPage(int page, int size, String sortParam) {
@@ -53,12 +50,7 @@ public class ReviewQueryService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortParam).descending());
         Page<Review> reviews = reviewRepository.findAll(pageable);
 
-        List<ReviewDTO> dtos = reviews.stream().map(r -> ReviewDTO.ofReview(r)).toList();
-
-        return new PageImpl<>(
-            dtos != null ? dtos : new ArrayList<>(), 
-            pageable, 
-            reviews.getTotalElements());
+        return reviews.map(r -> ReviewDTO.ofReview(r));
     }
 
     public MyReviews getMyReviews(UserAuthData authData) {
@@ -66,12 +58,8 @@ public class ReviewQueryService {
         List<Review> recived = reviewRepository.findByProfileSubOrderByCreatedAtDesc(authData.sub());
 
         return new MyReviews(
-            given.stream()
-                .map(r -> ReviewDTO.ofReview(r))
-                .toList(), 
-            recived.stream()
-                .map(r -> ReviewDTO.ofReview(r))
-                .toList()
-            );
+            ReviewDTO.ofList(given), 
+            ReviewDTO.ofList(recived)
+        );
     }
 }

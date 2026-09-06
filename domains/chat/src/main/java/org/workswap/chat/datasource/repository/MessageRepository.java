@@ -20,7 +20,30 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findBySenderSubNotAndReadFalse(String senderSub);
 
     // Получить все непрочитанные сообщения для пользователя в конкретном разговоре
-    List<Message> findByChatIdAndSenderSubNotAndReadFalse(Long chatId, String senderSub);
+    @Query("""
+        SELECT new org.workswap.chat.dto.MessageDTO(
+            m.id,
+            m.text,
+            m.sentAt,
+            m.sender.sub,
+            m.chat.id,
+            m.read
+        )
+        FROM Message m
+        WHERE m.chat.id = :chatId AND m.sender.sub <> :senderSub AND m.read = FALSE
+        """)
+    List<MessageDTO> findUnreadsByChatId(
+        @Param("chatId") Long chatId, 
+        @Param("senderSub") String senderSub);
+
+    @Query("""
+        SELECT COUNT(m)
+        FROM Message m
+        WHERE m.chat.id = :chatId AND m.sender.sub <> :senderSub AND m.read = FALSE
+        """)
+    long countUnreadsByChatId(
+        @Param("chatId") Long chatId, 
+        @Param("senderSub") String senderSub);
 
     List<Message> findByChatIdOrderBySentAtAsc(Long chatId);
 
@@ -57,7 +80,14 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     );
 
     @Query("""
-        SELECT m
+        SELECT new org.workswap.chat.dto.MessageDTO(
+            m.id,
+            m.text,
+            m.sentAt,
+            m.sender.sub,
+            m.chat.id,
+            m.read
+        )
         FROM Message m
         WHERE m.chatId IN (
             SELECT cp.chat.id
@@ -67,7 +97,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         AND m.read = false
         AND m.sender.sub <> :userSub
     """)
-    List<Message> findUnreadMessagesByUserSub(@Param("userSub") String userSub);
+    List<MessageDTO> findUnreadMessagesByUserSub(@Param("userSub") String userSub);
 
     Optional<Message> findTopByChatIdOrderByIdDesc(Long chatId);
 }

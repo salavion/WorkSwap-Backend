@@ -4,17 +4,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.workswap.sso.security.annotations.controllers.Authenticated;
-import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
-import org.workswap.sso.security.annotations.controllers.RequiredPermission;
-import org.workswap.sso.security.annotations.controllers.RequiredRole;
 import org.workswap.sso.security.exceptions.ForbiddenException;
 import org.workswap.sso.security.exceptions.UnauthenticatedException;
 

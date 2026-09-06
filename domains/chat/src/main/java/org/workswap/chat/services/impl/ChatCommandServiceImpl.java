@@ -16,7 +16,6 @@ import org.workswap.chat.dto.MessageDTO;
 import org.workswap.chat.dto.SendMessageDTO;
 import org.workswap.chat.enums.ChatStatus;
 import org.workswap.chat.services.ChatCommandService;
-import org.workswap.chat.services.ChatMappingService;
 import org.workswap.chat.services.ChatQueryService;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
@@ -44,7 +43,6 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final UserRepository userRepository;
 
     private final ChatQueryService chatQueryService;
-    private final ChatMappingService mappingService;
     /* private final NotificationCommandService notificationCommandService; */
 
     public void notifyChatUpdate(ChatDTO chatDto, String recipientSub) {
@@ -78,8 +76,13 @@ public class ChatCommandServiceImpl implements ChatCommandService {
             dto.text()
         ));
 
-        MessageDTO msgDto = Objects.requireNonNull(
-            mappingService.toDTO(message)
+        MessageDTO msgDto = new MessageDTO(
+            message.getId(),
+            message.getText(),
+            message.getSentAt(),
+            sender.getSub(),
+            message.getChatId(),
+            message.isRead()
         );
 
         // 3. Помечаем чат постоянным (UPDATE)
@@ -112,20 +115,15 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
     @Transactional
     public void markMessagesAsRead(Long chatId, UserAuthData authData) {
-        List<Message> messages = messageRepository.findByChatIdAndSenderSubNotAndReadFalse(chatId, authData.sub());
-        for (Message m : messages) {
-            m.setRead(true);
-        }
+        List<MessageDTO> messages = messageRepository.findUnreadsByChatId(chatId, authData.sub());
+
         messageRepository.markMessagesAsRead(chatId, authData.sub());
 
         ChatDTO chatDto = Objects.requireNonNull(
             chatQueryService.getChatDTO(chatId, authData.sub()));
         notifyChatUpdate(chatDto, authData.sub());
 
-        List<MessageDTO> dtos = Objects.requireNonNull(
-            messages.stream().map(m -> mappingService.toDTO(m)).toList());
-
-        messagingTemplate.convertAndSendToUser(authData.sub(), "/queue/chat/messages", dtos);
+        messagingTemplate.convertAndSendToUser(authData.sub(), "/queue/chat/messages", messages);
     }
 
     public void setPermanentChat(Chat chat) {

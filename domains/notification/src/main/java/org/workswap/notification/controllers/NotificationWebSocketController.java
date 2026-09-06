@@ -13,7 +13,6 @@ import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 
-// TODO решить вопрос с защитой вебсокетных контроллеров
 @Controller
 @RequiredArgsConstructor
 public class NotificationWebSocketController {

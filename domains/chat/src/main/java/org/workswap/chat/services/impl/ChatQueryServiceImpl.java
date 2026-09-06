@@ -39,7 +39,6 @@ import jakarta.persistence.EntityNotFoundException;
 
 import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.datasource.model.ChatParticipant;
-import org.workswap.chat.datasource.model.Message;
 import org.workswap.chat.datasource.repository.ChatParticipantRepository;
 import org.workswap.chat.datasource.repository.ChatRepository;
 import org.workswap.chat.datasource.repository.MessageRepository;
@@ -193,7 +192,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     public long getUnreadMessageCount(Long chatId, UserAuthData authData) {
         // Получаем все непрочитанные сообщения для конкретного разговора и пользователя
-        return messageRepository.findByChatIdAndSenderSubNotAndReadFalse(chatId, authData.sub()).size();
+        return messageRepository.countUnreadsByChatId(chatId, authData.sub());
     }
 
     public Chat getChatById(Long chatId) {
@@ -229,9 +228,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     public List<MessageDTO> getChatUnreadMessages(UserAuthData authData) {
-        List<Message> unreads = messageRepository.findUnreadMessagesByUserSub(authData.sub());
+        List<MessageDTO> unreads = messageRepository.findUnreadMessagesByUserSub(authData.sub());
         logger.debug("Найдены непрочитанные сообщения для " + authData.sub() + ": " + unreads.size());
-        return unreads.stream().map(m -> mappingService.toDTO(m)).toList();
+        return unreads;
     }
 
     public ChatDTO getChatDTO(Long chatId, String userSub) {

@@ -19,7 +19,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.workswap.security.websocket.AuthChannelInterceptor;
 import org.workswap.security.websocket.AuthHandshakeInterceptor;
-import org.workswap.security.websocket.AuthUserArgumentResolver;
+import org.workswap.security.websocket.WebSockerAuthUserArgumentResolver;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -32,7 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthChannelInterceptor authChannelInterceptor;
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
-    private final AuthUserArgumentResolver authUserArgumentResolver;
+    private final WebSockerAuthUserArgumentResolver authUserArgumentResolver;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

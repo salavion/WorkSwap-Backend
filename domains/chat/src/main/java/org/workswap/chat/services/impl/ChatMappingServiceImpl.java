@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.chat.dto.ChatDTO;
-import org.workswap.chat.dto.MessageDTO;
 import org.workswap.chat.enums.ChatStatus;
 import org.workswap.chat.enums.ChatType;
 import org.workswap.chat.services.ChatMappingService;
@@ -66,17 +65,4 @@ public class ChatMappingServiceImpl implements ChatMappingService {
         return dto;
     }
 
-    // Кастомные параметры которые сделаны для того чтобы можно было указать 
-    // их сразу если они имеются в методе, и тем самым ускорить загрузку
-    // TODO оптимизировать message.getSender().getSub()
-    public MessageDTO toDTO(Message message) {
-        return new MessageDTO(
-            message.getId(),
-            message.getText(),
-            message.getSentAt(),
-            message.getSender().getSub(),
-            message.getChatId(),
-            message.isRead()
-        );
-    }
 }

@@ -17,7 +17,7 @@ import org.workswap.sso.security.jwt.UserJwtAuthenticationToken;
 
 @Component
 @Profile("server")
-public class AuthUserArgumentResolver
+public class WebSockerAuthUserArgumentResolver
         implements HandlerMethodArgumentResolver {
 
     @Override

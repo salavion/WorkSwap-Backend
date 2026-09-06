@@ -16,11 +16,11 @@ import lombok.Setter;
 public class TaskComment {
 
     public TaskComment(String content,
-                       Long authorId,
+                       User author,
                        Task task
                        ) {
         this.content = content;
-        this.authorId = authorId;
+        this.author = author;
         this.task = task;
     }
 
@@ -31,11 +31,12 @@ public class TaskComment {
     @Column(length = 2000)
     private String content;
 
-    private Long authorId;
-
-    @Setter
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     private User author;
+
+    @Column(name = "author_id", insertable = false, updatable = false)
+    private Long authorId;
 
     @Setter
     @ManyToOne

@@ -18,12 +18,15 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 import com.nimbusds.jose.jwk.RSAKey;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableConfigurationProperties
 @Profile("server")
 @RequiredArgsConstructor
+@Slf4j
 public class JwtVerifierConfig {
 
     @Value("${jwt.public-key-location:file:./ssl/jwt-public.pem}")
@@ -56,5 +59,10 @@ public class JwtVerifierConfig {
         X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
         KeyFactory factory = KeyFactory.getInstance("RSA");
         return (RSAPublicKey) factory.generatePublic(spec);
+    }
+
+    @PostConstruct
+    public void init() {
+        log.debug("JwtVerifierConfig CREATED");
     }
 }

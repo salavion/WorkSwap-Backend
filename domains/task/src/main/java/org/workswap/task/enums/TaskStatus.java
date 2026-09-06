@@ -1,6 +1,8 @@
 package org.workswap.task.enums;
 
-public enum TaskStatus {
+import org.workswap.shared.enums.DisplayableEnum;
+
+public enum TaskStatus implements DisplayableEnum {
     NEW("Новая"),
     IN_PROGRESS("В процессе"),
     COMPLETED("Завершена"),
@@ -12,6 +14,7 @@ public enum TaskStatus {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }

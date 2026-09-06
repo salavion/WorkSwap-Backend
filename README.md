@@ -20,7 +20,7 @@ Frontend ja muut WorkSwap-ekosysteemin osat sijaitsevat erillisissä repositorio
   * Spring Data JPA
   * Spring OAuth2
   * Spring WebSocket
-  * Spring AMQP
+  * Spring RabbitMQ
 * Hibernate
 * MySQL / MariaDB
 * RabbitMQ
@@ -54,6 +54,7 @@ Projektin pääasiallinen rakenne:
 /
 ├── apps/
 │   ├── server/
+│   ├── sso/
 │   └── statistic/
 │
 ├── domains/
@@ -73,6 +74,7 @@ Projektin pääasiallinen rakenne:
 └── infrastructure/
     ├── datasource/
     ├── security/
+    ├── sso-security-core/
     ├── shared/
     ├── storage/
     └── webflux/

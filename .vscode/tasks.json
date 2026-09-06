@@ -24,10 +24,22 @@
             }
         },
         {
+            "label": "Run Sso",
+            "type": "shell",
+            "command": "java -jar apps/Sso/target/sso-1.0.jar",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "group": "applications"
+            }
+        },
+        {
             "label": "Run applications",
             "dependsOn": [
                 "Run Server",
-                "Run Statistic"
+                "Run Statistic",
+                "Run Sso"
             ],
             "dependsOrder": "parallel"
         }

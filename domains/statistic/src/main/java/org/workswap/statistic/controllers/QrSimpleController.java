@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.workswap.statistic.ampq.producers.SiteViewProducer;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.statistic.amqp.producers.SiteViewProducer;
 import org.workswap.statistic.dto.SiteViewDTO;
 import org.springframework.http.ResponseCookie;
 
@@ -28,6 +29,7 @@ public class QrSimpleController {
     private final SiteViewProducer siteViewProducer;
 
     @GetMapping("/r/{codeName}")
+    @PublicEndpoint
     public ResponseEntity<?> redirect(
             @PathVariable String codeName,
             HttpServletRequest request,
@@ -71,6 +73,7 @@ public class QrSimpleController {
         // 5) Редирект на нужную страницу
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(java.net.URI.create("https://workswap.org/"));
+        
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 }

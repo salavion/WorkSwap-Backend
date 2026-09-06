@@ -1,6 +1,5 @@
 package org.workswap.user.services.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
@@ -11,20 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityNotFoundException;
-
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.datasource.repository.UserSettingsRepository;
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.enums.UserStatus;
 import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserDTO;
-import org.workswap.user.services.UserMappingService;
 import org.workswap.user.services.UserQueryService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,22 +31,20 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     private final UserRepository userRepository;
     private final UserSettingsRepository userSettingsRepository;
-    private final UserMappingService userMappingService;
 
     public User findUserFromOAuth2(OAuth2User oauth2User) {
-        User user = userRepository.findByEmail(oauth2User.getAttribute("email")).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
+        User user = userRepository.findByEmail(oauth2User.getAttribute("email")).orElseThrow();
         return user;
     }
 
     public List<UserDTO> getRecentUsers(int count) {
         List<User> users = userRepository.findAllByStatusOrderByCreatedAtDesc(PageRequest.of(0, count), UserStatus.ACTIVE).getContent();
 
-        return userMappingService.toDTOList(users);
+        return UserDTO.ofList(users);
     }
 
     public boolean checkTelegramConnect(UserAuthData authData) {
-        return userSettingsRepository.existsByUserIdAndTelegramConnectedTrue(authData.id());
+        return userSettingsRepository.existsByUserSubAndTelegramConnectedTrue(authData.sub());
     }
 
     public List<User> findAllStandartUsers() {
@@ -59,40 +52,41 @@ public class UserQueryServiceImpl implements UserQueryService {
     }
 
     public UserDTO getCurrentUser(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.id()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-        return userMappingService.toDTO(user);
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow();
+        return UserDTO.ofUser(user);
     }
 
     public ShortUserDTO getById(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("User must not be null");
         }
-        User user = userRepository.findById(userId).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-        return userMappingService.toShortDTO(user);
+        User user = userRepository.findById(userId).orElseThrow();
+        return ShortUserDTO.ofUser(user);
     }
 
-    public ShortUserProfileDTO getUserProfile(String userOpenId) {
-        User user = userRepository.findByOpenId(userOpenId).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-
-        return userMappingService.toShortProfileDTO(user);
+    public ShortUserDTO getBySub(String userSub) {
+        User user = userRepository.findBySub(userSub).orElseThrow();
+        return ShortUserDTO.ofUser(user);
     }
 
-    public UserControlPageRequest getUserControlPage(String userOpenId) {
-        User user = userRepository.findByOpenId(userOpenId).orElseThrow(
+    public ShortUserProfileDTO getUserProfile(String userSub) {
+        User user = userRepository.findBySub(userSub).orElseThrow();
+
+        return ShortUserProfileDTO.ofUser(user);
+    }
+
+    public UserControlPageRequest getUserControlPage(String userSub) {
+        User user = userRepository.findBySub(userSub).orElseThrow(
             () -> new IllegalStateException("User not found"));
 
-        FullUserDTO userDto = userMappingService.toFullDto(user);
+        FullUserDTO userDto = FullUserDTO.ofUser(user);
 
         return new UserControlPageRequest(userDto);
     }
 
     public FullUserDTO getFullUserDTO(UserAuthData authData) {
-        User user = userRepository.getFullUser(authData.id()).orElseThrow(
-            () -> new EntityNotFoundException("Пользователь не найден"));
-        return userMappingService.toFullDto(user);
+        User user = userRepository.getFullUser(authData.sub()).orElseThrow();
+        return FullUserDTO.ofUser(user);
     }
 
     public Page<UserDTO> getUsersList(int size, int page, String sortParam) {
@@ -103,10 +97,8 @@ public class UserQueryServiceImpl implements UserQueryService {
         Page<Long> ids = userRepository.findIds(pageable);
         List<User> users = userRepository.findWithRelationsByIds(ids.getContent());
 
-        List<UserDTO> dtos = users.stream().map(u -> userMappingService.toDTO(u)).toList();
-
         return new PageImpl<>(
-            dtos != null ? dtos : new ArrayList<>(), 
+            UserDTO.ofList(users), 
             pageable, 
             ids.getTotalElements());
     }

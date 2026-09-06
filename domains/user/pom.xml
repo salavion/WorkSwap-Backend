@@ -16,8 +16,8 @@
     <dependencies>
 
         <dependency>
-			<groupId>org.salavion</groupId>
-			<artifactId>security-core</artifactId>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-sso-security-core-module</artifactId>
 		</dependency>
 
         <dependency>
@@ -39,6 +39,11 @@
         <dependency>
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-webflux-module</artifactId>
+		</dependency>
+
+        <dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-rabbitmq</artifactId>
 		</dependency>
     </dependencies>
 </project>

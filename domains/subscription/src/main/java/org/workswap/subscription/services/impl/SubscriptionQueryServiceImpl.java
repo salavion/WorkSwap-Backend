@@ -15,11 +15,11 @@ public class SubscriptionQueryServiceImpl implements SubscriptionQueryService {
 
     private final SubscriptionRepository subscriptionRepository;
 
-    public boolean existsEventSubscription(Long subscriberId, Long eventId) {
-        return subscriptionRepository.existsBySubscriberIdAndTypeAndTargetId(subscriberId, SubscriptionType.EVENT, eventId);
+    public boolean existsEventSubscription(String subscriberSub, Long eventId) {
+        return subscriptionRepository.existsBySubscriberSubAndTypeAndTargetId(subscriberSub, SubscriptionType.EVENT, eventId);
     }
 
-    public boolean existsUserSubscription(Long subscriberId, Long userId) {
-        return subscriptionRepository.existsBySubscriberIdAndTypeAndTargetId(subscriberId, SubscriptionType.USER, userId);
+    public boolean existsUserSubscription(String subscriberSub, Long userId) {
+        return subscriptionRepository.existsBySubscriberSubAndTypeAndTargetId(subscriberSub, SubscriptionType.USER, userId);
     }
 }

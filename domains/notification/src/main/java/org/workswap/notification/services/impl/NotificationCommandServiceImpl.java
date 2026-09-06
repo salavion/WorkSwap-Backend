@@ -23,14 +23,13 @@ import org.workswap.notification.dto.FullNotificationDTO;
 import org.workswap.notification.dto.NotificationDTO;
 import org.workswap.notification.enums.NotificationType;
 import org.workswap.notification.services.NotificationCommandService;
-import org.workswap.notification.services.NotificationMappingService;
 import org.workswap.order.datasource.model.Order;
 import org.workswap.shared.enums.Importance;
 import org.workswap.shared.events.notification.CreateNotificationCommand;
 import org.workswap.shared.util.WebhookSigner;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
-import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
@@ -44,8 +43,6 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
 
     private final NotificationRepository notificationRepository;
 
-    /* private final NewsService newsService; */
-    private final NotificationMappingService mappingService;
     private final SimpMessagingTemplate messagingTemplate;
 
     private final UserRepository userRepository;
@@ -67,37 +64,11 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
 
         Notification saved = notificationRepository.save(notification);
 
-        FullNotificationDTO fullNotification = mappingService.toDTO(saved);
-
-        return fullNotification;
+        return FullNotificationDTO.ofNotification(saved);
     }
 
-    /* public void sendNewsNotification(News news) {
-        List<User> reciverList = userRepository.findAll(); 
-
-        for(User receiver : reciverList) {
-
-            Locale reciverLocale = Locale.of("en");
-            
-            if (!receiver.getLanguages().isEmpty()) {
-                logger.debug("У пользователя найдено языков: {}", receiver.getLanguages());
-                logger.debug("Берём язык: {}", receiver.getLanguages().get(0));
-                reciverLocale = Locale.of(receiver.getLanguages().get(0));
-            }
-
-            newsService.localizeNews(news, reciverLocale);
-
-            NotificationDTO notification = new NotificationDTO(
-                messageSource.getMessage("new.news.notification", null, reciverLocale),
-                news.getLocalizedTitle(),
-                "/news/" + news.getId()
-            );
-            saveChatNotification(receiver.getId(), notification);
-        }
-    } */
-
     public void markAsRead(UserAuthData authData, Long notificationId) {
-        notificationRepository.markAsRead(notificationId, authData.id());
+        notificationRepository.markAsRead(notificationId, authData.sub());
     }
 
     public void sendOrderCompleteNotification(Order order) {
@@ -176,14 +147,14 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
        
         User receiver = userRepository.getReferenceById(event.userId());
 
-        String receiverOpenId = receiver.getOpenId();
+        String receiverSub = receiver.getSub();
 
-        if (receiverOpenId == null) {
+        if (receiverSub == null) {
             throw new IllegalStateException("У пользователя нет почты!");
         }
 
         messagingTemplate.convertAndSendToUser(
-                receiverOpenId,
+                receiverSub,
                 "/queue/notifications",
                 fullNotification
         );

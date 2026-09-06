@@ -24,9 +24,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.service.JwtService;
 import org.workswap.user.services.OnlineCounter;
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -75,7 +75,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 UserAuthData authData = (UserAuthData) auth.getPrincipal();
 
                 logger.debug("Авторизуем вебсокет, authData: {}", authData.toString());
-                onlineCounter.userConnected(authData.openId());
+                onlineCounter.userConnected(authData.sub());
 
                 accessor.setUser(auth);
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -99,7 +99,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         Authentication auth = (Authentication) accessor.getUser();
         if (auth != null && auth.getPrincipal() instanceof UserAuthData) {
             UserAuthData authData = (UserAuthData) auth.getPrincipal();
-            onlineCounter.userDisconnected(authData.openId());
+            onlineCounter.userDisconnected(authData.sub());
         }
     }
 }

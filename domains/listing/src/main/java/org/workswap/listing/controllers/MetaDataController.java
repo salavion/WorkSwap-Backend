@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.listing.enums.PriceType;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class MetaDataController {
     
     @GetMapping("/price-types")
+    @PublicEndpoint
     public List<String> getPriceTypes() {
         List<String> types = new ArrayList<>();
         for (PriceType p : PriceType.values()) types.add(p.toString());

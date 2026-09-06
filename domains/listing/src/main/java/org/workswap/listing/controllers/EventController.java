@@ -3,10 +3,9 @@ package org.workswap.listing.controllers;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.workswap.listing.dto.EventDTO;
 import org.workswap.listing.services.event.EventCommandService;
 import org.workswap.listing.services.event.EventQueryService;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.annotations.parameters.OptionalAuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
-import org.salavion.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,9 +37,9 @@ public class EventController {
     private final EventCommandService eventCommandService;
     
     @GetMapping("/{eventId}")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
+    @PublicEndpoint
     public EventDTO.Page getEventListing(
-        @AuthenticationPrincipal UserAuthData authData,
+        @OptionalAuthUser Optional<UserAuthData> authData,
         @PathVariable Long eventId, 
         @RequestParam(required = false) String token,
         @RequestParam String locale
@@ -45,45 +48,45 @@ public class EventController {
     }
     
     @GetMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('GET_EVENT_PARTICIPANTS')")
+    @RequiredPermission("GET_EVENT_PARTICIPANTS")
     public List<ShortUserDTO> getEventPaticipants(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         return eventQueryService.getEventParticipants(authData, eventId);
     }
 
     @GetMapping("/{eventId}/participants/check")
-    @PreAuthorize("hasAuthority('CHECK_EVENT_PARTICIPANTS')")
+    @RequiredPermission("CHECK_EVENT_PARTICIPANTS")
     public boolean checkEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         return eventQueryService.existEventParticipant(authData, eventId);
     }
 
     @PostMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('ADD_EVENT_PARTICIPANT')")
+    @RequiredPermission("ADD_EVENT_PARTICIPANT")
     public void addEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId
     ) {
         eventCommandService.addEventParticipant(authData, eventId);
     }
 
     @DeleteMapping("/{eventId}/participants")
-    @PreAuthorize("hasAuthority('REMOVE_EVENT_PARTICIPANT')")
+    @RequiredPermission("REMOVE_EVENT_PARTICIPANT")
     public void removeEventPaticipant(
-        @AuthenticationPrincipal UserAuthData authData, 
+        @AuthUser UserAuthData authData, 
         @PathVariable Long eventId 
     ) {
         eventCommandService.removeEventParticipant(authData, eventId);
     }
 
     @PatchMapping("/{eventId}/modify")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long eventId,
         @RequestBody Map<String, Object> updates
     ) throws AccessDeniedException {
@@ -91,9 +94,9 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}/settings")
-    @PreAuthorize("hasAuthority('GET_EVENT_SETTINGS')")
+    @RequiredPermission("GET_EVENT_SETTINGS")
     public EventDTO.Settings getEventSettings(
-        @AuthenticationPrincipal UserAuthData authData,
+        @AuthUser UserAuthData authData,
         @PathVariable Long eventId
     ) {
         return eventQueryService.getEventSettingsDTO(authData, eventId);

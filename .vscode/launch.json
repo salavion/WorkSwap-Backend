@@ -3,9 +3,23 @@
     "configurations": [
         {
             "type": "java",
-            "name": "WorkSwapServerApplication",
+            "name": "SsoApplication",
             "request": "launch",
-            "mainClass": "org.workswap.WorkSwapServerApplication",
+            "mainClass": "org.workswap.sso.SsoApplication",
+            "projectName": "sso"
+        },
+        {
+            "type": "java",
+            "name": "StatisticApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.statistic.StatisticApplication",
+            "projectName": "statistic"
+        },
+        {
+            "type": "java",
+            "name": "ServerApplication",
+            "request": "launch",
+            "mainClass": "org.workswap.ServerApplication",
             "projectName": "server"
         },
         {
@@ -21,6 +35,13 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/apps/Statistic",
             "command": "java -jar target/statistic-1.0.jar"
+        },
+        {
+            "name": "Sso",
+            "type": "node-terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/apps/Sso",
+            "command": "java -jar target/sso-1.0.jar"
         }
     ],
     "compounds": [
@@ -28,7 +49,8 @@
             "name": "Run applications",
             "configurations": [
                 "Server",
-                "Statistic"
+                "Statistic",
+                "Sso"
             ],
             "stopAll": true
         }

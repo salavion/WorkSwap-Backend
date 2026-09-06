@@ -9,14 +9,17 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.salavion.security.dto.UserAuthData;
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.MessageDTO;
+import org.workswap.chat.dto.SendMessageDTO;
 import org.workswap.chat.services.ChatCommandService;
 import org.workswap.chat.services.ChatQueryService;
+import org.workswap.shared.dto.PageRequestDTO;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
 
 import java.util.List;
@@ -32,54 +35,56 @@ public class ChatWebSocketController {
     private final ChatCommandService chatCommandService;
 
     @MessageMapping("/chat.message-send")
-    @PreAuthorize("hasAuthority('CHAT_SEND_MESSAGE')")
+    @RequiredPermission("CHAT_SEND_MESSAGE")
     public void sendMessage(
-        MessageDTO messageDTO, 
-        @AuthenticationPrincipal UserAuthData authData
+        SendMessageDTO message, 
+        @AuthUser UserAuthData authData
     ) throws AccessDeniedException {
-        chatCommandService.sendMessage(messageDTO, authData);
+        chatCommandService.sendMessage(message, authData);
     }
 
     @MessageMapping("/chat.loadMessages/{chatId}")
     @SendToUser("/queue/chat/history.messages/{chatId}")
-    @PreAuthorize("hasAuthority('CHAT_LOAD_HISTORY')")
+    @RequiredPermission("CHAT_LOAD_HISTORY")
     public List<MessageDTO> loadMessagesForChat(
         @DestinationVariable Long chatId, 
-        @AuthenticationPrincipal UserAuthData authData
+        PageRequestDTO pageRequest,
+        @AuthUser UserAuthData authData
     ) {
-        return chatQueryService.getMessagesByChatId(chatId, authData);
+        return chatQueryService.getMessagesByChatId(pageRequest.page(), chatId, authData);
     }
 
     @MessageMapping("/chat.markAsRead/{chatId}")
-    @PreAuthorize("hasAuthority('CHAT_MARK_AS_READ')")
+    @RequiredPermission("CHAT_MARK_AS_READ")
     public void markAsRead(
         @DestinationVariable Long chatId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         chatCommandService.markMessagesAsRead(chatId, authData);
     }
 
     @MessageMapping("/chat.get-chats")
     @SendToUser("/queue/chats")
-    @PreAuthorize("hasAuthority('CHAT_GET_CHATS')")
-    public List<ChatDTO> getChats(@AuthenticationPrincipal UserAuthData authData, String locale) {
+    @RequiredPermission("CHAT_GET_CHATS")
+    public List<ChatDTO> getChats(@AuthUser UserAuthData authData, String locale) {
         return chatQueryService.getChatsDTOForUser(authData, locale);
     }
 
     @Transactional
     @MessageMapping("/chat.get-interlocutor-info/{chatId}")
     @SendToUser("/queue/chat/interlocutor-info")
-    @PreAuthorize("hasAuthority('CHAT_GET_INTERLOCUTOR')")
+    @RequiredPermission("CHAT_GET_INTERLOCUTOR")
     public Map<Long, List<ShortUserDTO>> getChatInterlocutors(
         @DestinationVariable Long chatId, 
-        @AuthenticationPrincipal UserAuthData authData
+        @AuthUser UserAuthData authData
     ) {
         return Map.of(chatId, chatQueryService.getChatInterlocutors(chatId, authData));
     }
 
     @MessageMapping("/messages.get-unread")
     @SendToUser("/queue/chat/messages")
-    public List<MessageDTO> getChatUnreadMessages(@AuthenticationPrincipal UserAuthData authData) {
+    @Authenticated
+    public List<MessageDTO> getChatUnreadMessages(@AuthUser UserAuthData authData) {
         logger.debug("Ауфдата: {}", authData.toString());
         return chatQueryService.getChatUnreadMessages(authData);
     }

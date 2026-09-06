@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 import org.workswap.statistic.dto.ListingsStatsMetricDTO;
 import org.workswap.statistic.dto.OnlineStatsMetricsDTO;
 import org.workswap.statistic.dto.UsersStatsMetricDTO;
@@ -28,7 +28,7 @@ public class StatsController {
     private final StatisticQueryService statisticQueryService;
 
     @GetMapping("/views")
-    @PreAuthorize("hasAuthority('VIEW_LISTING_STATS')")
+    @RequiredPermission("VIEW_LISTING_STATS")
     public List<Map<String, Object>> getViewsStats(
             @RequestParam Long listingId,
             @RequestParam StatSaveIntervalType interval,
@@ -38,19 +38,19 @@ public class StatsController {
     }
 
     @GetMapping("/online-metrics/month")
-    @PreAuthorize("hasAuthority('GET_ONLINE_METRICS')")
+    @RequiredPermission("GET_ONLINE_METRICS")
     public OnlineStatsMetricsDTO getMonthlyMetrics() {
         return statisticQueryService.getMonthlyMetrics();
     }
 
     @GetMapping("/online")
-    @PreAuthorize("hasAuthority('GET_ONLINE')")
+    @RequiredPermission("GET_ONLINE")
     public Integer getOnline() {
         return statisticQueryService.getLastOnlineSnapshot();
     }
 
     @GetMapping("/users-count")
-    @PreAuthorize("hasAuthority('GET_ONLINE')")
+    @RequiredPermission("GET_ONLINE")
     public UsersStatsMetricDTO getUsersCount(
         @RequestParam String intervalType,
         @RequestParam int multiplier
@@ -59,7 +59,7 @@ public class StatsController {
     }
 
     @GetMapping("/listings-count")
-    @PreAuthorize("hasAuthority('GET_ONLINE')")
+    @RequiredPermission("GET_ONLINE")
     public ListingsStatsMetricDTO getListingsCount(
         @RequestParam String intervalType,
         @RequestParam int multiplier
@@ -68,7 +68,7 @@ public class StatsController {
     }
 
     @GetMapping("/views-count")
-    @PreAuthorize("hasAuthority('GET_ONLINE')")
+    @RequiredPermission("GET_ONLINE")
     public ViewsStatsMetricDTO getViewsCount(
         @RequestParam String intervalType,
         @RequestParam int multiplier

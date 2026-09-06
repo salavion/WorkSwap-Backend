@@ -3,7 +3,6 @@ package org.workswap.listing.services.impl;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.salavion.security.dto.UserAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -16,9 +15,9 @@ import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ImageRepository;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.dto.ImageDTO;
-import org.workswap.listing.services.ListingMappingService;
 import org.workswap.listing.services.ListingStorageService;
 import org.workswap.listing.services.SecurityFilterService;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.storage.ImageStorageService;
 import org.workswap.storage.S3StorageService;
 import org.workswap.storage.util.HashUtil;
@@ -38,7 +37,6 @@ public class ListingStorageServiceImpl implements ListingStorageService {
     private final ListingRepository listingRepository;
     private final ImageRepository imageRepository;
     private final SecurityFilterService securityFilterService;
-    private final ListingMappingService mappingService;
     private final ImageStorageService imageStorageService;
     private final S3StorageService storageService;
     private final EntityManager entityManager;
@@ -74,7 +72,7 @@ public class ListingStorageServiceImpl implements ListingStorageService {
 
             listingRepository.setImagePathIfEmpty(listingId, imageKey);
 
-            return new ImageDTO(savedImage.getId(), listingId, mappingService.getImageLink(savedImage));
+            return ImageDTO.ofImage(savedImage);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка загрузки изображения");
         }

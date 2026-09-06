@@ -37,9 +37,9 @@ public interface ForumTopicRepository extends JpaRepository<ForumTopic, Long> {
             Pageable pageable
     );
 
-    List<ForumTopic> findByAuthorId(Long authorId);
+    List<ForumTopic> findByAuthorSub(String authorSub);
 
     Page<ForumTopic> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    void deleteByOpenIdAndAuthorId(String openId, Long authorId);
+    void deleteByOpenIdAndAuthorSub(String openId, String userSub);
 }

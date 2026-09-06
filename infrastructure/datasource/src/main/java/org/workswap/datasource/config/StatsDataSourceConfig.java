@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
@@ -17,9 +16,10 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.workswap.datasource.logging.CustomHibernateConnectionLogger;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableTransactionManagement
@@ -29,15 +29,8 @@ import jakarta.persistence.EntityManagerFactory;
     transactionManagerRef = "statsTransactionManager"
 )
 @Profile({"server", "statistic"})
+@Slf4j
 public class StatsDataSourceConfig {
-
-    @PostConstruct
-    public void init() {
-        System.out.println(">>> StatsDataSourceConfig LOADED");
-    }
-
-    @Value("${spring.jpa.properties.hibernate.dialect}")
-    private String hibernateDialect;
 
     @Bean
     @ConfigurationProperties("spring.statistics-datasource")
@@ -54,7 +47,7 @@ public class StatsDataSourceConfig {
                 .packages("org.workswap.statistic") // Пакет с @Entity статистики
                 .persistenceUnit("stats")
                 .properties(Map.of(
-                    "hibernate.dialect", hibernateDialect
+                    "hibernate.connection.provider_class", CustomHibernateConnectionLogger.class.getName()
                 ))
                 .build();
     }

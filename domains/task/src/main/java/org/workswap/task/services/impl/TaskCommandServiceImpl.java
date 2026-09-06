@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.task.datasource.model.Task;
 import org.workswap.task.datasource.model.TaskComment;
 import org.workswap.task.datasource.repository.TaskCommentRepository;
@@ -13,9 +14,8 @@ import org.workswap.task.dto.TaskCreateDTO;
 import org.workswap.task.dto.TaskDTO;
 import org.workswap.task.enums.TaskStatus;
 import org.workswap.task.services.TaskCommandService;
-import org.workswap.task.services.TaskMappingService;
-import org.workswap.task.services.TaskQueryService;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,21 +25,24 @@ public class TaskCommandServiceImpl implements TaskCommandService {
 
     private final TaskCommentRepository taskCommentRepository;
     private final TaskRepository taskRepository;
-    private final TaskQueryService taskQueryService;
-    private final TaskMappingService taskMappingService;
+    private final UserRepository userRepository;
     
     public TaskDTO createTask(
         UserAuthData authData, 
         TaskCreateDTO dto
     ) {
-        Task task = new Task(dto.name(), 
-                             dto.description(), 
-                             dto.deadline(), 
-                             dto.type(), 
-                             authData.id());
+
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        Task task = new Task(
+            dto.name(), 
+            dto.description(), 
+            dto.deadline(), 
+            dto.type(), 
+            user
+        );
 
         Task saved = taskRepository.save(task);
-        return taskMappingService.toDTO(saved);
+        return TaskDTO.ofTask(saved);
     }
     
     public void createComment(
@@ -47,8 +50,9 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         Long taskId, 
         String commentContent
     ) {
-        Task task = taskQueryService.getTaskById(taskId);
-        TaskComment comment = new TaskComment(commentContent, authData.id(), task);
+        Task task = taskRepository.findById(taskId).orElseThrow();
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        TaskComment comment = new TaskComment(commentContent, user, task);
         taskCommentRepository.save(comment);
     }
 
@@ -58,8 +62,9 @@ public class TaskCommandServiceImpl implements TaskCommandService {
         }
 
         TaskComment comment = taskCommentRepository.findById(commentId).orElse(null);
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
         
-        if (!comment.getAuthorId().equals(authData.id())) {
+        if (!comment.getAuthorId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете удалять только свои комментарии!");
         }
 
@@ -67,24 +72,26 @@ public class TaskCommandServiceImpl implements TaskCommandService {
     }
 
     public void cancelTask(Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
         task.setStatus(TaskStatus.CANCELED);
         taskRepository.save(task);
     }
 
     public void pickupTask(UserAuthData authData, Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
 
-        task.setExecutorId(authData.id());
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        task.setExecutor(user);
         task.setStatus(TaskStatus.IN_PROGRESS);
 
         taskRepository.save(task);
     }
 
     public void completeTask(UserAuthData authData, Long taskId) {
-        Task task = taskQueryService.getTaskById(taskId);
+        Task task = taskRepository.findById(taskId).orElseThrow();
 
-        if (authData.id() != task.getExecutorId()) {
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+        if (user.getId() != task.getExecutorId()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Вы можете завершать только свои задачи!");
         }
         

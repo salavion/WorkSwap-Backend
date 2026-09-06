@@ -5,7 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.workswap.shared.events.listing.ListingDeletedEvent;
 import org.workswap.shared.events.listing.ListingViewedEvent;
-import org.workswap.statistic.ampq.producers.ListingViewProducer;
+import org.workswap.statistic.amqp.producers.ListingViewProducer;
 import org.workswap.statistic.services.StatisticCommandService;
 
 import lombok.RequiredArgsConstructor;

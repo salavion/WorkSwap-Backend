@@ -2,7 +2,6 @@ package org.workswap.forum.services.impl;
 
 import java.util.Optional;
 
-import org.salavion.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import org.workswap.forum.dto.ForumTopicDTO;
 import org.workswap.forum.services.ForumCommandService;
 import org.workswap.shared.locale.LanguageMapper;
 import org.workswap.shared.locale.LocalisationConfig.LanguageUtils;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 import com.github.pemistahl.lingua.api.LanguageDetector;
@@ -49,7 +49,7 @@ public class ForumCommandServiceImpl implements ForumCommandService {
 
         ForumTag tag = tagRepository.findByName(topicDto.tagName());
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumTopic newTopic = new ForumTopic(authorProxy, tag, topicDto.title(), topicDto.content(), lang);
 
         return topicRepository.save(newTopic);
@@ -64,7 +64,7 @@ public class ForumCommandServiceImpl implements ForumCommandService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No topics exist with this OpenId");
         }
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumPost post = new ForumPost(topic.get(), authorProxy, content);
         return postRepository.save(post);
     }
@@ -78,20 +78,20 @@ public class ForumCommandServiceImpl implements ForumCommandService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No posts exist with this OpenId");
         }
 
-        User authorProxy = entityManager.getReference(User.class, authData.id());
+        User authorProxy = entityManager.getReference(User.class, authData.sub());
         ForumComment comment = new ForumComment(post.get(), authorProxy, content);
         return commentRepository.save(comment);
     }
 
     public void deleteTopic(UserAuthData authData, String topicOpenId) {
-        topicRepository.deleteByOpenIdAndAuthorId(topicOpenId, authData.id());
+        topicRepository.deleteByOpenIdAndAuthorSub(topicOpenId, authData.sub());
     }
 
     public void deletePost(UserAuthData authData, String postOpenId) {
-        postRepository.deleteByOpenIdAndAuthorId(postOpenId, authData.id());
+        postRepository.deleteByOpenIdAndAuthorSub(postOpenId, authData.sub());
     }
 
     public void deleteComment(UserAuthData authData, Long commentId) {
-        commentRepository.deleteByIdAndAuthorId(commentId, authData.id());
+        commentRepository.deleteByIdAndAuthorSub(commentId, authData.sub());
     }
 }

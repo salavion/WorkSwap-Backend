@@ -3,8 +3,8 @@ package org.workswap.listing.datasource.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-import org.salavion.security.dto.UserAuthData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +21,7 @@ import org.workswap.listing.enums.ListingType;
 import org.workswap.listing.enums.ProductType;
 import org.workswap.listing.enums.ServiceType;
 import org.workswap.location.datasource.model.Location;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.datasource.model.User;
 
 import jakarta.persistence.EntityManager;
@@ -56,7 +57,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         ProductType productType,
         String sortBy,
         Pageable pageable,
-        UserAuthData authData
+        Optional<UserAuthData> optAuthData
     ) {
         
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -65,7 +66,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         List<ShortListingDTO> content = Objects.requireNonNull(executeMainQuery(
             cb, categories, locationName, search, requireReviews,
             translationsFilter, languages, type, serviceType, productType,
-            sortBy, pageable, authData
+            sortBy, pageable, optAuthData
         ));
         
         // Подсчет общего количества
@@ -90,7 +91,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         ProductType productType,
         String sortBy,
         Pageable pageable,
-        UserAuthData authData
+        Optional<UserAuthData> optAuthData
     ) {
         
         CriteriaQuery<ShortListingDTO> query = cb.createQuery(ShortListingDTO.class);
@@ -103,8 +104,8 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         Subquery<Long> likesCountSubquery = buildLikesCountSubquery(cb, query, root);
         
         // Подзапрос для проверки "liked" [web:12]
-        Expression<Boolean> likedExpr = authData != null 
-            ? buildLikedExpression(cb, query, root, authData.id())
+        Expression<Boolean> likedExpr = optAuthData.isPresent() 
+            ? buildLikedExpression(cb, query, root, optAuthData.get().sub())
             : cb.literal(false);
 
         // Projection
@@ -198,7 +199,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         CriteriaBuilder cb,
         CriteriaQuery<?> parentQuery,
         Root<Listing> parentRoot,
-        Long userId
+        String userSub
     ) {
         
         Subquery<Long> subquery = parentQuery.subquery(Long.class);
@@ -208,7 +209,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
         subquery.select(cb.literal(1L))
             .where(
                 cb.equal(subRoot.get("id"), parentRoot.get("id")),
-                cb.equal(favoritesJoin.get("id"), userId)
+                cb.equal(favoritesJoin.get("sub"), userSub)
             );
         
         return cb.exists(subquery);
@@ -412,6 +413,7 @@ public class ListingRepositoryCustomImpl implements ListingRepositoryCustom {
             case "price" -> List.of(cb.asc(root.get("price")));
             case "rating" -> List.of(cb.desc(root.get("rating")));
             case "date" -> List.of(cb.desc(root.get("publishedAt")));
+            case "views" -> List.of(cb.desc(root.get("views")));
             case "likes" -> List.of(cb.desc(likesCountSubquery));
             default -> List.of(cb.desc(root.get("createdAt")));
         };

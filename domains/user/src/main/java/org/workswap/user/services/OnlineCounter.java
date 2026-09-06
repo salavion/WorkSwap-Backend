@@ -13,25 +13,25 @@ public class OnlineCounter {
 
     private final Map<String, AtomicInteger> activeSessions = new ConcurrentHashMap<>();
 
-    public void userConnected(String openId) {
+    public void userConnected(String sub) {
         activeSessions
-            .computeIfAbsent(openId, k -> new AtomicInteger(0))
+            .computeIfAbsent(sub, k -> new AtomicInteger(0))
             .incrementAndGet();
     }
 
-    public void userDisconnected(String openId) {
-        activeSessions.computeIfPresent(openId, (k, counter) -> {
+    public void userDisconnected(String sub) {
+        activeSessions.computeIfPresent(sub, (k, counter) -> {
             int now = counter.decrementAndGet();
             return now <= 0 ? null : counter; // удалить запись, если больше нет соединений
         });
     }
 
-    public boolean isOnline(String openId) {
-        return activeSessions.containsKey(openId);
+    public boolean isOnline(String sub) {
+        return activeSessions.containsKey(sub);
     }
 
-    public int getConnectionsCount(String openId) {
-        return activeSessions.getOrDefault(openId, new AtomicInteger(0)).get();
+    public int getConnectionsCount(String sub) {
+        return activeSessions.getOrDefault(sub, new AtomicInteger(0)).get();
     }
 
     public Set<String> getOnlineUsers() {

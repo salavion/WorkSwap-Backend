@@ -6,18 +6,18 @@ import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.dto.ChatDTO;
 import org.workswap.chat.dto.ChatDetails;
 import org.workswap.chat.dto.MessageDTO;
+import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.user.dto.ShortUserDTO;
-import org.salavion.security.dto.UserAuthData;
 
 public interface ChatQueryService {
     
     Chat getOrCreateListingDiscussion(UserAuthData authData, Long listingId);
-    Chat getOrCreatePrivateChat(UserAuthData authData, Long interlocutorId);
+    Chat getOrCreatePrivateChat(UserAuthData authData, String interlocutorSub);
     Chat getOrCreateEventChat(UserAuthData authData, Long eventId);
 
-    ChatDTO getChatDTO(Long chatId, Long userId);
+    ChatDTO getChatDTO(Long chatId, String userSub);
     List<ChatDTO> getChatsDTOForUser(UserAuthData authData, String locale);
-    List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData);
+    List<MessageDTO> getMessagesByChatId(int page, Long chatId, UserAuthData authData);
     List<MessageDTO> getChatUnreadMessages(UserAuthData authData);
 
     long getUnreadMessageCount(Long chatId, UserAuthData authData);
@@ -27,5 +27,5 @@ public interface ChatQueryService {
 
     List<ShortUserDTO> getChatInterlocutors(Long chatId, UserAuthData authData);
 
-    List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale);
+    List<ChatDetails> getChatDetails(String userSub, List<ChatDTO> chats, String locale);
 }

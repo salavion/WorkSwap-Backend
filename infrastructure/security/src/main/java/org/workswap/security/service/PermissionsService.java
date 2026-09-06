@@ -11,26 +11,26 @@ import org.springframework.stereotype.Service;
 import org.workswap.user.datasource.model.permission.Permission;
 import org.workswap.user.datasource.model.permission.Role;
 import org.workswap.user.datasource.repository.permission.RoleRepository;
-import org.workswap.user.services.UserCommandService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j 
 @RequiredArgsConstructor
 public class PermissionsService {
 
     private final RoleRepository roleRepository;
-    private final UserCommandService userCommandService;
 
     @Cacheable(
         value = "user-permissions",
-        key = "#userId"
+        key = "#userSub"
     )
-    public Collection<GrantedAuthority> getUserPermissions(Long userId) {
+    public Collection<GrantedAuthority> getUserPermissions(String userSub) {
 
-        userCommandService.createUser(userId);
+        log.debug("get permissions for user {}", userSub);
 
-        Set<Role> roles = roleRepository.findRolesWithPermissionsByUserId(userId);
+        Set<Role> roles = roleRepository.findRolesWithPermissionsByUserSub(userSub);
 
         Set<GrantedAuthority> authorities = new HashSet<>();
 
@@ -48,6 +48,8 @@ public class PermissionsService {
             .map(roleName -> "ROLE_" + roleName)
             .map(SimpleGrantedAuthority::new)
             .forEach(authorities::add);
+
+        log.debug("found authorities {}", authorities);
 
         return authorities;
     }

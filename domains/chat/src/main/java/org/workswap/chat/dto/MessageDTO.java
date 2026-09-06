@@ -6,7 +6,7 @@ public record MessageDTO(
     Long id,
     String text,
     LocalDateTime sentAt,
-    Long senderId,
+    String senderSub,
     Long chatId,
     boolean isRead
 ) {}

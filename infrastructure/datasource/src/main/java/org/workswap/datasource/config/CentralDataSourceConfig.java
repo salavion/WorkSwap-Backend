@@ -1,14 +1,13 @@
 package org.workswap.datasource.config;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jpa.EntityManagerFactoryBuilder;
@@ -21,6 +20,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.workswap.datasource.logging.CustomHibernateConnectionLogger;
 
 @Configuration
 @EnableTransactionManagement
@@ -41,15 +41,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     transactionManagerRef = "centralTransactionManager"
 )
 @Profile({"server", "statistic"})
+@Slf4j
 public class CentralDataSourceConfig {
-
-    @PostConstruct
-    public void init() {
-        System.out.println(">>> CentralDataSourceConfig LOADED");
-    }
-
-    @Value("${spring.jpa.properties.hibernate.dialect}")
-    private String hibernateDialect;
 
     @Primary
     @Bean
@@ -79,7 +72,7 @@ public class CentralDataSourceConfig {
                 )
                 .persistenceUnit("central")
                 .properties(Map.of(
-                    "hibernate.dialect", hibernateDialect
+                    "hibernate.connection.provider_class", CustomHibernateConnectionLogger.class.getName()
                 ))
                 .build();
     }

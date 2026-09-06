@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.workswap.statistic.dto.OnlineStatSnapshotDTO;
-import org.workswap.statistic.ampq.producers.OnlineStatProducer;
+import org.workswap.statistic.amqp.producers.OnlineStatProducer;
 import org.workswap.user.services.OnlineCounter;
 
 import lombok.RequiredArgsConstructor;

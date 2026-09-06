@@ -13,7 +13,7 @@ import org.workswap.listing.datasource.repository.types.EventSettingsRepository;
 import org.workswap.listing.enums.EventStatus;
 import org.workswap.listing.enums.RecurrencePattern;
 import org.workswap.listing.services.SecurityFilterService;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +29,16 @@ public class EventCommandService {
     private final EventSettingsRepository eventRepository;
     
     public void addEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.addParticipantById(eventId, authData.id());
+        eventRepository.addParticipant(eventId, authData.sub());
     }
 
     public void removeEventParticipant(UserAuthData authData, Long eventId) {
-        eventRepository.removeParticipantById(eventId, authData.id());
+        eventRepository.removeParticipant(eventId, authData.sub());
     }
 
     public void modifyEventParam(UserAuthData authData, Long eventId, Map<String, Object> updates) throws AccessDeniedException {
 
-        logger.debug("Айди пользователя: {}", authData.id());
+        logger.debug("Айди пользователя: {}", authData.sub());
 
         if (eventId == null) {
             throw new IllegalStateException("ID события отсутствует");

@@ -6,5 +6,5 @@ import org.workswap.user.datasource.model.UserSettings;
 
 @Repository
 public interface UserSettingsRepository extends JpaRepository<UserSettings, Long> {
-    boolean existsByUserIdAndTelegramConnectedTrue(Long userId);
+    boolean existsByUserSubAndTelegramConnectedTrue(String userSub);
 }

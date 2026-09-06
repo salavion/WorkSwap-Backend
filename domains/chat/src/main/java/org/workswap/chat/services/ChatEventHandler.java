@@ -22,10 +22,10 @@ public class ChatEventHandler {
     @Async
     public void handleChatsLoaded(ChatsLoadedEvent event) {
 
-        List<ChatDetails> details = chatQueryService.getChatDetails(event.authData().id(), event.chats(), event.locale());
+        List<ChatDetails> details = chatQueryService.getChatDetails(event.authData().sub(), event.chats(), event.locale());
 
         messagingTemplate.convertAndSendToUser(
-            event.authData().openId(), 
+            event.authData().sub(), 
             "/queue/chats/details",
             details
         );

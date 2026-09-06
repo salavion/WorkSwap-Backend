@@ -148,7 +148,7 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
             .flatMap(listing -> reviewQueryService.getReviewsByListingId(listing.getId()).stream())
             .toList();
 
-        List<Review> profileReviews = reviewQueryService.getReviewsByProfileId(user.getId());
+        List<Review> profileReviews = reviewQueryService.getReviewsByProfileSub(user.getSub());
 
         List<Review> allReviews = new ArrayList<>();
         allReviews.addAll(listingReviews);
@@ -193,17 +193,19 @@ public class StatisticCommandServiceImpl implements StatisticCommandService {
 
     public void saveListingView(ListingViewedEvent event) {
         boolean alreadyExists = true;
-        if (event.userId() != null && event.listingId() != null) {
+        if (event.userSub() != null && event.listingId() != null) {
             log.debug("Айди объявления: {}", event.listingId());
-            log.debug("Айди пользователя: {}", event.userId());
+            log.debug("Айди пользователя: {}", event.userSub());
 
-            alreadyExists = listingViewRepository.existsByUserIdAndListingId(event.userId(), event.listingId());
+            User user = userRepository.findBySub(event.userSub()).orElseThrow();
+
+            alreadyExists = listingViewRepository.existsByUserIdAndListingId(user.getId(), event.listingId());
 
             log.debug("Просмотр уже существует? {}", alreadyExists);
 
             if (alreadyExists == false) {
                 ListingView newView = new ListingView(
-                    event.userId(), 
+                    user.getId(), 
                     event.listingId(), 
                     event.temporary(),
                     event.timestamp()

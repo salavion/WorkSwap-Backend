@@ -16,7 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByRecipient(User recipient);
 
-    List<Notification> findByRecipientId(Long recipientId);
+    List<Notification> findByRecipientSub(String recipientSub);
 
     @Modifying
     @Transactional
@@ -24,11 +24,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         UPDATE Notification n
         SET n.isRead = true
         WHERE n.id = :notificationId
-        AND n.recipient.id = :userId
+        AND n.recipient.sub = :userSub
         AND n.isRead = false
     """)
     int markAsRead(
         @Param("notificationId") Long notificationId,
-        @Param("userId") Long userId
+        @Param("userSub") String userSub
     );
 }

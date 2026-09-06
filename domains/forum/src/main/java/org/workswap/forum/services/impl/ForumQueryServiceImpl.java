@@ -79,10 +79,10 @@ public class ForumQueryServiceImpl implements ForumQueryService {
         return dtos;
     }
 
-    public UserForumContent getUserForumContent(Long userId) {
-        List<ForumTopic> topics = topicRepository.findByAuthorId(userId);
-        List<ForumPost> posts = postRepository.findByAuthorId(userId);
-        List<ForumComment> comments = commentRepository.findByAuthorId(userId);
+    public UserForumContent getUserForumContent(String userSub) {
+        List<ForumTopic> topics = topicRepository.findByAuthorSub(userSub);
+        List<ForumPost> posts = postRepository.findByAuthorSub(userSub);
+        List<ForumComment> comments = commentRepository.findByAuthorSub(userSub);
 
         return new UserForumContent(
             topics.stream().map(t -> forumMappingService.toDTO(t)).toList(), 

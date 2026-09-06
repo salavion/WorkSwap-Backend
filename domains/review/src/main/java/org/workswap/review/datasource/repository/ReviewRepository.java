@@ -1,10 +1,7 @@
 package org.workswap.review.datasource.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.workswap.review.datasource.model.Review;
 
@@ -13,19 +10,17 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Пример кастомного метода:
+    @EntityGraph(attributePaths = "author")
     List<Review> findByListingIdOrderByCreatedAtDesc(Long listingId);
-    List<Review> findByProfileIdOrderByCreatedAtDesc(Long profileId);
 
-    Page<Review> findAll(Pageable pageable);
+    @EntityGraph(attributePaths = "author")
+    List<Review> findByProfileSubOrderByCreatedAtDesc(String profileSub);
 
-    boolean existsByAuthorIdAndListingId(Long authorId, Long listingId);
-    boolean existsByAuthorIdAndProfileId(Long authorId, Long profileId);
+    @EntityGraph(attributePaths = "author")
+    List<Review> findByAuthorSub(String authorSub);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.author WHERE r.listing.id = :listingId")
-    List<Review> findByListingIdWithAuthors(@Param("listingId") Long listingId);
-
-    @Query("SELECT r FROM Review r JOIN FETCH r.author WHERE r.profile.id = :profileId")
-    List<Review> findByProfileIdWithAuthors(@Param("profileId") Long profileId);
+    boolean existsByAuthorSubAndListingId(String authorSub, Long listingId);
+    boolean existsByAuthorSubAndProfileSub(String authorSub, String profileDub);
 
     void deleteAllByListingId(Long listingId);
     void deleteAllByAuthorId(Long userId);

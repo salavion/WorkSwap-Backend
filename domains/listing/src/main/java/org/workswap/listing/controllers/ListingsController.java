@@ -3,24 +3,24 @@ package org.workswap.listing.controllers;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.workswap.listing.dto.CatalogFilterDTO;
-import org.workswap.listing.dto.CatalogRequest;
+import org.workswap.listing.dto.FullListingDTO;
 import org.workswap.listing.dto.ImageDTO;
 import org.workswap.listing.dto.ListingDTO;
 import org.workswap.listing.dto.ListingTranslationDTO;
@@ -29,9 +29,13 @@ import org.workswap.listing.enums.ListingTranslateType;
 import org.workswap.listing.services.ListingCommandService;
 import org.workswap.listing.services.ListingQueryService;
 import org.workswap.listing.services.ListingStorageService;
-import org.salavion.security.dto.UserAuthData;
+import org.workswap.sso.security.annotations.controllers.Authenticated;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
+import org.workswap.sso.security.annotations.controllers.RequiredPermission;
+import org.workswap.sso.security.annotations.parameters.AuthUser;
+import org.workswap.sso.security.annotations.parameters.OptionalAuthUser;
+import org.workswap.sso.security.dto.UserAuthData;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -45,9 +49,9 @@ public class ListingsController {
     private final ListingStorageService listingStorageService;
 
     @GetMapping("/{listingId}")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
-    public ListingDTO.Full getListing(
-            @AuthenticationPrincipal UserAuthData authData, 
+    @RequiredPermission("GET_LISTING_BY_ID")
+    public FullListingDTO getListing(
+            @AuthUser UserAuthData authData, 
             @PathVariable Long listingId, 
             @RequestParam(required = false) String token,
             @RequestParam String locale
@@ -55,28 +59,28 @@ public class ListingsController {
         return listingQueryService.getListingDTO(listingId, authData, locale);
     }
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('CREATE_LISTING')")
+    @PutMapping
+    @RequiredPermission("CREATE_LISTING")
     public Long createListing(
             @RequestParam String type,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingCommandService.create(authData, type).getId();
     }
 
     @DeleteMapping("/{listingId}")
-    @PreAuthorize("hasAuthority('DELETE_LISTING')")
+    @RequiredPermission("DELETE_LISTING")
     public void deleteListing(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.delete(authData, listingId);
     }
 
     @GetMapping("/{listingId}/page")
-    @PreAuthorize("hasAuthority('GET_LISTING_BY_ID')")
+    @RequiredPermission("GET_LISTING_BY_ID")
     public ListingDTO.Page getListingPage(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @OptionalAuthUser Optional<UserAuthData> authData, 
             @PathVariable Long listingId, 
             @RequestParam(required = false) String token,
             @RequestParam String locale
@@ -85,63 +89,63 @@ public class ListingsController {
     }
 
     @PostMapping("/catalog") 
-    @PreAuthorize("hasAuthority('LOAD_CATALOG')")
-    public CatalogRequest getSortedCatalog(
+    @PublicEndpoint
+    public Page<ShortListingDTO> getSortedCatalog(
             @RequestBody CatalogFilterDTO filters,
             @RequestParam String locale,
-            @AuthenticationPrincipal UserAuthData authData
+            @OptionalAuthUser Optional<UserAuthData> authData
     ) {
         return listingQueryService.getSortedCatalog(authData, filters, locale);
     }
 
     @GetMapping("/drafts")
-    @PreAuthorize("hasAuthority('VIEW_LISTINGS_DRAFTS')")
-    public List<ListingDTO.Full> getDraftListings(
-            @AuthenticationPrincipal UserAuthData authData, 
+    @RequiredPermission("VIEW_LISTINGS_DRAFTS")
+    public List<FullListingDTO> getDraftListings(
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getDrafts(authData, locale);
     }
 
     @PostMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('FAVORITE_LISTING')")
+    @RequiredPermission("FAVORITE_LISTING")
     public void addFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.addListingToFavorite(authData, listingId);
     }
 
     @DeleteMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('FAVORITE_LISTING')")
+    @RequiredPermission("FAVORITE_LISTING")
     public void removeFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.removeListingFromFavorite(authData, listingId);
     }
 
     @GetMapping("/{listingId}/favorite")
-    @PreAuthorize("hasAuthority('CHECK_FAVORITE_LISTING')")
+    @RequiredPermission("CHECK_FAVORITE_LISTING")
     public boolean isFavorite(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingQueryService.isFavorite(authData, listingId);
     }
 
     @PatchMapping("/{listingId}/publish")
-    @PreAuthorize("hasAuthority('PUBLISH_LISTING')")
+    @RequiredPermission("PUBLISH_LISTING")
     public void publishListing(
             @PathVariable Long listingId, 
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingCommandService.publish(authData, listingId);
     }
 
     @GetMapping("/page")
-    @PreAuthorize("hasAuthority('GET_LISTINGS_LIST')")
-    public Page<ListingDTO.Full> getListingsPage(
+    @RequiredPermission("GET_LISTINGS_LIST")
+    public Page<FullListingDTO> getListingsPage(
             @RequestParam int page, 
             @RequestParam int amount, 
             @RequestParam String sortParam,
@@ -151,8 +155,8 @@ public class ListingsController {
     }
 
     @GetMapping("/recent")
-    @PreAuthorize("hasAuthority('GET_RECENT_LISTINGS')")
-    public List<ListingDTO.Full> getRecentListings(
+    @RequiredPermission("GET_RECENT_LISTINGS")
+    public List<FullListingDTO> getRecentListings(
             @RequestParam int amount,
             @RequestParam String locale
     ) {
@@ -160,17 +164,17 @@ public class ListingsController {
     }
 
     @GetMapping("/my-listings")
-    @PreAuthorize("hasAuthority('GET_OWN_LISTINGS')")
-    public List<ListingDTO.Full> getMyListings(
-            @AuthenticationPrincipal UserAuthData authData, 
+    @RequiredPermission("GET_OWN_LISTINGS")
+    public List<FullListingDTO> getMyListings(
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getOwnListingsByUser(authData, locale);
     }
 
     @GetMapping("/by-user")
-    @PermitAll
-    public List<ListingDTO.Full> getListingsByUser(
+    @PublicEndpoint
+    public List<FullListingDTO> getListingsByUser(
             @RequestParam Long userId, 
             @RequestParam String locale
     ) {
@@ -178,16 +182,16 @@ public class ListingsController {
     }
 
     @GetMapping("/favorites")
-    @PreAuthorize("hasAuthority('GET_FAVORITES_LISTINGS')")
+    @RequiredPermission("GET_FAVORITES_LISTINGS")
     public List<ShortListingDTO> getFavorites(
-            @AuthenticationPrincipal UserAuthData authData, 
+            @AuthUser UserAuthData authData, 
             @RequestParam String locale
     ) {
         return listingQueryService.getFavorites(authData, locale);
     }
 
     @GetMapping("/{listingId}/images")
-    @PermitAll
+    @PublicEndpoint
     public List<ImageDTO> getImages(
             @PathVariable Long listingId
     ) {
@@ -195,7 +199,7 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/translations")
-    @PermitAll
+    @PublicEndpoint
     public Map<String, ListingTranslationDTO> getTranslations(
             @PathVariable Long listingId
     ) {
@@ -203,28 +207,28 @@ public class ListingsController {
     }
 
     @GetMapping("/{listingId}/token")
-    @PermitAll
+    @Authenticated
     public String getToken(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId
     ) {
         return listingQueryService.getListingToken(authData, listingId);
     }
 
-    @PatchMapping("/{listingId}/modify")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @PostMapping("/{listingId}/update")
+    @RequiredPermission("UPDATE_LISTING")
     public void modifyListing(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId,
-            @RequestBody Map<String, Object> updates
+            @RequestBody ListingDTO.Update updates
     ) throws AccessDeniedException {
         listingCommandService.modifyListingParam(authData, listingId, updates);
     }
 
-    @PatchMapping("/{listingId}/modify/translations")
-    @PreAuthorize("hasAuthority('UPDATE_LISTING')")
+    @PostMapping("/{listingId}/modify/translations")
+    @RequiredPermission("UPDATE_LISTING")
     public Set<String> updateListingTranslations(
-            @AuthenticationPrincipal UserAuthData authData,
+            @AuthUser UserAuthData authData,
             @PathVariable Long listingId,
             @RequestBody Map<String, ListingTranslationDTO> translations
     ) throws AccessDeniedException {
@@ -232,28 +236,31 @@ public class ListingsController {
     }
 
     @PostMapping("/{listingId}/image")
+    @Authenticated
     public ImageDTO uploadListingImage(
             @RequestParam MultipartFile image,
             @PathVariable Long listingId,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingStorageService.uploadListingImage(image, listingId, authData);
     }
 
     @DeleteMapping("/{listingId}/image/{imageId}")
+    @Authenticated
     public void deleteListingImage(
             @RequestParam Long imageId,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         listingStorageService.deleteListingImage(imageId, authData);
     }
 
     @PostMapping("/{listingId}/auto-translate")
+    @Authenticated
     public ListingTranslationDTO autoTranslateListing(
             @PathVariable Long listingId,
             @RequestParam String lang,
             @RequestParam(required = false) String preferedRefLang,
-            @AuthenticationPrincipal UserAuthData authData
+            @AuthUser UserAuthData authData
     ) {
         return listingCommandService.autoTranslateListing(authData, listingId, lang, preferedRefLang);
     }

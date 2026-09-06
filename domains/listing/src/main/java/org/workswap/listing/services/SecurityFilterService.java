@@ -1,11 +1,11 @@
 package org.workswap.listing.services;
 
-import org.salavion.security.dto.UserAuthData;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.exceptions.ListingAccessDeniedException;
+import org.workswap.sso.security.dto.UserAuthData;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +47,8 @@ public class SecurityFilterService {
     }
 
     public boolean listingAuthorFilter(UserAuthData authData, Long listingId) {
-        return listingRepository.existsByIdAndAuthorId(listingId, authData.id());
+        if (authData == null) return false;
+        
+        return listingRepository.existsByIdAndAuthorSub(listingId, authData.sub());
     }
 }

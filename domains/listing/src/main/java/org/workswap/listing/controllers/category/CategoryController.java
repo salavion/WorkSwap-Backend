@@ -11,8 +11,8 @@ import org.workswap.category.dto.CategoryDTO;
 import org.workswap.category.services.CategoryMappingService;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
+import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,13 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
     
     private final CategoryMappingService categoryMappingService;
-
-    //перенести сервис в сервис
     private final ServiceCategoryRepository serviceCategoryRepository;
     private final ProductCategoryRepository productCategoryRepository;
     
     @GetMapping("/all")
-    @PermitAll
+    @PublicEndpoint
     public Map<String, List<CategoryDTO>> categoryList() {
 
         List<CategoryDTO> sCategories = categoryMappingService.toDTOList(serviceCategoryRepository.findAll());

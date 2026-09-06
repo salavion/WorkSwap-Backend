@@ -8,17 +8,20 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.workswap.user.datasource.model.User;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class Message {
 
-    public Message(Long chatId,
-                   Long senderId,
-                   String text) {
-        this.chatId = chatId;
-        this.senderId = senderId;
+    public Message(
+        Chat chat,
+        User sender,
+        String text
+    ) {
+        this.chat = chat;
+        this.sender = sender;
         this.text = text;
     }
 
@@ -26,10 +29,18 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "chat_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private User sender;
+
+    @Column(name = "chat_id", insertable = false, updatable = false)
     private Long chatId;
 
-    @Column(name = "sender_id", nullable = false)
+    @Column(name = "sender_id", insertable = false, updatable = false)
     private Long senderId;
 
     @Column(columnDefinition = "TEXT")
@@ -41,12 +52,4 @@ public class Message {
     @Setter
     @Column(name = "is_read")
     private boolean read = false;
-
-    public static Message create(Long chatId, Long senderId, String text) {
-        Message m = new Message();
-        m.chatId = chatId;
-        m.senderId = senderId;
-        m.text = text;
-        return m;
-    }
 }

@@ -13,11 +13,29 @@ public interface EventSettingsRepository extends JpaRepository<EventSettings, Lo
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO event_participants(event_id, user_id) VALUES (:eventId, :userId) ON CONFLICT DO NOTHING", nativeQuery = true)
-    void addParticipantById(@Param("eventId") Long eventId, @Param("userId") Long userId);
+    @Query(value = """
+        INSERT INTO event_participants(event_id, user_id)
+        SELECT :eventId, u.id
+        FROM users u
+        WHERE u.sub = :userSub
+        ON CONFLICT DO NOTHING
+        """, nativeQuery = true)
+    void addParticipant(
+        @Param("eventId") Long eventId,
+        @Param("userSub") String userSub
+    );
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM event_participants WHERE event_id = :eventId AND user_id = :userId", nativeQuery = true)
-    void removeParticipantById(@Param("eventId") Long eventId, @Param("userId") Long userId);
+    @Query(value = """
+        DELETE FROM event_participants ep
+        USING users u
+        WHERE ep.event_id = :eventId
+        AND ep.user_id = u.id
+        AND u.sub = :userSub
+        """, nativeQuery = true)
+    void removeParticipant(
+        @Param("eventId") Long eventId,
+        @Param("userSub") String userSub
+    );
 }

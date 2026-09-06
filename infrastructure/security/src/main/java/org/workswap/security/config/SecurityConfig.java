@@ -5,13 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-import org.salavion.security.service.JwtAuthenticationFilter;
 import org.springframework.boot.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,34 +19,36 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.workswap.datasource.testers.HttpRequestStatisticsFilter;
+import org.workswap.sso.security.config.CorsConfig;
+import org.workswap.sso.security.service.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+// @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
     
     private final CorsConfig corsConfig;
     private final HttpRequestStatisticsFilter statisticFilter;
-    private final JwtAuthenticationFilter jwtAuthenticationConverter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .authorizeHttpRequests(auth -> auth
+            // .authorizeHttpRequests(auth -> auth
 
-                .requestMatchers("/r/**").permitAll()
+            //     .requestMatchers("/r/**").permitAll()
 
-                // для установки подключения к вебсокету
-                .requestMatchers("/ws/**").permitAll()
+            //     // для установки подключения к вебсокету
+            //     .requestMatchers("/ws/**").permitAll()
 
-                // для вызова методов вебсокета
-                .requestMatchers( "/app/**").authenticated()
+            //     // для вызова методов вебсокета
+            //     .requestMatchers( "/app/**").authenticated()
 
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationConverter, AuthorizationFilter.class)
+            //     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            //     .anyRequest().authenticated()
+            // )
+            .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
             .addFilterBefore(statisticFilter, AuthorizationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

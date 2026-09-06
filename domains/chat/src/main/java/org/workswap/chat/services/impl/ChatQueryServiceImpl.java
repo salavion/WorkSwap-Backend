@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.salavion.security.dto.UserAuthData;
-import org.salavion.security.enums.UserStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +27,17 @@ import org.workswap.listing.datasource.model.Listing;
 import org.workswap.listing.datasource.repository.ListingRepository;
 import org.workswap.listing.dto.ShortListingDTO;
 import org.workswap.listing.services.ListingQueryService;
+import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
+import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserDTO;
-import org.workswap.user.services.UserMappingService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.workswap.chat.datasource.model.Chat;
 import org.workswap.chat.datasource.model.ChatParticipant;
-import org.workswap.chat.datasource.model.Message;
 import org.workswap.chat.datasource.repository.ChatParticipantRepository;
 import org.workswap.chat.datasource.repository.ChatRepository;
 import org.workswap.chat.datasource.repository.MessageRepository;
@@ -56,39 +57,42 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final ListingRepository listingRepository;
 
     private final EntityManager entityManager;
-    private final UserMappingService userMappingService;
     private final ChatMappingService mappingService;
     private final ListingQueryService listingQueryService;
+    private final UserRepository userRepository;
 
     private final ApplicationEventPublisher eventPublisher;
     
     public Chat getOrCreateListingDiscussion(UserAuthData authData, Long listingId) {
 
-        Long sellerId = listingRepository.findAuthorIdByListingId(listingId);
+        String sellerSub = listingRepository.findAuthorSubByListingId(listingId);
 
         Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(
-                sellerId, authData.id(), ChatType.LISTING_DISCUSSION, listingId);
+                sellerSub, authData.sub(), ChatType.LISTING_DISCUSSION, listingId);
         if (existing.isPresent()) {
             return existing.get();
         }
 
-        User sellerProxy = entityManager.getReference(User.class, sellerId);
-        User clientProxy = entityManager.getReference(User.class, authData.id());
+        User sellerProxy = userRepository.findBySub(sellerSub).orElseThrow();
+        User clientProxy = userRepository.findBySub(authData.sub()).orElseThrow();
+
         Set<User> participants = Set.of(clientProxy, sellerProxy);
         Chat listingDiscussion = new Chat(participants, ChatType.LISTING_DISCUSSION, listingId);
 
         return chatRepository.save(listingDiscussion);
     }
 
-    public Chat getOrCreatePrivateChat(UserAuthData authData, Long interlocutorId) {
-        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(authData.id(), interlocutorId, ChatType.PRIVATE_CHAT, null);
+    public Chat getOrCreatePrivateChat(UserAuthData authData, String interlocutorSub) {
+        Optional<Chat> existing = chatRepository.findChatBetweenUsersAndChatTypeAndTargetId(
+            authData.sub(), interlocutorSub, ChatType.PRIVATE_CHAT, null);
         if (existing.isPresent()) {
             return existing.get();
         }
 
-        User user1Proxy = entityManager.getReference(User.class, interlocutorId);
-        User user2Proxy = entityManager.getReference(User.class, authData.id());
-        Set<User> participants = Set.of(user1Proxy, user2Proxy);
+        User interlocutor = userRepository.findBySub(interlocutorSub).orElseThrow();
+        User user = userRepository.findBySub(authData.sub()).orElseThrow();
+
+        Set<User> participants = Set.of(interlocutor, user);
         Chat chat = new Chat(participants, ChatType.PRIVATE_CHAT, null);
         return chatRepository.save(chat);
     }
@@ -100,14 +104,14 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Listing event = listingQueryService.getListingById(eventId);
         Optional<Chat> chat = chatRepository.findChatByTargetId(ChatType.EVENT_TOPIC, event.getId());
 
-        User userProxy = entityManager.getReference(User.class, authData.id());
+        User userProxy = entityManager.getReference(User.class, authData.sub());
 
         if (chat.isPresent()) {
             Chat existing = chat.get();
             
             // TODO Реализовать систему проверки блокировки пользователя в чате перед добавленим его.
 
-            boolean alreadyParticipant = chatParticipantRepository.existsByChatIdAndUserId(existing.getId(), authData.id());
+            boolean alreadyParticipant = chatParticipantRepository.existsByChatIdAndUserId(existing.getId(), authData.sub());
 
             if (!alreadyParticipant) {
                 existing.getParticipants().add(new ChatParticipant(existing, userProxy));
@@ -122,21 +126,21 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     @Transactional
     public List<ChatDTO> getChatsDTOForUser(UserAuthData authData, String locale) {
-        List<ChatDTO> chats = chatRepository.findChatsForUser(authData.id());
+        List<ChatDTO> chats = chatRepository.findChatsForUser(authData.sub());
 
         logger.debug("Chats for DTO found: " + chats.size());
         eventPublisher.publishEvent(new ChatsLoadedEvent(authData, chats, locale));
         return chats;
     }
 
-    public List<ChatDetails> getChatDetails(Long userId, List<ChatDTO> chats, String locale) {
+    public List<ChatDetails> getChatDetails(String userSub, List<ChatDTO> chats, String locale) {
         List<Long> chatIds = chats.stream().map(c -> c.id()).toList();
         List<Long> listingIds = chats.stream()
             .filter(c -> Set.of(ChatType.EVENT_TOPIC, ChatType.LISTING_DISCUSSION).contains(c.type()))
             .map(ChatDTO::targetId).toList();
 
         List<ChatMemberDTO> members = chatParticipantRepository.findMembersByChatIds(chatIds);
-        List<ShortListingDTO> listings = listingRepository.findShortListingsByIds(listingIds, userId, locale);
+        List<ShortListingDTO> listings = listingRepository.findShortListingsByIds(listingIds, userSub, locale);
 
         List<ChatDetails> chatDetails = chats.stream()
             .map(c -> {
@@ -144,8 +148,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
                 List<ShortUserDTO> chatMembers = members.stream()
                     .filter(m -> m.chatId().equals(c.id()))
                     .map(m -> new ShortUserDTO(
-                        m.id(),
-                        m.openId(),
+                        m.sub(),
                         m.name(),
                         m.avatarUrl()
                     ))
@@ -164,27 +167,30 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return Objects.requireNonNull(chatDetails);
     }
 
-    public List<MessageDTO> getMessagesByChatId(Long chatId, UserAuthData authData) {
-        logger.debug("Получение сообщений для разговора с ID: {}", chatId);
+    public List<MessageDTO> getMessagesByChatId(int page, Long chatId, UserAuthData authData) {
+        logger.debug("Получение сообщений для разговора с ID: {}, page: {}", chatId, page);
 
-        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.id())) {
+        if (!chatParticipantRepository.existsByChatIdAndUserId(chatId, authData.sub())) {
             throw new AccessDeniedException("That is not your chat");
         }
 
+        Pageable pageable = PageRequest.of(
+            page,
+            50,
+            Sort.by(Sort.Direction.DESC, "sentAt")
+        );
+
         // Получаем все сообщения для этого разговора
-        List<Message> messages = messageRepository.findByChatIdOrderBySentAtAsc(chatId);
+        List<MessageDTO> messages = messageRepository.findByChatId(chatId, pageable).getContent();
 
-        // Преобразуем сообщения в DTO и отправляем клиенту
-        List<MessageDTO> messageDtos = messages.stream()
-            .map(msg -> mappingService.toDTO(msg))
-            .collect(Collectors.toList());
+        logger.debug("Найдены сообщения {}", messages.size());
 
-        return messageDtos;
+        return messages;
     }
 
     public long getUnreadMessageCount(Long chatId, UserAuthData authData) {
         // Получаем все непрочитанные сообщения для конкретного разговора и пользователя
-        return messageRepository.findByChatIdAndSenderIdNotAndReadFalse(chatId, authData.id()).size();
+        return messageRepository.countUnreadsByChatId(chatId, authData.sub());
     }
 
     public Chat getChatById(Long chatId) {
@@ -196,7 +202,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     public Boolean isChatTermsAccepted(Long chatId, UserAuthData authData) {
-        Boolean accepted = chatParticipantRepository.isChatTermsAccepted(authData.id(), chatId);
+        Boolean accepted = chatParticipantRepository.isChatTermsAccepted(authData.sub(), chatId);
         if (accepted == null) {
             throw new AccessDeniedException("That is not your chat");
         }
@@ -208,25 +214,25 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         ChatType chatType = chatRepository.findTypeById(chatId);
 
         if (chatType == ChatType.PRIVATE_CHAT || chatType == ChatType.LISTING_DISCUSSION) {
-            boolean isParticipant = chatParticipantRepository.existsByChatIdAndUserIdAndChatTypeIn(
-                chatId, authData.id(), List.of(ChatType.PRIVATE_CHAT, ChatType.LISTING_DISCUSSION)
+            boolean isParticipant = chatParticipantRepository.existsByChatIdAndUserSubAndChatTypeIn(
+                chatId, authData.sub(), List.of(ChatType.PRIVATE_CHAT, ChatType.LISTING_DISCUSSION)
             );
             if (!isParticipant) throw new AccessDeniedException("Нет доступа к приватному чату");
         }
 
-        List<User> interlocutors = chatParticipantRepository.findChatInterlocutorsExcludingUser(chatId, authData.id());
+        List<User> interlocutors = chatParticipantRepository.findChatInterlocutorsExcludingUser(chatId, authData.sub());
 
-        return interlocutors.stream().map(user -> userMappingService.toShortDTO(user)).toList();
+        return interlocutors.stream().map(user -> ShortUserDTO.ofUser(user)).toList();
     }
 
     public List<MessageDTO> getChatUnreadMessages(UserAuthData authData) {
-        List<Message> unreads = messageRepository.findUnreadMessagesByUserId(authData.id());
-        logger.debug("Найдены непрочитанные сообщения для " + authData.name() + ": " + unreads.size());
-        return unreads.stream().map(m -> mappingService.toDTO(m)).toList();
+        List<MessageDTO> unreads = messageRepository.findUnreadMessagesByUserSub(authData.sub());
+        logger.debug("Найдены непрочитанные сообщения для " + authData.sub() + ": " + unreads.size());
+        return unreads;
     }
 
-    public ChatDTO getChatDTO(Long chatId, Long userId) {
+    public ChatDTO getChatDTO(Long chatId, String userSub) {
         Chat chat = getChatById(chatId);
-        return mappingService.convertToDTO(chat, userId);
+        return mappingService.convertToDTO(chat, userSub);
     }
 }

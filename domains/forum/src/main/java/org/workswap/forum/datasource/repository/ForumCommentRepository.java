@@ -12,9 +12,9 @@ import org.workswap.forum.datasource.model.ForumComment;
 @Repository
 public interface ForumCommentRepository extends JpaRepository<ForumComment, Long> {
     Optional<ForumComment> findByOpenId(String openId);
-    List<ForumComment> findByAuthorId(Long authorId);
+    List<ForumComment> findByAuthorSub(String authorSub);
 
     Page<ForumComment> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    void deleteByIdAndAuthorId(Long commentId, Long authorId);
+    void deleteByIdAndAuthorSub(Long commentId, String authorSub);
 }

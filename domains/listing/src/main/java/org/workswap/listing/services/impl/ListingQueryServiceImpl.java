@@ -45,7 +45,6 @@ import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserProfileDTO;
-import org.workswap.user.services.UserMappingService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +64,6 @@ public class ListingQueryServiceImpl implements ListingQueryService {
     private final ListingMappingService mappingService;
     private final ListingTranslationRepository translationRepository;
     private final SecurityFilterService securityFilterService;
-    private final UserMappingService userMappingService;
     private final ApplicationEventPublisher eventPublisher;
 
     public boolean isFavorite(UserAuthData authData, Long listingId) {
@@ -291,7 +289,7 @@ public class ListingQueryServiceImpl implements ListingQueryService {
 
         Location loc = listing.getLocation();
 
-        ShortUserProfileDTO author = userMappingService.toShortProfileDTO(listing.getAuthor());
+        ShortUserProfileDTO author = ShortUserProfileDTO.ofUser(listing.getAuthor());
         List<ImageDTO> images = listing.getImages().stream()
             .map(image -> new ImageDTO(image.getId(), listingId, mappingService.getImageLink(image))).toList();
 

@@ -14,7 +14,7 @@ import org.workswap.forum.dto.ForumTopicDTO;
 import org.workswap.forum.enums.ForumActivityType;
 import org.workswap.forum.services.ForumMappingService;
 import org.workswap.user.datasource.model.User;
-import org.workswap.user.services.UserMappingService;
+import org.workswap.user.dto.ShortUserDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 @Profile({"server"})
 @RequiredArgsConstructor
 public class ForumMappingServiceImpl implements ForumMappingService {
-
-    private final UserMappingService userMappingService;
     
     public ForumTopicDTO toRequest(ForumTopic topic) {
 
@@ -37,7 +35,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
             tag != null ? tag.getName() : null,
             topic.getLanguage(),
             topic.getCreatedAt(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             topic.getPosts().stream().map(post -> toRequest(post)).toList(),
             topic.getPosts().size()
         );
@@ -54,7 +52,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
             tag != null ? tag.getName() : null,
             topic.getLanguage(),
             topic.getCreatedAt(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             null,
             topic.getPosts().size()
         );
@@ -67,7 +65,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
             post.getOpenId(),
             post.getContent(), 
             post.getCreatedAt(),
-            author != null ? userMappingService.toShortDTO(author) : null
+            ShortUserDTO.ofUser(author)
         );
     }
 
@@ -77,7 +75,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
             post.getOpenId(), 
             post.getContent(), 
             post.getCreatedAt(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             post.getComments().stream().map(c -> toDTO(c)).toList()
         );
     }
@@ -90,7 +88,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
             comment.getContent(),
             comment.getPost().getOpenId(),
             comment.getCreatedAt(),
-            author != null ? userMappingService.toShortDTO(author) : null
+            ShortUserDTO.ofUser(author)
         );
     }
 
@@ -99,7 +97,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
 
         return new ForumActivityItemDTO(
             topic.getTitle(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             "/forum/topic/" + topic.getOpenId(),
             topic.getLanguage(),
             topic.getCreatedAt(),
@@ -114,7 +112,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
 
         return new ForumActivityItemDTO(
             post.getContent(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             "/forum/topic/" + topic.getOpenId(),
             topic.getLanguage(),
             post.getCreatedAt(),
@@ -130,7 +128,7 @@ public class ForumMappingServiceImpl implements ForumMappingService {
 
         return new ForumActivityItemDTO(
             comment.getContent(),
-            author != null ? userMappingService.toShortDTO(author) : null,
+            ShortUserDTO.ofUser(author),
             "/forum/topic/" + topic.getOpenId(),
             topic.getLanguage(),
             comment.getCreatedAt(),

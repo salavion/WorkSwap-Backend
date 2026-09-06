@@ -32,7 +32,6 @@ import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.ShortUserDTO;
-import org.workswap.user.services.UserMappingService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -58,7 +57,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final ListingRepository listingRepository;
 
     private final EntityManager entityManager;
-    private final UserMappingService userMappingService;
     private final ChatMappingService mappingService;
     private final ListingQueryService listingQueryService;
     private final UserRepository userRepository;
@@ -224,7 +222,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         List<User> interlocutors = chatParticipantRepository.findChatInterlocutorsExcludingUser(chatId, authData.sub());
 
-        return interlocutors.stream().map(user -> userMappingService.toShortDTO(user)).toList();
+        return interlocutors.stream().map(user -> ShortUserDTO.ofUser(user)).toList();
     }
 
     public List<MessageDTO> getChatUnreadMessages(UserAuthData authData) {

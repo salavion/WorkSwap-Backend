@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class ReviewQueryService {
 
     private final ReviewRepository reviewRepository;
-    private final ReviewMappingService reviewMappingService;
 
     public List<Review> getReviewsByListingId(Long listingId) {
         return reviewRepository.findByListingIdOrderByCreatedAtDesc(listingId); // Получаем отзывы для объявления
@@ -37,13 +36,13 @@ public class ReviewQueryService {
     public List<ReviewDTO> getRewiewsList(Long listingId, String profileSub) {
         List<Review> reviews = new ArrayList<>();
         if (listingId != null) {
-            reviews = getReviewsByListingId(listingId);
+            reviews = reviewRepository.findByListingIdOrderByCreatedAtDesc(listingId);
         } else if (profileSub != null) {
-            reviews = getReviewsByProfileSub(profileSub);
+            reviews = reviewRepository.findByProfileSubOrderByCreatedAtDesc(profileSub);
         }
 
         return reviews.stream()
-            .map(r -> reviewMappingService.toDTO(r))
+            .map(r -> ReviewDTO.ofReview(r))
             .toList();
     }
 
@@ -54,7 +53,7 @@ public class ReviewQueryService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortParam).descending());
         Page<Review> reviews = reviewRepository.findAll(pageable);
 
-        List<ReviewDTO> dtos = reviews.stream().map(r -> reviewMappingService.toDTO(r)).toList();
+        List<ReviewDTO> dtos = reviews.stream().map(r -> ReviewDTO.ofReview(r)).toList();
 
         return new PageImpl<>(
             dtos != null ? dtos : new ArrayList<>(), 
@@ -68,10 +67,10 @@ public class ReviewQueryService {
 
         return new MyReviews(
             given.stream()
-                .map(r -> reviewMappingService.toDTO(r))
+                .map(r -> ReviewDTO.ofReview(r))
                 .toList(), 
             recived.stream()
-                .map(r -> reviewMappingService.toDTO(r))
+                .map(r -> ReviewDTO.ofReview(r))
                 .toList()
             );
     }

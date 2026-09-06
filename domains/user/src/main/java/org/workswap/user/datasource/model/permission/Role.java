@@ -38,4 +38,5 @@ public class Role {
     @Setter
     @ManyToMany
     private Set<Permission> permissions;
+
 }

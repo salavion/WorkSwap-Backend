@@ -30,7 +30,6 @@ import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
-import org.workswap.user.services.UserMappingService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,7 +42,6 @@ public class EventQueryServiceImpl implements EventQueryService {
 
     private final ListingTranslationRepository translationRepository;
     private final ListingMappingService listingMappingService;
-    private final UserMappingService userMappingService;
     private final SecurityFilterService securityFilterService;
     private final ListingQueryService listingQueryService;
     private final ApplicationEventPublisher eventPublisher;
@@ -75,8 +73,7 @@ public class EventQueryServiceImpl implements EventQueryService {
 
             List<ShortUserDTO> list = new ArrayList<>();
             for (User participant : event.getEventSettings().getParticipants()) {
-                ShortUserDTO dto = userMappingService.toShortDTO(participant);
-                list.add(dto);
+                list.add(ShortUserDTO.ofUser(participant));
             }
 
             return list;
@@ -99,11 +96,11 @@ public class EventQueryServiceImpl implements EventQueryService {
 
         EventSettings event = listing.getEventSettings();
 
-        ShortUserProfileDTO author = userMappingService.toShortProfileDTO(listing.getAuthor());
+        ShortUserProfileDTO author = ShortUserProfileDTO.ofUser(listing.getAuthor());
         List<ImageDTO> images = listing.getImages().stream()
             .map(image -> new ImageDTO(image.getId(), eventId, listingMappingService.getImageLink(image))).toList();
 
-        List<ShortUserDTO> participants = userMappingService.toShortDTOList(event.getParticipants());
+        List<ShortUserDTO> participants = ShortUserDTO.ofList(event.getParticipants());
 
         if (optAuthData.isPresent()) {
             UserAuthData authData = optAuthData.get();

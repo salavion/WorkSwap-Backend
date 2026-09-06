@@ -1,6 +1,5 @@
 package org.workswap.user.services.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
@@ -21,7 +20,6 @@ import org.workswap.user.dto.UserControlPageRequest;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
 import org.workswap.user.dto.UserDTO;
-import org.workswap.user.services.UserMappingService;
 import org.workswap.user.services.UserQueryService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +31,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     private final UserRepository userRepository;
     private final UserSettingsRepository userSettingsRepository;
-    private final UserMappingService userMappingService;
 
     public User findUserFromOAuth2(OAuth2User oauth2User) {
         User user = userRepository.findByEmail(oauth2User.getAttribute("email")).orElseThrow();
@@ -43,7 +40,7 @@ public class UserQueryServiceImpl implements UserQueryService {
     public List<UserDTO> getRecentUsers(int count) {
         List<User> users = userRepository.findAllByStatusOrderByCreatedAtDesc(PageRequest.of(0, count), UserStatus.ACTIVE).getContent();
 
-        return userMappingService.toDTOList(users);
+        return UserDTO.ofList(users);
     }
 
     public boolean checkTelegramConnect(UserAuthData authData) {
@@ -56,7 +53,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
     public UserDTO getCurrentUser(UserAuthData authData) {
         User user = userRepository.getFullUser(authData.sub()).orElseThrow();
-        return userMappingService.toDTO(user);
+        return UserDTO.ofUser(user);
     }
 
     public ShortUserDTO getById(Long userId) {
@@ -64,32 +61,32 @@ public class UserQueryServiceImpl implements UserQueryService {
             throw new IllegalArgumentException("User must not be null");
         }
         User user = userRepository.findById(userId).orElseThrow();
-        return userMappingService.toShortDTO(user);
+        return ShortUserDTO.ofUser(user);
     }
 
     public ShortUserDTO getBySub(String userSub) {
         User user = userRepository.findBySub(userSub).orElseThrow();
-        return userMappingService.toShortDTO(user);
+        return ShortUserDTO.ofUser(user);
     }
 
     public ShortUserProfileDTO getUserProfile(String userSub) {
         User user = userRepository.findBySub(userSub).orElseThrow();
 
-        return userMappingService.toShortProfileDTO(user);
+        return ShortUserProfileDTO.ofUser(user);
     }
 
     public UserControlPageRequest getUserControlPage(String userSub) {
         User user = userRepository.findBySub(userSub).orElseThrow(
             () -> new IllegalStateException("User not found"));
 
-        FullUserDTO userDto = userMappingService.toFullDto(user);
+        FullUserDTO userDto = FullUserDTO.ofUser(user);
 
         return new UserControlPageRequest(userDto);
     }
 
     public FullUserDTO getFullUserDTO(UserAuthData authData) {
         User user = userRepository.getFullUser(authData.sub()).orElseThrow();
-        return userMappingService.toFullDto(user);
+        return FullUserDTO.ofUser(user);
     }
 
     public Page<UserDTO> getUsersList(int size, int page, String sortParam) {
@@ -100,10 +97,8 @@ public class UserQueryServiceImpl implements UserQueryService {
         Page<Long> ids = userRepository.findIds(pageable);
         List<User> users = userRepository.findWithRelationsByIds(ids.getContent());
 
-        List<UserDTO> dtos = users.stream().map(u -> userMappingService.toDTO(u)).toList();
-
         return new PageImpl<>(
-            dtos != null ? dtos : new ArrayList<>(), 
+            UserDTO.ofList(users), 
             pageable, 
             ids.getTotalElements());
     }

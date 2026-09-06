@@ -15,16 +15,23 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
     Permission findByName(String name);
 
+    @Query("""
+        SELECT r.permissions
+        FROM Role r
+        WHERE r.id = :roleId
+        """)
+    List<Permission> findByRole(@Param("roleId") Long roleId);
+
     List<Permission> findAllByIdIn(List<Long> ids);
     
     @Modifying
     @Transactional
     @Query("""
-        update Permission p
-        set
-            p.name = coalesce(:name, p.name),
-            p.comment = coalesce(:comment, p.comment)
-        where p.id = :permissionId
+        UPDATE Permission p
+        SET
+            p.name = COALESCE(:name, p.name),
+            p.comment = COALESCE(:comment, p.comment)
+        WHERE p.id = :permissionId
     """)
     void updatePermission(
             @Param("permissionId") Long permissionId,

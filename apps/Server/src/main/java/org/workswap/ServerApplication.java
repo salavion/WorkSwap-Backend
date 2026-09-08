@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 @SpringBootApplication(
-	scanBasePackages = { "org.workswap" },
+	scanBasePackages = "org.workswap",
 	exclude = DataSourceAutoConfiguration.class
 )
 @EnableScheduling

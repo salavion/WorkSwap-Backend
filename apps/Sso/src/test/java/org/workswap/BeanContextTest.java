@@ -1,15 +1,15 @@
-package org.workswap.statistic;
+package org.workswap;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.workswap.ServerApplication;
+import org.workswap.sso.SsoApplication;
 
 @SpringBootTest(
-    classes = ServerApplication.class,
+    classes = SsoApplication.class,
     webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
-@ActiveProfiles({"server", "test"})
+@ActiveProfiles({"sso", "test", "api"})
 class StartUpTest {
 
     @Test

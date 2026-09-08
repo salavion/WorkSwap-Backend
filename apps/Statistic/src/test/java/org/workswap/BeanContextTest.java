@@ -1,4 +1,4 @@
-package org.workswap.statistic;
+package org.workswap;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.workswap.listing.datasource.repository.ListingRepository;
+import org.workswap.statistic.StatisticApplication;
 import org.workswap.statistic.consumers.ListingsStatConsumer;
 
 @SpringBootTest(

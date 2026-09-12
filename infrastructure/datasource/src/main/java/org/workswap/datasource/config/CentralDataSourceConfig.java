@@ -35,7 +35,8 @@ import org.workswap.datasource.logging.CustomHibernateConnectionLogger;
         "org.workswap.review",
         "org.workswap.subscription",
         "org.workswap.task",
-        "org.workswap.user"
+        "org.workswap.user",
+        "org.workswap.permission"
     }, // Пакет основной БД
     entityManagerFactoryRef = "centralEntityManagerFactory",
     transactionManagerRef = "centralTransactionManager"
@@ -68,7 +69,8 @@ public class CentralDataSourceConfig {
                     "org.workswap.review",
                     "org.workswap.subscription",
                     "org.workswap.task",
-                    "org.workswap.user"
+                    "org.workswap.user",
+                    "org.workswap.permission"
                 )
                 .persistenceUnit("central")
                 .properties(Map.of(

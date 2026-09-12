@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Profile("server")
 @RequiredArgsConstructor
-public class StatisticListingEventHandler {
+public class OnlineStateEventHandler {
 
     private final OnlineCounter onlineCounter;
     

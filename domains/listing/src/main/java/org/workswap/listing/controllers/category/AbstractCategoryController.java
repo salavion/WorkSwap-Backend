@@ -1,7 +1,6 @@
 package org.workswap.listing.controllers.category;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +28,8 @@ public abstract class AbstractCategoryController<T extends Category> {
 
     @GetMapping("/{parentId}/children")
     @PublicEndpoint
-    public List<CategoryDTO> getChildCategories(@PathVariable Long parentId, Locale locale) {
-        return categoryService.toDTOList(
-                    categoryService.getChildCategories(parentId)
-                );
+    public List<CategoryDTO> getChildCategories(@PathVariable Long parentId) {
+        return CategoryDTO.ofList(categoryService.getChildCategories(parentId));
     }
 
     @GetMapping("/{categoryId}/is-leaf")
@@ -43,10 +40,8 @@ public abstract class AbstractCategoryController<T extends Category> {
 
     @GetMapping("/{categoryId}/path")
     @PublicEndpoint
-    public List<CategoryDTO> getCategoryPath(@PathVariable Long categoryId, Locale locale) {
-        return categoryService.toDTOList(
-                    categoryService.getCategoryPath(categoryId)
-                );
+    public List<CategoryDTO> getCategoryPath(@PathVariable Long categoryId) {
+        return CategoryDTO.ofList(categoryService.getCategoryPath(categoryId));
     }
 
     @PostMapping

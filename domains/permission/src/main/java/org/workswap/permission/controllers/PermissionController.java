@@ -1,9 +1,8 @@
-package org.workswap.user.controllers;
+package org.workswap.permission.controllers;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.sso.security.annotations.controllers.RequiredPermission;
-import org.workswap.user.datasource.repository.UserRepository;
-import org.workswap.user.datasource.repository.permission.PermissionRepository;
-import org.workswap.user.dto.PermissionDTO;
-import org.workswap.user.dto.RoleDTO;
-import org.workswap.user.services.permission.PermissionCommandSevice;
-import org.workswap.user.services.permission.PermissionQueryService;
+import org.workswap.permission.datasource.repository.PermissionRepository;
+import org.workswap.permission.dto.PermissionDTO;
+import org.workswap.permission.dto.RoleDTO;
+import org.workswap.permission.services.PermissionCommandSevice;
+import org.workswap.permission.services.PermissionQueryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +29,6 @@ public class PermissionController {
     private final PermissionQueryService permissionQueryService;
     private final PermissionCommandSevice permissionCommandSevice;
     private final PermissionRepository permissionRepository;
-    private final UserRepository userRepository;
 
     @GetMapping
     @RequiredPermission("GET_ALL_PERMISSIONS")
@@ -81,17 +78,5 @@ public class PermissionController {
         @RequestParam(required = false) String comment
     ) {
         permissionRepository.updatePermission(permissionId, name, comment);
-    }
-
-    @PostMapping("/user/role")
-    @RequiredPermission("ADD_USER_ROLE")
-    public void userAddRole(@RequestParam Long userId, @RequestParam Long roleId) {
-        userRepository.addRoleToUser(userId, roleId);
-    }
-
-    @DeleteMapping("/user/role")
-    @RequiredPermission("REMOVE_USER_ROLE")
-    public void userRemoveRole(@RequestParam Long userId, @RequestParam Long roleId) {
-        userRepository.removeRoleFromUser(userId, roleId);
     }
 }

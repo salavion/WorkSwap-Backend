@@ -1,4 +1,4 @@
-package org.workswap.user.datasource.model.permission;
+package org.workswap.permission.datasource.model;
 
 import java.util.Set;
 

@@ -11,18 +11,13 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>workswap-user-module</artifactId>
+    <artifactId>workswap-permission-module</artifactId>
 
     <dependencies>
 
         <dependency>
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-sso-security-core-module</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-            <artifactId>workswap-location-module</artifactId>
 		</dependency>
 
         <dependency>
@@ -34,26 +29,6 @@
         <dependency>
 			<groupId>org.workswap</groupId>
 			<artifactId>workswap-datasource-module</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-permission-module</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-shared</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-webflux-module</artifactId>
-		</dependency>
-
-        <dependency>
-			<groupId>org.workswap</groupId>
-			<artifactId>workswap-rabbitmq</artifactId>
 		</dependency>
     </dependencies>
 </project>

@@ -1,9 +1,9 @@
-package org.workswap.user.dto;
+package org.workswap.permission.dto;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.workswap.user.datasource.model.permission.Permission;
+import org.workswap.permission.datasource.model.Permission;
 
 public record PermissionDTO(
     Long id,

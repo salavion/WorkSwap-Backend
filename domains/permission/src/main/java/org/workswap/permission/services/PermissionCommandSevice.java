@@ -1,12 +1,12 @@
-package org.workswap.user.services.permission.impl;
+package org.workswap.permission.services;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.workswap.user.services.permission.PermissionCommandSevice;
-import org.workswap.user.datasource.model.permission.Permission;
-import org.workswap.user.datasource.model.permission.Role;
-import org.workswap.user.datasource.repository.permission.PermissionRepository;
-import org.workswap.user.datasource.repository.permission.RoleRepository;
+import org.workswap.permission.services.PermissionCommandSevice;
+import org.workswap.permission.datasource.model.Permission;
+import org.workswap.permission.datasource.model.Role;
+import org.workswap.permission.datasource.repository.PermissionRepository;
+import org.workswap.permission.datasource.repository.RoleRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Profile({"server", "statistic"})
-public class PermissionCommandSeviceImpl implements PermissionCommandSevice {
+public class PermissionCommandSevice {
     
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;

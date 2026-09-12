@@ -20,6 +20,7 @@ import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
 import org.workswap.sso.security.annotations.controllers.RequiredPermission;
 import org.workswap.sso.security.annotations.parameters.AuthUser;
 import org.workswap.sso.security.dto.UserAuthData;
+import org.workswap.user.datasource.repository.UserRepository;
 import org.workswap.user.dto.FullUserDTO;
 import org.workswap.user.dto.ShortUserDTO;
 import org.workswap.user.dto.ShortUserProfileDTO;
@@ -36,6 +37,7 @@ public class UsersController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+    private final UserRepository userRepository;
 
     @PostMapping("/telegram")
     @RequiredPermission("CONNECT_TELEGRAM")
@@ -110,5 +112,17 @@ public class UsersController {
         @RequestParam String sortParam
     ) {
         return userQueryService.getUsersList(size, page, sortParam);
+    }
+
+    @PostMapping("/role")
+    @RequiredPermission("ADD_USER_ROLE")
+    public void userAddRole(@RequestParam Long userId, @RequestParam Long roleId) {
+        userRepository.addRoleToUser(userId, roleId);
+    }
+
+    @DeleteMapping("/role")
+    @RequiredPermission("REMOVE_USER_ROLE")
+    public void userRemoveRole(@RequestParam Long userId, @RequestParam Long roleId) {
+        userRepository.removeRoleFromUser(userId, roleId);
     }
 }

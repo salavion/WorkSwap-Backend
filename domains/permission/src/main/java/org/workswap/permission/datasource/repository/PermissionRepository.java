@@ -1,4 +1,4 @@
-package org.workswap.user.datasource.repository.permission;
+package org.workswap.permission.datasource.repository;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.workswap.user.datasource.model.permission.Permission;
+import org.workswap.permission.datasource.model.Permission;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Long> {

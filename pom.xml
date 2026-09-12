@@ -45,6 +45,7 @@
         <module>domains/statistic</module>
         <module>domains/subscription</module>
         <module>domains/task</module>
+        <module>domains/permission</module>
         <module>domains/user</module>
 
         <module>infrastructure/storage</module>
@@ -142,6 +143,12 @@
             <dependency>
                 <groupId>org.workswap</groupId>
                 <artifactId>workswap-user-module</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.workswap</groupId>
+                <artifactId>workswap-permission-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

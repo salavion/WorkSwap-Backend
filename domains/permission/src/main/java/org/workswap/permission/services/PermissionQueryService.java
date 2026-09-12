@@ -1,24 +1,24 @@
-package org.workswap.user.services.permission.impl;
+package org.workswap.permission.services;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.workswap.user.dto.PermissionDTO;
-import org.workswap.user.dto.RoleDTO;
-import org.workswap.user.services.permission.PermissionQueryService;
+import org.workswap.permission.dto.PermissionDTO;
+import org.workswap.permission.dto.RoleDTO;
+import org.workswap.permission.services.PermissionQueryService;
 
-import org.workswap.user.datasource.model.permission.Permission;
-import org.workswap.user.datasource.model.permission.Role;
-import org.workswap.user.datasource.repository.permission.PermissionRepository;
-import org.workswap.user.datasource.repository.permission.RoleRepository;
+import org.workswap.permission.datasource.model.Permission;
+import org.workswap.permission.datasource.model.Role;
+import org.workswap.permission.datasource.repository.PermissionRepository;
+import org.workswap.permission.datasource.repository.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Profile({"server", "statistic"})
 @RequiredArgsConstructor
-public class PermissionQueryServiceImpl implements PermissionQueryService {
+public class PermissionQueryService {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;

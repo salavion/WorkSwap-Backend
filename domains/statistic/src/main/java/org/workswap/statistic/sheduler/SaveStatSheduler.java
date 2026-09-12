@@ -1,5 +1,6 @@
-package org.workswap.statistic.shedulers;
+package org.workswap.statistic.sheduler;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.workswap.statistic.enums.StatSaveIntervalType;
@@ -8,6 +9,7 @@ import org.workswap.statistic.services.StatisticCommandService;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Profile("statistic")
 @RequiredArgsConstructor
 public class SaveStatSheduler {
 

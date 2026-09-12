@@ -6,11 +6,11 @@ Tämä repositorio sisältää WorkSwap-alustan backend-osan. Backend on toteute
 
 Frontend ja muut WorkSwap-ekosysteemin osat sijaitsevat erillisissä repositorioissa.
 
+Frontend-repo: https://github.com/salavion/WorkSwapFrontend
+
 ---
 
 ## Teknologiat
-
-### Backend
 
 * Java 21
 * Spring Boot

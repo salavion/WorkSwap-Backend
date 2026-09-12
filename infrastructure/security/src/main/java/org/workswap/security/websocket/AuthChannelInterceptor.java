@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
@@ -24,9 +25,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.workswap.security.service.CachedPermissionsJwtTokenConverter;
+import org.workswap.shared.events.user.UserOnlineState;
 import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.service.JwtService;
-import org.workswap.user.services.OnlineCounter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,7 +40,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AuthChannelInterceptor.class);
 
     private final JwtService jwtService;
-    private final OnlineCounter onlineCounter;
+    private final ApplicationEventPublisher eventPublisher;
     private final CachedPermissionsJwtTokenConverter jwtTokenConverter;
 
     @Override
@@ -75,7 +76,8 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 UserAuthData authData = (UserAuthData) auth.getPrincipal();
 
                 logger.debug("Авторизуем вебсокет, authData: {}", authData.toString());
-                onlineCounter.userConnected(authData.sub());
+
+                eventPublisher.publishEvent(new UserOnlineState(authData.sub(), true));
 
                 accessor.setUser(auth);
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -99,7 +101,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         Authentication auth = (Authentication) accessor.getUser();
         if (auth != null && auth.getPrincipal() instanceof UserAuthData) {
             UserAuthData authData = (UserAuthData) auth.getPrincipal();
-            onlineCounter.userDisconnected(authData.sub());
+            eventPublisher.publishEvent(new UserOnlineState(authData.sub(), false));
         }
     }
 }

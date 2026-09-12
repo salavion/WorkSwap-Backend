@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.workswap.category.dto.CategoryDTO;
-import org.workswap.category.services.CategoryMappingService;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
 import org.workswap.listing.datasource.repository.category.ServiceCategoryRepository;
 import org.workswap.sso.security.annotations.controllers.PublicEndpoint;
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/category")
 public class CategoryController {
     
-    private final CategoryMappingService categoryMappingService;
     private final ServiceCategoryRepository serviceCategoryRepository;
     private final ProductCategoryRepository productCategoryRepository;
     
@@ -29,8 +27,8 @@ public class CategoryController {
     @PublicEndpoint
     public Map<String, List<CategoryDTO>> categoryList() {
 
-        List<CategoryDTO> sCategories = categoryMappingService.toDTOList(serviceCategoryRepository.findAll());
-        List<CategoryDTO> pCategories = categoryMappingService.toDTOList(productCategoryRepository.findAll());
+        List<CategoryDTO> sCategories = CategoryDTO.ofList(serviceCategoryRepository.findAll());
+        List<CategoryDTO> pCategories = CategoryDTO.ofList(productCategoryRepository.findAll());
 
         return Map.of("PRODUCT", pCategories, "SERVICE", sCategories);
     }

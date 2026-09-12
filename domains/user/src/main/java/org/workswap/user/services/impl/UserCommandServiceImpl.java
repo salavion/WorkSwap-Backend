@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import org.workswap.user.services.UserCommandService;
-import org.workswap.user.datasource.model.permission.Role;
+import org.workswap.permission.datasource.model.Role;
 import org.workswap.location.datasource.model.Location;
 import org.workswap.location.datasource.repository.LocationRepository;
 import org.workswap.rabbit.queues.events.UserCreatedEvent;
@@ -27,7 +27,7 @@ import org.workswap.sso.security.dto.UserAuthData;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.model.UserSettings;
-import org.workswap.user.datasource.repository.permission.RoleRepository;
+import org.workswap.permission.datasource.repository.RoleRepository;
 import org.workswap.user.datasource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;

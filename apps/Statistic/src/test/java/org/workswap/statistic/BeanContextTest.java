@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.workswap.StatisticApplication;
 import org.workswap.listing.datasource.repository.ListingRepository;
-import org.workswap.statistic.consumers.ListingsStatConsumer;
+import org.workswap.statistic.amqp.consumers.ListingsStatConsumer;
 
 @SpringBootTest(
     classes = StatisticApplication.class,

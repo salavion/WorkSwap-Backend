@@ -23,12 +23,17 @@
 
         <dependency>
 			<groupId>org.workswap</groupId>
-			<artifactId>workswap-user-module</artifactId>
+			<artifactId>workswap-datasource-module</artifactId>
 		</dependency>
 
         <dependency>
 			<groupId>org.workswap</groupId>
-			<artifactId>workswap-datasource-module</artifactId>
+			<artifactId>workswap-permission-module</artifactId>
+		</dependency>
+
+        <dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-shared</artifactId>
 		</dependency>
 
         <dependency>

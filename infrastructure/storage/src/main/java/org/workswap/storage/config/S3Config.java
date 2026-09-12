@@ -2,6 +2,7 @@ package org.workswap.storage.config;
 
 import java.net.URI;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,11 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 @EnableConfigurationProperties(S3Properties.class)
 @Profile("server")
+@ConditionalOnProperty(
+    name = "storage.s3.enabled",
+    havingValue = "true",
+    matchIfMissing = true
+)
 public class S3Config {
     
     @Bean

@@ -3,6 +3,7 @@ package org.workswap.user.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.workswap.permission.dto.RoleDTO;
 import org.workswap.user.datasource.model.User;
 import org.workswap.user.datasource.model.UserSettings;
 

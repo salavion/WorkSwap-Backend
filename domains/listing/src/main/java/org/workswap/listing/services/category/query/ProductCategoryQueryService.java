@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.workswap.category.datasource.CategoryRepository;
-import org.workswap.category.services.CategoryMappingService;
 import org.workswap.category.services.CategoryQueryService;
 import org.workswap.listing.datasource.model.category.ProductCategory;
 import org.workswap.listing.datasource.repository.category.ProductCategoryRepository;
@@ -19,10 +18,9 @@ public class ProductCategoryQueryService
 
     public ProductCategoryQueryService(
         CategoryRepository<ProductCategory> categoryRepository,
-        ProductCategoryRepository productCategoryRepository,
-        CategoryMappingService categoryMappingService
+        ProductCategoryRepository productCategoryRepository
     ) {
-        super(productCategoryRepository, categoryMappingService);
+        super(productCategoryRepository);
         this.productCategoryRepository = productCategoryRepository;
     }
 

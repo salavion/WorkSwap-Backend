@@ -8,9 +8,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.workswap.user.datasource.model.permission.Permission;
-import org.workswap.user.datasource.model.permission.Role;
-import org.workswap.user.datasource.repository.permission.RoleRepository;
+import org.workswap.permission.datasource.model.Permission;
+import org.workswap.permission.datasource.model.Role;
+import org.workswap.permission.datasource.repository.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,5 @@
 package org.workswap.category.services;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.workswap.category.datasource.Category;
@@ -11,17 +10,14 @@ public abstract class CategoryFacade<T extends Category> {
 
     private final CategoryCommandService<T> commandService;
     private final CategoryQueryService<T> queryService;
-    private final CategoryMappingService mappingService;
 
     public CategoryFacade(CategoryRepository<T> repository,
                           CategoryFactory<T> factory,
-                          CategoryQueryService<T> queryService,
-                          CategoryMappingService mappingService) {
+                          CategoryQueryService<T> queryService) {
         this.commandService = new CategoryCommandService<T>(repository, factory) {
             // если нужны override методы, можно тут
         };
         this.queryService = queryService;
-        this.mappingService = mappingService;
     }
 
     // --- Общие команды ---
@@ -66,15 +62,5 @@ public abstract class CategoryFacade<T extends Category> {
 
     public List<CategoryDTO> getAllCategories() {
         return queryService.getAllCategories();
-    }
-
-    // --- Маппинг DTO ---
-
-    public CategoryDTO toDTO(T category) {
-        return mappingService.toDTO(category);
-    }
-
-    public List<CategoryDTO> toDTOList(Collection<T> categories) {
-        return mappingService.toDTOList(categories);
     }
 }

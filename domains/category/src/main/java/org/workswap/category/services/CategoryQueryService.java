@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public abstract class CategoryQueryService<T extends Category> {
 
     protected final CategoryRepository<T> categoryRepository;
-    protected final CategoryMappingService categoryMappingService;
 
     @Transactional(readOnly = true)
     public List<T> getLeafCategories() {
@@ -99,9 +98,6 @@ public abstract class CategoryQueryService<T extends Category> {
     }
 
     public List<CategoryDTO> getAllCategories() {
-        return categoryRepository.findAll()
-                                .stream()
-                                .map(category -> categoryMappingService.toDTO(category))
-                                .collect(Collectors.toList());
+        return CategoryDTO.ofList(categoryRepository.findAll());
     }
 }

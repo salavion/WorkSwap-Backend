@@ -38,6 +38,16 @@
 
         <dependency>
 			<groupId>org.workswap</groupId>
+			<artifactId>workswap-permission-module</artifactId>
+		</dependency>
+
+        <dependency>
+			<groupId>org.workswap</groupId>
+			<artifactId>workswap-shared</artifactId>
+		</dependency>
+
+        <dependency>
+			<groupId>org.workswap</groupId>
 			<artifactId>workswap-webflux-module</artifactId>
 		</dependency>
 

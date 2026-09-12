@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.workswap.user.datasource.model.permission.Role;
+import org.workswap.permission.datasource.model.Role;
 import org.workswap.sso.security.enums.UserStatus;
 import org.workswap.user.datasource.model.User;
 

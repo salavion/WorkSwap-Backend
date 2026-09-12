@@ -65,15 +65,7 @@ public class ReviewCommandService {
 
         log.debug("Отзыв сохранён");
 
-        eventPublisher.publishEvent(new ReviewCreatedEvent(
-            review.getId(), 
-            review.getText(), 
-            review.getRating(), 
-            review.getAuthor().getId(),
-            review.getListing() != null ? review.getListing().getId() : null, 
-            review.getProfile() != null ? review.getProfile().getId() : null,
-            review.getCreatedAt()
-        ));
+        eventPublisher.publishEvent(new ReviewCreatedEvent(review.getId()));
     }
 
     public void deleteReviewsByListingId(Long listingId) {

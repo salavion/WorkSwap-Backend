@@ -6,4 +6,5 @@ public record UserForumContent(
     List<ForumTopicDTO> topics, 
     List<ForumPostDTO> posts,
     List<ForumCommentDTO> comments
-) {}
+) {
+}
